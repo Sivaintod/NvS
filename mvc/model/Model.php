@@ -138,7 +138,7 @@ abstract class Model extends Db
 				$values[] = $condition[1];
 			}
 			
-			$where = ' WHERE '.implode(', ',$columns);
+			$where = ' WHERE '.implode(' AND ',$columns);
 		}
 
 		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$grouped;
