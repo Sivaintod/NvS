@@ -16,7 +16,7 @@ $temps_actuel = date("U");
 $sql = 'SELECT count(*) FROM nb_online WHERE ip= "'.$_SERVER['REMOTE_ADDR'].'"';
 
 // on lance la requête SQL (mysqli_query) et on affiche un message d'erreur si la requête ne se passait pas bien (or die)
-$res = $mysqli->query($sql) or die('Erreur SQL !<br />'.$sql.'<br />'.mysql_error());
+$res = $mysqli->query($sql) or die('Erreur SQL !<br />'.$sql.'<br />'.mysqli_error());
 
 // on comptabilise le nombre de résultats obtenus : soit 1, soit aucun (attention, aucun est différent de 0)
 $data = $res->fetch_array(MYSQLI_NUM);
@@ -27,7 +27,7 @@ if ($data[0]) {
     $sql = 'UPDATE nb_online SET time = "'.$temps_actuel.'" WHERE ip = "'.$_SERVER['REMOTE_ADDR'].'"';
 
     // on lance la requête SQL (mysqli_query) et on affiche un message d'erreur si la requête ne se passait pas bien (or die)
-    $res = $mysqli->query($sql) or die ('Erreur SQL !<br />'.$sql.'<br />'.mysql_error());
+    $res = $mysqli->query($sql) or die ('Erreur SQL !<br />'.$sql.'<br />'.mysqli_error());
 }
 else {
     // on entre dans ce cas si le client n'a jamais chargé de page (il est inconnu dans la table SQL car son IP y est absente). 
@@ -36,7 +36,7 @@ else {
     $sql = 'INSERT INTO nb_online VALUES("'.$_SERVER['REMOTE_ADDR']. '", "'.$temps_actuel.'")';
 
     // on lance la requête SQL (mysqli_query) et on affiche un message d'erreur si la requête ne se passait pas bien (or die)
-    $res = $mysqli->query($sql) or die ('Erreur SQL !<br />'.$sql.'<br />'.mysql_error());
+    $res = $mysqli->query($sql) or die ('Erreur SQL !<br />'.$sql.'<br />'.mysqli_error());
 }
 
 // on calcule le temps imparti pour comptabiliser les connectés au site (en fait, cela correspond à notre soustraction de tout à l'heure : 
@@ -48,5 +48,5 @@ $heure_max = $temps_actuel - $tps_max_connex;
 $sql2 = 'DELETE FROM nb_online where time < "'.$heure_max.'"';
 
 // on lance la requête SQL (mysqli_query) et on affiche un message d'erreur si la requête ne se passait pas bien (or die)
-$res2 = $mysqli->query($sql2) or die ('Erreur SQL !<br />'.$sql2.'<br />'.mysql_error());
+$res2 = $mysqli->query($sql2) or die ('Erreur SQL !<br />'.$sql2.'<br />'.mysqli_error());
 ?>
