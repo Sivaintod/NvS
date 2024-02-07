@@ -727,7 +727,7 @@ if($dispo == '1' || $admin){
 							// il n'appartient a aucune compagnie
 							
 							// A t-il demandé la création d'une compagie ?
-							$sql = "SELECT count(id_em_creer_compagnie) as verif_creer_comp FROM em_creer_compagnie WHERE id_perso='$id'";
+							$sql = "SELECT count(id) as verif_creer_comp FROM em_creer_compagnie WHERE id_perso='$id' AND (votes_result IS NULL OR votes_result=0)";
 							$res = $mysqli->query($sql);
 							$t = $res->fetch_assoc();
 							

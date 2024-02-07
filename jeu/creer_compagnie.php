@@ -70,12 +70,12 @@ if($dispo == '1' || $admin){
 					}
 				}
 				else {
-					echo "<center><font color='red'>Votre perso fait déjà parti d'une compagnie et ne peux donc pas demander la création d'une autre</font></center>";
+					echo "<center><font color='red'>Votre perso fait déjà parti d'une compagnie et ne peux pas demander la création d'une autre compagnie</font></center>";
 				}
 			}
 			
 			// A t-il demandé la création d'une compagie ?
-			$sql = "SELECT count(id_em_creer_compagnie) as verif_creer_comp FROM em_creer_compagnie WHERE id_perso='$id'";
+			$sql = "SELECT count(id) as verif_creer_comp FROM em_creer_compagnie WHERE id_perso='$id' AND (votes_result IS NULL OR votes_result=0)";
 			$res = $mysqli->query($sql);
 			$t = $res->fetch_assoc();
 							
@@ -133,7 +133,7 @@ if($dispo == '1' || $admin){
 	<?php
 		}
 		else {
-			echo "<center><font color='red'>Les chiens ne peuvent pas accèder à cette page.</font></center>";
+			echo "<center><font color='red'>Les chiens ne peuvent pas accéder à cette page.</font></center>";
 		}
 	}
 	else{

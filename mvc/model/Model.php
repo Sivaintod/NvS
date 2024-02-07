@@ -194,13 +194,33 @@ abstract class Model extends Db
 		return $this;
 	}
 	
-	//supprimer l'entrée en base de l'instance "sélectionnée" du modèle
+	/* delete the database line of the selected instance of the model. Can be used with Where
+	 * @return number of deleted lines
+	 */
 	public function delete()
 	{
 		$key = $this->primaryKey;
-		$id = $this->$key;
+		
+		
+		if(empty($this->whereConditions)){
+			$id = $this->$key;
+			$where = ' WHERE '.$key.' = ?';
+			$values = [$id];
+		}else{
+			$columns = [];
+			$values = [];
+			
+			foreach($this->whereConditions as $condition){
+				$columns[] = $condition[0];
+				$values[] = $condition[1];
+			}
+			
+			$where = ' WHERE '.implode(' AND ',$columns);
+		}
 
-		return $this->request('DELETE FROM '.$this->table.' WHERE '.$key.' = ?',[$id]);// on protège cette donnée en provoquant un prepare au lieu d'un query
+		$query = 'DELETE FROM '.$this->table.$where;
+
+		return $this->request($query,$values);// on protège cette donnée en provoquant un prepare au lieu d'un query
 	}
 	
 	/*
@@ -220,6 +240,8 @@ abstract class Model extends Db
 		}elseif(is_int($ids)){
 			$whereIn = '= ?';
 			$ids = [$ids];
+		}else{
+			return false;	
 		}
 		
 		$query = 'DELETE FROM '.$this->table.' WHERE '.$this->primaryKey.' '.$whereIn;

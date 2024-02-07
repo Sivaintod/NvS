@@ -2266,7 +2266,7 @@ if($dispo == '1' || $admin){
 				echo "</tr>";
 				echo "</table>";
 
-				$sql_info = "SELECT xp_perso, pc_perso, pv_perso, pvMax_perso, pa_perso, paMax_perso, pi_perso, pm_perso, pmMax_perso, recup_perso, protec_perso, type_perso, x_perso, y_perso, perception_perso, bonusPerception_perso, bonusRecup_perso, bonusPA_perso, bonusPM_perso, bonus_perso, charge_perso, chargeMax_perso, image_perso, message_perso, clan, bataillon FROM perso WHERE ID_perso ='$id_perso'";
+				$sql_info = "SELECT * FROM perso WHERE ID_perso ='$id_perso'";
 				$res_info = $mysqli->query($sql_info);
 				$t_perso2 = $res_info->fetch_assoc();
 
@@ -2296,6 +2296,7 @@ if($dispo == '1' || $admin){
 				$message_perso			= $t_perso2["message_perso"];
 				$charge_perso			= $t_perso2["charge_perso"];
 				$chargeMax_perso		= $t_perso2["chargeMax_perso"];
+				$nb_em					= $t_perso2["etat_major"];
 
 				// Bonus recup batiment
 				$bonus_recup_bat 		= get_bonus_recup_bat_perso($mysqli, $id_perso);
@@ -2470,17 +2471,13 @@ if($dispo == '1' || $admin){
 				else {
 					$image_compagnie_perso = "";
 				}
-
+				
 				// Le perso est-il membre de l'etat major de son camp ?
-				$sql_em = "SELECT * FROM perso_in_em WHERE id_perso='$id_perso' AND camp_em='$clan_perso'";
-				$res_em = $mysqli->query($sql_em);
-				$nb_em = $res_em->num_rows;
-
 				if ($nb_em) {
 					$pourc_icone = "12%";
 
 					// Verifier nombre compagnies en attente de validation
-					$sql = "SELECT * FROM em_creer_compagnie WHERE camp='$clan_perso'";
+					$sql = "SELECT * FROM em_creer_compagnie WHERE camp='$clan_perso' AND soft_delete IS NULL AND (votes_result=0 OR votes_result IS NULL)";
 					$res = $mysqli->query($sql);
 					$nb_compagnie_attente_em = $res->num_rows;
 
@@ -2573,7 +2570,7 @@ if($dispo == '1' || $admin){
 							}
 							if ($nb_em) {
 							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="etat_major.php"><img width=117 height=89 border=0 src="../images/<?php echo $image_em; ?>" alt="etat major"></a></td>
+							<td align="center" width=<?php echo $pourc_icone; ?>><a href="command.php"><img width=117 height=89 border=0 src="../images/<?php echo $image_em; ?>" alt="etat major"></a></td>
 							<?php
 							}
 							?>

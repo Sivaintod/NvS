@@ -38,7 +38,7 @@ if(isset($_SESSION["id_perso"])){
 			$camp_joueur	= $t['clan'];
 			
 			if ($type_acces == 'em') {
-				$sql = "INSERT INTO perso_in_em (id_perso, camp_em) VALUES ('$id_perso_acces', '$camp_joueur')";
+				$sql = "UPDATE perso SET etat_major=1 WHERE id_perso=".$id_perso_acces;
 			}
 			else if ($type_acces == 'anim') {
 				$sql = "UPDATE joueur SET animateur='1' WHERE id_joueur='$id_joueur'";
@@ -59,7 +59,7 @@ if(isset($_SESSION["id_perso"])){
 			$action 	= $_GET['action'];
 			
 			if ($action == "delete_em") {
-				$sql = "DELETE FROM perso_in_em WHERE id_perso='$id_perso'";
+				$sql = "UPDATE perso SET etat_major=0 WHERE id_perso=".$id_perso;
 			}
 			else if ($action == "delete_anim") {
 				$sql = "UPDATE joueur SET animateur='0' WHERE id_joueur=(SELECT idJoueur_perso FROM perso WHERE id_perso='$id_perso')";
@@ -169,7 +169,7 @@ if(isset($_SESSION["id_perso"])){
 								</thead>
 								<tbody>
 									<?php
-									$sql = "SELECT perso.nom_perso, perso.id_perso, perso.clan FROM perso, perso_in_em WHERE perso.id_perso = perso_in_em.id_perso ORDER BY clan ASC";
+									$sql = "SELECT nom_perso, id_perso, clan FROM perso WHERE etat_major = 1 ORDER BY clan ASC";
 									$res = $mysqli->query($sql);
 									
 									while ($t = $res->fetch_assoc()) {

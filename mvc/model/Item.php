@@ -15,6 +15,7 @@ class Item extends Model
      */
 	public function allowUnits(array $types){
 		$firstTableKey = $this->primaryKey;
+		$firstTableKeyInPivot = 'id_objet';
 		
 		$pivotTable = 'objet_as_type_unite';
 		$requests = 0;
@@ -26,7 +27,7 @@ class Item extends Model
 			
 			foreach($types as $type){
 				if(!in_array($type,$this->allowed_units)){
-					$query = 'INSERT INTO '.$pivotTable.' ('.$this->primaryKey.',id_type_unite) VALUES (?,?)';
+					$query = 'INSERT INTO '.$pivotTable.' ('.$firstTableKeyInPivot.',id_type_unite) VALUES (?,?)';
 					$values = [$this->$firstTableKey,$type];
 
 					$request = $this->request($query,$values);
@@ -35,7 +36,7 @@ class Item extends Model
 			}
 			foreach($this->allowed_units as $unit){
 				if(!in_array($unit,$types)){
-					$query = 'DELETE FROM '.$pivotTable.' WHERE '.$this->primaryKey.'=? AND id_type_unite=?';
+					$query = 'DELETE FROM '.$pivotTable.' WHERE '.$firstTableKeyInPivot.'=? AND id_type_unite=?';
 					$values = [$this->$firstTableKey,$unit];
 
 					$request = $this->request($query,$values);
@@ -46,7 +47,7 @@ class Item extends Model
 			return $control==$requests;
 		}else{
 			foreach($types as $type){
-				$query = 'INSERT INTO '.$pivotTable.' ('.$this->primaryKey.',id_type_unite) VALUES (?,?)';
+				$query = 'INSERT INTO '.$pivotTable.' ('.$firstTableKeyInPivot.',id_type_unite) VALUES (?,?)';
 				$values = [$this->$firstTableKey,$type];
 
 				$request = $this->request($query,$values);
