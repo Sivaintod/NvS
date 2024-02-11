@@ -274,8 +274,11 @@ ALTER TABLE `armure`
 --
 
 CREATE TABLE `banque_as_compagnie` (
-  `id_compagnie` int(11) NOT NULL default '0',
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_compagnie` int(11) NOT NULL,
+  `name` text NULL,
   `montant` int(11) NOT NULL default '0',
+  `created_at` datetime NOT NULL
   KEY `index_banque_compagnie` (`id_compagnie`)
 );
 
@@ -286,7 +289,8 @@ CREATE TABLE `banque_as_compagnie` (
 --
 
 CREATE TABLE `banque_compagnie` (
-  `id_perso` int(11) NOT NULL default '0',
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_perso` int(11) NOT NULL,
   `montant` int(11) NOT NULL default '0',
   `demande_emprunt` int(11) NOT NULL default '0',
   `montant_emprunt` int(11) NOT NULL default '0',
@@ -302,13 +306,13 @@ CREATE TABLE `banque_compagnie` (
 --
 
 CREATE TABLE `banque_log` (
-	`id_log` INT NOT NULL AUTO_INCREMENT,
-	`date_log` DATETIME NOT NULL ,
-	`id_compagnie` INT NOT NULL ,
-	`id_perso` INT NOT NULL ,
-	`montant_transfert` INT NOT NULL ,
-	`montant_final` INT NOT NULL,
-  PRIMARY KEY (`id_log`),
+  `id_log` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_bank` INT NOT NULL,
+  `id_compagnie` INT NOT NULL,
+  `id_perso` INT NOT NULL,
+  `montant_transfert` INT NOT NULL,
+  `montant_final` INT NOT NULL,
+  `date_log` DATETIME NOT NULL,
   KEY `index_supp_banqueLog` (`id_compagnie`),
   KEY `index_veriflogBanque` (`id_log`,`id_compagnie`)
 ) ENGINE = MyISAM;
@@ -533,6 +537,7 @@ ALTER TABLE `compagnies`
 --
 
 CREATE TABLE `compagnie_as_contraintes` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY;
   `id_compagnie` int(11) NOT NULL,
   `contrainte_type_perso` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -801,15 +806,16 @@ ALTER TABLE `dossier`
 --
 
 CREATE TABLE `em_creer_compagnie` (
-  `id_em_creer_compagnie` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `nom_compagnie` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description_compagnie` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `camp` int(11) NOT NULL
+  `camp` int(11) NOT NULL,
+  `votes_result` tinyint NOT NULL DEFAULT '0',
+  `soft_delete` datetime NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `em_creer_compagnie`
-  ADD PRIMARY KEY (`id_em_creer_compagnie`),
   ADD KEY `index_emPerso` (`id_perso`),
   ADD KEY `index_emcompagnie` (`camp`);
 
@@ -858,6 +864,7 @@ ALTER TABLE `em_vote_choix_carte`
 --
 
 CREATE TABLE `em_vote_creer_compagnie` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY;
   `id_em_creer_compagnie` int(11) NOT NULL,
   `id_em_perso` int(11) NOT NULL,
   `vote` int(11) NOT NULL
@@ -936,6 +943,7 @@ ALTER TABLE `grades`
 
 CREATE TABLE `histobanque_compagnie` (
   `id_histo` int(11) NOT NULL default '0',
+  `id_bank` int(11) NOT NULL,
   `id_compagnie` int(11) NOT NULL default '0',
   `id_perso` int(11) NOT NULL default '0',
   `operation` int(11) NOT NULL default '0',
@@ -1524,6 +1532,7 @@ CREATE TABLE `perso` (
   `DLA_perso` datetime DEFAULT NULL,
   `description_perso` longtext,
   `clan` tinyint(4) NOT NULL,
+  `etat_major` tinyint unsigned NOT NULL DEFAULT '0',
   `a_gele` tinyint(1) NOT NULL DEFAULT '0',
   `est_gele` tinyint(1) NOT NULL DEFAULT '0',
   `date_gele` datetime DEFAULT NULL,
@@ -1851,7 +1860,7 @@ ALTER TABLE `perso_in_compagnie`
 -- --------------------------------------------------------
 
 --
--- Structure de la table `perso_in_em`
+-- Structure de la table `perso_in_em` //OBSOLETE. A supprimer à terme.
 --
 CREATE TABLE `perso_in_em` (
   `id_perso` int(11) NOT NULL,

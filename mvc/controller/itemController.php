@@ -174,6 +174,7 @@ class ItemController extends Controller
 				}
 				
 				header('location:?action=create');
+				die();
 			}
 		}else{
 			header('location:?action=create');

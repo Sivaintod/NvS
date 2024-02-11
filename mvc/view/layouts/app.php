@@ -42,7 +42,7 @@
             </main>
 			
 			<!-- Page Footer -->
-			<footer class='container-fluid text-center mt-3 bg-light bg-opacity-50'>
+			<footer class='container-fluid text-center mt-3 bg-light bg-opacity-50 sticky-bottom'>
 				<div class='row'>
 					<div class='col fw-semibold py-3'>
 					Nord vs Sud - Le jeu au tour par tour sur la guerre civile américaine</br>
