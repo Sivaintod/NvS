@@ -291,6 +291,7 @@ CREATE TABLE `banque_as_compagnie` (
 CREATE TABLE `banque_compagnie` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
+  `bank_id` int(11) NOT NULL,
   `montant` int(11) NOT NULL default '0',
   `demande_emprunt` int(11) NOT NULL default '0',
   `montant_emprunt` int(11) NOT NULL default '0',
@@ -811,7 +812,7 @@ CREATE TABLE `em_creer_compagnie` (
   `nom_compagnie` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description_compagnie` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `camp` int(11) NOT NULL,
-  `votes_result` tinyint NOT NULL DEFAULT '0',
+  `votes_result` tinyint NULL,
   `soft_delete` datetime NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
