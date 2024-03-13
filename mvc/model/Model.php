@@ -80,7 +80,9 @@ abstract class Model extends Db
 		$columns = implode(', ',$columns);
 		$bind = implode(', ',$bind);
 		
-		$this->request('INSERT INTO '.$this->table.' ('.$columns.') VALUES ('.$bind.')',$values);
+		$query = 'INSERT INTO '.$this->table.' ('.$columns.') VALUES ('.$bind.')';
+		
+		$this->request($query,$values);
 		return $this->find($this->db->lastInsertId());
 	}
 	
