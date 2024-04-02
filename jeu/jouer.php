@@ -3874,19 +3874,23 @@ if($dispo == '1' || $admin){
 												case '1':
 													$camp_bat2 		= 'bleu';
 													$image_profil 	= "Nord.gif";
+													$img_folder		= 'nord';
 													break;
 												case '2':
 													$camp_bat2 		= 'rouge';
 													$image_profil 	= "Sud.gif";
+													$img_folder		= 'sud';
+													break;
 												default:
 													$camp_bat2 		= 'neutre';
 													$image_profil 	= "neutre.gif";
+													$img_folder		= 'neutre';
 											}
 
 											$blason="mini_blason_".$camp_bat2.".gif";
 
 											echo "<td width=40 height=40 background=\"../fond_carte/".$tab["fond_carte"]."\">";
-											echo "	<img tabindex='0' border=0 src=\"../images_perso/".$tab["image_carte"]."\" width=40 height=40
+											echo "	<img tabindex='0' border=0 src=\"../public/img/buildings/".$img_folder."/".$tab["image_carte"]."\" width=40 height=40
 														data-toggle='popover'
 														data-trigger='focus'
 														data-html='true'

@@ -102,19 +102,20 @@ if($dispo == '1' || $admin){
 						$mysqli->query($sql);
 						$id_i_bat = $mysqli->insert_id;
 						
+						$i = 1;
+						
 						for ($x = $x_penitencier - $taille_search; $x <= $x_penitencier + $taille_search; $x++) {
 							for ($y = $y_penitencier - $taille_search; $y <= $y_penitencier + $taille_search; $y++) {
 								
+								$img = 'jail_'.$camp.'_'.$i.'.png';
+								
 								// mise a jour de la carte
-								$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img_bat_sup' WHERE x_carte='$x' AND y_carte='$y'";
+								$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img' WHERE x_carte='$x' AND y_carte='$y'";
 								$mysqli->query($sql);
 								
+								$i++;
 							}
 						}
-					
-						// mise a jour de la carte image centrale
-						$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img_bat' WHERE x_carte='$x_penitencier' AND y_carte='$y_penitencier'";
-						$mysqli->query($sql);
 						
 						$texte = "";
 									
