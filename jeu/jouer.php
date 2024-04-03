@@ -2212,9 +2212,10 @@ if($dispo == '1' || $admin){
 				?>
 				<a class='btn btn-warning' href="missions.php"><b>Missions
 				<?php
-				if ($nb_missions_actives > 0) {
+				if ($nb_missions_actives > 0) 				
+				{
 				?>
-				<span class='badge badge-success'>".$nb_missions_actives."</span>
+				<span class='badge badge-success'><?= $nb_missions_actives ?></span>
 				<?php
 				}
 				?>
