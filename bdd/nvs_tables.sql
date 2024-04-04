@@ -328,9 +328,13 @@ CREATE TABLE `banque_log` (
 CREATE TABLE `batiment` (
   `id_batiment` int(11) NOT NULL,
   `nom_batiment` varchar(125) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pvMax_batiment` int(11) NOT NULL DEFAULT '20',
   `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `taille_batiment` int(11) NOT NULL DEFAULT '1',
+  `image_prefix` tinytext NOT NULL,
+  `pvMax_batiment` int(11) NOT NULL DEFAULT '20',
+  `taille_batiment` int(11) unsigned NOT NULL DEFAULT '1',
+  `capacity` int unsigned NOT NULL DEFAULT '0',
+  `passable` tinyint NOT NULL DEFAULT '0',
+  `respawn_allowed` tinyint NOT NULL DEFAULT '0'
   `capturable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_batiment`),
   KEY `index_taille_bat` (`taille_batiment`,`id_batiment`) USING BTREE

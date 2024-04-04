@@ -1445,7 +1445,7 @@ if($dispo == '1' || $admin) {
 										|| $nom_action == 'Construire - Pont' || $nom_action == 'Construire - Barricade'){
 										
 										// recuperation du batiment
-										$sql = "SELECT batiment.id_batiment, batiment.nom_batiment, batiment.taille_batiment, clan 
+										$sql = "SELECT batiment.id_batiment, batiment.nom_batiment, batiment.taille_batiment, batiment.image_prefix, clan 
 												FROM action_as_batiment, batiment, perso
 												WHERE id_action='$id_action'
 												AND id_perso='$id_perso'
@@ -1462,25 +1462,26 @@ if($dispo == '1' || $admin) {
 											$id_bat 		= $t_bat['id_batiment'];
 											$nom_batiment 	= $t_bat['nom_batiment'];
 											$taille_batiment= $t_bat['taille_batiment'];
+											$img_prefix		= $t_bat['image_prefix'];
 											$camp_batiment 	= $t_bat['clan'];
 											
 											switch($camp_batiment){
 												case "1":
-													$camp_b = 'b';
+													$img_folder = 'nord';
 													break;
 												case "2":
-													$camp_b = 'r';
+													$img_folder = 'sud';
 													break;
 												default:
-													$camp_b = 'g';
+													$img_folder = 'neutre';
 												
 											}
 											
-											$image_bat = "b".$id_bat."".$camp_b.".png";
+											$image_bat = $img_prefix."_".$camp_batiment.".png";
 										}
 										
-										echo "<center><img src=\"../images_perso/$image_bat\" alt=\"$nom_batiment\" /></center>";
-										echo "<center><b>$nom_batiment</b></center>";
+										echo '<center><b>'.$nom_batiment.'</b></center>';
+										echo '<center><img src="../public/img/buildings/'.$img_folder.'/thumbnail/'.$image_bat.'" alt="'.$nom_batiment.'" /></center>';
 									
 										//recuperation des coordonnees du perso
 										$sql = "SELECT x_perso, y_perso FROM perso WHERE id_perso='$id_perso'";
@@ -1532,7 +1533,7 @@ if($dispo == '1' || $admin) {
 															else {
 																// batiment
 																echo "<td width=40 height=40 background=\"../fond_carte/".$tab["fond_carte"]."\">";
-																echo "	<img border=0 src=\"../images_perso/".$tab["image_carte"]."\" width=40 height=40 \>";
+																echo "	<img border=0 src=\"../public/img/buildings/".$img_folder."/".$tab["image_carte"]."\" width=40 height=40 \>";
 																echo "</td>";
 															}
 														}
@@ -1559,7 +1560,7 @@ if($dispo == '1' || $admin) {
 																	echo "
 																	<td width=40 height=40> 
 																		<input type=\"image\" name=\"image_bat\" value=\"$x,$y,$id_bat\" border=0 src=\"../fond_carte/$fond_carte\" width=40 height=40 
-																			onMouseOver=\"this.src='../images_perso/$image_bat';\" 
+																			onMouseOver=\"this.src='../public/img/buildings/$img_folder/thumbnail/$image_bat';\" 
 																			onMouseOut=\"this.src='../fond_carte/$fond_carte';\" >
 																		<input type=\"hidden\" name=\"hid_image_bat\" value=\"$x,$y,$id_bat\" >
 																	</td>";
@@ -1572,7 +1573,7 @@ if($dispo == '1' || $admin) {
 																echo "
 																	<td width=40 height=40> 
 																		<input type=\"image\" name=\"image_bat\" value=\"$x,$y,$id_bat\" border=0 src=\"../fond_carte/$fond_carte\" width=40 height=40 
-																			onMouseOver=\"this.src='../images_perso/$image_bat';\" 
+																			onMouseOver=\"this.src='../public/img/buildings/$img_folder/thumbnail/$image_bat';\" 
 																			onMouseOut=\"this.src='../fond_carte/$fond_carte';\" >
 																		<input type=\"hidden\" name=\"hid_image_bat\" value=\"$x,$y,$id_bat\" >
 																	</td>";

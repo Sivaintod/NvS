@@ -51,12 +51,13 @@ if(isset($_SESSION["id_perso"])){
 			}
 			
 			// recuperation du nom du batiment
-			$sql = "SELECT nom_batiment, taille_batiment FROM batiment WHERE id_batiment='$id_bat'";
+			$sql = "SELECT nom_batiment, taille_batiment, image_prefix FROM batiment WHERE id_batiment='$id_bat'";
 			$res = $mysqli->query($sql);
 			$tb = $res->fetch_assoc();
 			
 			$nom_bat 	= $tb["nom_batiment"];
 			$taille_bat = $tb["taille_batiment"];
+			$img_prefix = $tb["image_prefix"];
 			
 			$sql = "SELECT MAX(x_carte) as x_max, MAX(y_carte) as y_max FROM carte";
 			$res = $mysqli->query($sql);
@@ -96,7 +97,7 @@ if(isset($_SESSION["id_perso"])){
 					}
 				}
 				
-				if ($verif_fond_carte) {								
+				if ($verif_fond_carte) {
 				
 					$gain_xp = 1;
 					
@@ -182,43 +183,22 @@ if(isset($_SESSION["id_perso"])){
 											$mysqli->query($sql);
 											
 										} else {
-										
-											$img_bat_sup = $bat_camp.".png";
+											$i = 1;
 											
 											for ($x = $x_bat - $taille_search; $x <= $x_bat + $taille_search; $x++) {
 												for ($y = $y_bat - $taille_search; $y <= $y_bat + $taille_search; $y++) {
 													
-													// mise a jour de la carte
-													$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img_bat_sup' WHERE x_carte='$x' AND y_carte='$y'";
-													$mysqli->query($sql);
+													$img = $img_prefix.'_'.$camp_bat.'_'.$i.'.png';
 													
+													// mise a jour de la carte
+													$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img' WHERE x_carte='$x' AND y_carte='$y'";
+													$mysqli->query($sql);
+													$i++;
 												}
 											}
-										
-											// mise a jour de la carte image centrale
-											$sql = "UPDATE carte SET occupee_carte='1', idPerso_carte='$id_i_bat', image_carte='$img_bat' WHERE x_carte='$x_bat' AND y_carte='$y_bat'";
-											$mysqli->query($sql);
 											
 											if ($id_bat == '8') {
 												// CANONS FORTIN
-												
-												if ($camp_bat == 1) {
-													$image_canon_g = 'canonG_nord.gif';
-													$image_canon_d = 'canonD_nord.gif';
-												}
-												
-												if ($camp_bat == 2) {
-													$image_canon_g = 'canonG_sud.gif';
-													$image_canon_d = 'canonD_sud.gif';
-												}
-												
-												// Canons Gauche
-												$sql = "UPDATE carte SET image_carte='$image_canon_g' WHERE (x_carte=$x_bat - 1 AND y_carte=$y_bat - 1) OR (x_carte=$x_bat - 1 AND y_carte=$y_bat + 1)";
-												$mysqli->query($sql);
-												
-												// Canons Droit
-												$sql = "UPDATE carte SET image_carte='$image_canon_d' WHERE (x_carte=$x_bat + 1 AND y_carte=$y_bat - 1) OR (x_carte=$x_bat + 1 AND y_carte=$y_bat + 1)";
-												$mysqli->query($sql);
 												
 												$sql = "INSERT INTO instance_batiment_canon (id_instance_bat, x_canon, y_canon, camp_canon) VALUES ('$id_i_bat', $x_bat - 1, $y_bat - 1, $camp_bat)";
 												$mysqli->query($sql);
@@ -231,24 +211,6 @@ if(isset($_SESSION["id_perso"])){
 											}
 											else if ($id_bat == '9') {
 												// CANONS FORT
-												
-												if ($camp_bat == 1) {
-													$image_canon_g = 'canonG_nord.gif';
-													$image_canon_d = 'canonD_nord.gif';
-												}
-												
-												if ($camp_bat == 2) {
-													$image_canon_g = 'canonG_sud.gif';
-													$image_canon_d = 'canonD_sud.gif';
-												}
-												
-												// Canons Gauche
-												$sql = "UPDATE carte SET image_carte='$image_canon_g' WHERE (x_carte=$x_bat - 2 AND y_carte=$y_bat + 2) OR (x_carte=$x_bat - 2 AND y_carte=$y_bat) OR (x_carte=$x_bat - 2 AND y_carte=$y_bat - 2)";
-												$mysqli->query($sql);
-												
-												// Canons Droit
-												$sql = "UPDATE carte SET image_carte='$image_canon_d' WHERE (x_carte=$x_bat + 2 AND y_carte=$y_bat + 2) OR (x_carte=$x_bat + 2 AND y_carte=$y_bat) OR (x_carte=$x_bat + 2 AND y_carte=$y_bat - 2)";
-												$mysqli->query($sql);
 												
 												$sql = "INSERT INTO instance_batiment_canon (id_instance_bat, x_canon, y_canon, camp_canon) VALUES ('$id_i_bat', $x_bat - 2, $y_bat + 2, $camp_bat)";
 												$mysqli->query($sql);

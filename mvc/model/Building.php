@@ -3,6 +3,12 @@ require_once("Model.php");
 
 class Building extends Model
 {
+	protected $table = "instance_batiment";
+	protected $primaryKey = "id_instanceBat";
+	// protected $fillable = [];
+	protected $guarded = [];
+
+	// Obsolète. A supprimer à termes
    public function getByType(int $type,int $camp=null){
 		$db = $this->dbConnectPDO();
 		
@@ -21,6 +27,7 @@ class Building extends Model
 		return $result;
    }
    
+   // Obsolète. A supprimer à termes
    public function getById(int $id){
 		$db = $this->dbConnectPDO();
 		
