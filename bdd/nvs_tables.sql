@@ -274,8 +274,11 @@ ALTER TABLE `armure`
 --
 
 CREATE TABLE `banque_as_compagnie` (
-  `id_compagnie` int(11) NOT NULL default '0',
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_compagnie` int(11) NOT NULL,
+  `name` text NULL,
   `montant` int(11) NOT NULL default '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
   KEY `index_banque_compagnie` (`id_compagnie`)
 );
 
@@ -286,7 +289,9 @@ CREATE TABLE `banque_as_compagnie` (
 --
 
 CREATE TABLE `banque_compagnie` (
-  `id_perso` int(11) NOT NULL default '0',
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_perso` int(11) NOT NULL,
+  `bank_id` int(11) NOT NULL,
   `montant` int(11) NOT NULL default '0',
   `demande_emprunt` int(11) NOT NULL default '0',
   `montant_emprunt` int(11) NOT NULL default '0',
@@ -302,13 +307,13 @@ CREATE TABLE `banque_compagnie` (
 --
 
 CREATE TABLE `banque_log` (
-	`id_log` INT NOT NULL AUTO_INCREMENT,
-	`date_log` DATETIME NOT NULL ,
-	`id_compagnie` INT NOT NULL ,
-	`id_perso` INT NOT NULL ,
-	`montant_transfert` INT NOT NULL ,
-	`montant_final` INT NOT NULL,
-  PRIMARY KEY (`id_log`),
+  `id_log` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_bank` INT NOT NULL,
+  `id_compagnie` INT NOT NULL,
+  `id_perso` INT NOT NULL,
+  `montant_transfert` INT NOT NULL,
+  `montant_final` INT NOT NULL,
+  `date_log` DATETIME NOT NULL,
   KEY `index_supp_banqueLog` (`id_compagnie`),
   KEY `index_veriflogBanque` (`id_log`,`id_compagnie`)
 ) ENGINE = MyISAM;
@@ -323,9 +328,13 @@ CREATE TABLE `banque_log` (
 CREATE TABLE `batiment` (
   `id_batiment` int(11) NOT NULL,
   `nom_batiment` varchar(125) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pvMax_batiment` int(11) NOT NULL DEFAULT '20',
   `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `taille_batiment` int(11) NOT NULL DEFAULT '1',
+  `image_prefix` tinytext NOT NULL,
+  `pvMax_batiment` int(11) NOT NULL DEFAULT '20',
+  `taille_batiment` int(11) unsigned NOT NULL DEFAULT '1',
+  `capacity` int unsigned NOT NULL DEFAULT '0',
+  `passable` tinyint NOT NULL DEFAULT '0',
+  `respawn_allowed` tinyint NOT NULL DEFAULT '0'
   `capturable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_batiment`),
   KEY `index_taille_bat` (`taille_batiment`,`id_batiment`) USING BTREE
@@ -346,11 +355,10 @@ ALTER TABLE `batiment`
 --
 
 CREATE TABLE `camp` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `desc` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `color` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -361,7 +369,7 @@ CREATE TABLE `camp` (
 --
 
 CREATE TABLE `carte` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_carte` int(10) unsigned NOT NULL,
   `x_carte` int(11) NOT NULL DEFAULT '0',
   `y_carte` int(11) NOT NULL DEFAULT '0',
@@ -376,7 +384,6 @@ CREATE TABLE `carte` (
   `vue_nord_date` datetime DEFAULT NULL,
   `vue_sud_date` datetime DEFAULT NULL,
   `coordonnees` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   UNIQUE KEY `x_carte` (`x_carte`,`y_carte`),
   UNIQUE KEY `index_anim_creer_batiment` (`x_carte`,`y_carte`,`fond_carte`,`coordonnees`,`idPerso_carte`),
   KEY `index_carte_FCarte` (`x_carte`,`y_carte`,`fond_carte`),
@@ -404,7 +411,7 @@ CREATE TABLE `carte` (
 --
 
 CREATE TABLE `carte2` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_carte` int(10) unsigned NOT NULL,
   `x_carte` int(11) NOT NULL DEFAULT '0',
   `y_carte` int(11) NOT NULL DEFAULT '0',
@@ -418,8 +425,7 @@ CREATE TABLE `carte2` (
   `vue_sud` tinyint(1) DEFAULT '0',
   `vue_nord_date` datetime DEFAULT NULL,
   `vue_sud_date` datetime DEFAULT NULL,
-  `coordonnees` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `coordonnees` varchar(250) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -429,7 +435,7 @@ CREATE TABLE `carte2` (
 --
 
 CREATE TABLE `carte3` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_carte` int(10) unsigned NOT NULL,
   `x_carte` int(11) NOT NULL DEFAULT '0',
   `y_carte` int(11) NOT NULL DEFAULT '0',
@@ -443,8 +449,7 @@ CREATE TABLE `carte3` (
   `vue_sud` tinyint(1) DEFAULT '0',
   `vue_nord_date` datetime DEFAULT NULL,
   `vue_sud_date` datetime DEFAULT NULL,
-  `coordonnees` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `coordonnees` varchar(250) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
@@ -497,7 +502,7 @@ ALTER TABLE `choix_carte_suivante`
 --
 
 CREATE TABLE `compagnies` (
-  `id_compagnie` int(11) NOT NULL,
+  `id_compagnie` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `nom_compagnie` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `image_compagnie` varchar(255) NOT NULL DEFAULT '0',
   `resume_compagnie` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -508,7 +513,6 @@ CREATE TABLE `compagnies` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `compagnies`
-  ADD PRIMARY KEY (`id_compagnie`),
   ADD KEY `index_AllCompagnie1` (`id_compagnie`,`id_clan`),
   ADD KEY `index_compagnieParent` (`id_parent`),
   ADD KEY `index_clan_parent` (`id_clan`,`id_parent`),
@@ -533,6 +537,7 @@ ALTER TABLE `compagnies`
 --
 
 CREATE TABLE `compagnie_as_contraintes` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY;
   `id_compagnie` int(11) NOT NULL,
   `contrainte_type_perso` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -801,15 +806,16 @@ ALTER TABLE `dossier`
 --
 
 CREATE TABLE `em_creer_compagnie` (
-  `id_em_creer_compagnie` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `nom_compagnie` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description_compagnie` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `camp` int(11) NOT NULL
+  `camp` int(11) NOT NULL,
+  `votes_result` tinyint NULL,
+  `soft_delete` datetime NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `em_creer_compagnie`
-  ADD PRIMARY KEY (`id_em_creer_compagnie`),
   ADD KEY `index_emPerso` (`id_perso`),
   ADD KEY `index_emcompagnie` (`camp`);
 
@@ -858,6 +864,7 @@ ALTER TABLE `em_vote_choix_carte`
 --
 
 CREATE TABLE `em_vote_creer_compagnie` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY;
   `id_em_creer_compagnie` int(11) NOT NULL,
   `id_em_perso` int(11) NOT NULL,
   `vote` int(11) NOT NULL
@@ -936,6 +943,7 @@ ALTER TABLE `grades`
 
 CREATE TABLE `histobanque_compagnie` (
   `id_histo` int(11) NOT NULL default '0',
+  `id_bank` int(11) NOT NULL,
   `id_compagnie` int(11) NOT NULL default '0',
   `id_perso` int(11) NOT NULL default '0',
   `operation` int(11) NOT NULL default '0',
@@ -1524,6 +1532,7 @@ CREATE TABLE `perso` (
   `DLA_perso` datetime DEFAULT NULL,
   `description_perso` longtext,
   `clan` tinyint(4) NOT NULL,
+  `etat_major` tinyint unsigned NOT NULL DEFAULT '0',
   `a_gele` tinyint(1) NOT NULL DEFAULT '0',
   `est_gele` tinyint(1) NOT NULL DEFAULT '0',
   `date_gele` datetime DEFAULT NULL,
@@ -1830,6 +1839,7 @@ ALTER TABLE `perso_in_batiment`
 --
 
 CREATE TABLE `perso_in_compagnie` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL DEFAULT '0',
   `id_compagnie` int(11) NOT NULL DEFAULT '0',
   `poste_compagnie` int(11) NOT NULL DEFAULT '0',
@@ -1851,7 +1861,7 @@ ALTER TABLE `perso_in_compagnie`
 -- --------------------------------------------------------
 
 --
--- Structure de la table `perso_in_em`
+-- Structure de la table `perso_in_em` //OBSOLETE. A supprimer à terme.
 --
 CREATE TABLE `perso_in_em` (
   `id_perso` int(11) NOT NULL,

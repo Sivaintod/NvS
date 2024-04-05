@@ -6,6 +6,9 @@ $mysqli = db_connexion();
 
 include ('../nb_online.php');
 
+// Fonction non accessible depuis le jeu pour le moment.
+// Seuls les Admins peuvent décider du placement des Forts de début de carte.
+
 // recupération config jeu
 $dispo = config_dispo_jeu($mysqli);
 $admin = admin_perso($mysqli, $_SESSION["id_perso"]);
@@ -18,17 +21,16 @@ if($dispo == '1' || $admin){
 		$id = $_SESSION["id_perso"];
 		
 		// Le perso est-il membre de l'etat major
-		$sql = "SELECT camp_em FROM perso_in_em WHERE id_perso='$id'";
+		$sql = "SELECT etat_major, clan FROM perso WHERE id_perso='$id'";
 		$res = $mysqli->query($sql);
 		$t = $res->fetch_assoc();
-		$verif = $res->num_rows;
 		
-		if ($verif) {
+		if ($t['etat_major']==1) {
 			
 			$msg_erreur = "";
 			$msg = "";
 		
-			$camp_em = $t['camp_em'];
+			$camp_em = $t['clan'];
 			
 			if ($camp_em == 1) {
 				$image_em = "em_nord.png";
@@ -127,6 +129,7 @@ if($dispo == '1' || $admin){
 								<a class="nav-link" href="etat_major.php">Validation compagnies</a>
 							</li>
 						</ul>
+						<!-- option désactivée
 						<ul class="navbar-nav">
 							<li class="nav-item dropdown active">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkCarte" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -138,6 +141,7 @@ if($dispo == '1' || $admin){
 								</div>
 							</li>
 						</ul>
+						-->
 						<ul class="navbar-nav">
 							<li class="nav-item dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

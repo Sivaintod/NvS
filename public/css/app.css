@@ -12,6 +12,10 @@ body{
 	background:#969696;
 }
 
+.vote-input{
+	margin-top:0.8rem;
+}
+
 /* couleurs de camps */
 
 /* heights and width custom */
@@ -86,6 +90,13 @@ body{
 .items {
 	z-index:-1;
 	background:center url("../img/backgrounds/items_admin.jpg");
+	background-size: auto;
+}
+
+/* Etat Major */
+.emBg {
+	z-index:-1;
+	background:center url("../img/backgrounds/em_bg.jpg");
 	background-size: auto;
 }
 
