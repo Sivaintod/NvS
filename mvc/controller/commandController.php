@@ -121,7 +121,7 @@ class CommandController extends Controller
      * @param Character class
      * @return redirect
      */
-    public function compValidation(Character $perso)
+    public function compValidation()
     {
 		if($_SERVER['REQUEST_METHOD']==='POST'){
 
@@ -177,16 +177,15 @@ class CommandController extends Controller
 						$allowedUnits = $newCompany->allowUnits([1,2,3,4,5,7,8]);
 						
 						// Définir le perso demandeur comme chef de compagnie
-						$assignPerso = $newCompany->assignPerso($perso->id_perso,1,0);
+						$assignPerso = $newCompany->assignPerso($demand->id_perso,1,0);
 						
 						// Créer la banque de compagnie et créer un compte au chef de compagnie
-						
 						$bank = new Bank();
 						$bank->id_compagnie = $newCompany->id_compagnie;
 						$bank = $bank->saveWithModel();
 						
 						$account = new Account();
-						$account->id_perso = $perso->id_perso;
+						$account->id_perso = $demand->id_perso;
 						$account->bank_id = $bank->id;
 						$account = $account->save();
 						
@@ -217,7 +216,7 @@ class CommandController extends Controller
 		$result = $companyModel->deleteForCommand($id);
 		
 		if($result){
-			$_SESSION['flash'] = ['class'=>'success','message'=>'La demande de compagnie "'.$demand->nom_compagnie.'" a été retirée'];
+			$_SESSION['flash'] = ['class'=>'success','message'=>'La demande de compagnie a été retirée'];
 		}else{
 			$_SESSION['flash'] = ['class'=>'danger','message'=>"Une erreur inconnue est survenue, veuillez recommencer. Si le problème persiste, contactez l'administrateur."];
 		}
