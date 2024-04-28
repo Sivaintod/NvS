@@ -2627,7 +2627,7 @@ if($dispo == '1' || $admin){
 							if ($nb_em) {
 							?>
 							<td align="center" width=<?php echo $pourc_icone; ?>>
-								<a href="etat_major.php"><img width=83 height=16 border=0 src="../images/em_titrev2.png" alt="etat major"></a>
+								<a href="command.php"><img width=83 height=16 border=0 src="../images/em_titrev2.png" alt="etat major"></a>
 								<?php
 								if ($nb_compagnie_attente_em) {
 									echo "<br/><font color=red><b>$nb_compagnie_attente_em</b> compagnie(s) en attente de validation</font>";
