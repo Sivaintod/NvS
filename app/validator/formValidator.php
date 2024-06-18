@@ -231,7 +231,7 @@ class formValidator
 							break;
 						case 'in':
 							if(!in_array($_POST[$key],$value)){
-								$errors[$key][$condition] = 'le champ "'.$key_name.'" ne correspond à une valeur attendue';
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" ne correspond pas à une valeur attendue';
 							}else{
 								$bail = 0;
 							}
