@@ -147,7 +147,7 @@ abstract class Model extends Db
 		
 		$request = $this->request($query,$values);
 
-		return $request->fetchAll(PDO::FETCH_CLASS);
+		return $request->fetchAll(PDO::FETCH_CLASS,get_class($this));
 	}
 	
 	//récupérer une entrée d'une table via sa clé primaire (à améliorer comme le get)
@@ -161,12 +161,17 @@ abstract class Model extends Db
 		return $request->fetch();
 	}
 	
-	//mettre à jour une entrée d'une table via sa clé primaire
-	public function update(int $id)
+	/*mettre à jour une entrée d'une table via sa clé primaire si celle-ci n'est pas dans le modèle
+	 * @return number of lines affected
+	*/
+	public function update(int $id=NULL)
 	{
 		$model_vars = get_object_vars($this);
-		
+
 		foreach($model_vars as $attr => $value){
+			if($attr=='primaryKey' AND !empty($this->$value)){
+				$id=$this->$value;
+			}
 			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
 				$columns[] = $attr. ' = ?';
 				$values[] = $value;
@@ -174,8 +179,9 @@ abstract class Model extends Db
 		}
 		
 		$columns = implode(', ',$columns);
-		
-		return $this->request('UPDATE '.$this->table.' SET '.$columns.' WHERE '.$this->primaryKey.' = '.$id,$values);
+
+		$request = $this->request('UPDATE '.$this->table.' SET '.$columns.' WHERE '.$this->primaryKey.' = '.$id,$values);
+		return $request->rowCount();
 	}
 	
 	//mettre à jour une entrée d'une table via sa clé primaire

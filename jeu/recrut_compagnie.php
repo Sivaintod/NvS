@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once("../fonctions.php");
+require_once("../mvc/model/Account.php");
+require_once("../mvc/model/Company.php");
 
 $mysqli = db_connexion();
 
@@ -68,12 +70,11 @@ if(isset($_SESSION["id_perso"])){
 			if($verif){
 				
 				// recuperation des information sur la compagnie
-				$sql = "SELECT genie_civil, nom_compagnie FROM compagnies WHERE id_compagnie=$id_compagnie";
-				$res = $mysqli->query($sql);
-				$sec = $res->fetch_assoc();
+				$company = new Company();
+				$company = $company->select('compagnies.id_compagnie, compagnies.genie_civil, compagnies.nom_compagnie, banque_as_compagnie.id as bank_id')->leftJoin('banque_as_compagnie','compagnies.id_compagnie','=','banque_as_compagnie.id_compagnie')->find($id_compagnie);
 				
-				$genie_compagnie 	= $sec["genie_civil"];
-				$nom_compagnie		= addslashes($sec["nom_compagnie"]);
+				$genie_compagnie 	= $company->genie_civil;
+				$nom_compagnie		= $company->nom_compagnie;
 				
 				if ($genie_compagnie) {
 					$nb_persos_compagnie_max = 60;
@@ -94,8 +95,10 @@ if(isset($_SESSION["id_perso"])){
 						$mysqli->query($sql);
 						
 						// insertion dans la table banque compagnie
-						$sql = "INSERT INTO banque_compagnie VALUES ($new_recrue,'0','0','0')";
-						$mysqli->query($sql);
+						$account = new Account();
+						$account->id_perso = $new_recrue;
+						$account->bank_id = $company->bank_id;
+						$account = $account->save();
 						
 						if ($genie_compagnie) {
 							// Nouvelles compétences de construction pour le perso
@@ -131,13 +134,13 @@ if(isset($_SESSION["id_perso"])){
 						
 						// on lui envoi un mp
 						$message = "Bonjour $nom_recrue,
-									J\'ai le plaisir de t\'annoncer que ton entrée dans la compagnie ". $nom_compagnie ." a été acceptée.";
+									J'ai le plaisir de t'annoncer que ton entrée dans la compagnie ".$nom_compagnie." a été acceptée.";
 						$objet = "Incorporation dans la compagnie";
 						
 						$lock = "LOCK TABLE message WRITE";
 						$mysqli->query($lock);
 						
-						$sql = "INSERT INTO message (expediteur_message, date_message, contenu_message, objet_message) VALUES ( '" . $nom_compagnie . "', NOW(), '" . $message . "', '" . $objet . "')";
+						$sql = 'INSERT INTO message (expediteur_message, date_message, contenu_message, objet_message) VALUES ("'.$nom_compagnie.'",NOW(),"'.$message.'","'.$objet.'")';
 						$res = $mysqli->query($sql);
 						$id_message = $mysqli->insert_id;
 						
@@ -165,13 +168,13 @@ if(isset($_SESSION["id_perso"])){
 						
 						// on lui envoi un mp
 						$message = "Bonjour $nom_recrue,
-									J\'ai le regret de t\'annoncer que ton entrée dans la compagnie ". $nom_compagnie ." a été refusé.";
-						$objet = "Refus d\'incorporation dans la compagnie";
+									J'ai le regret de t'annoncer que ton entrée dans la compagnie ".$nom_compagnie." a été refusé.";
+						$objet = "Refus d'incorporation dans la compagnie";
 						
 						$lock = "LOCK TABLE message WRITE";
 						$mysqli->query($lock);
 						
-						$sql = "INSERT INTO message (expediteur_message, date_message, contenu_message, objet_message) VALUES ( '" . $nom_compagnie . "', NOW(), '" . $message . "', '" . $objet . "')";
+						$sql = 'INSERT INTO message (expediteur_message, date_message, contenu_message, objet_message) VALUES ("'.$nom_compagnie.'",NOW(),"'.$message.'","'.$objet.'")';
 						$res = $mysqli->query($sql);
 						$id_message = $mysqli->insert_id;
 						
