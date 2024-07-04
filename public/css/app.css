@@ -73,6 +73,7 @@ body{
 }
 
 .background-img {
+	z-index:-1;
 	position:fixed;
 	top:0;
 	left:0;
@@ -98,6 +99,17 @@ body{
 	z-index:-1;
 	background:center url("../img/backgrounds/em_bg.jpg");
 	background-size: auto;
+}
+
+/* Banque */
+.bankBg {
+	background:center url("../img/backgrounds/bank_bg.jpg");
+	background-size: auto;
+}
+
+.treasuryBg {
+	background:center url("../img/backgrounds/treasury_bg.jpg");
+	background-size: cover;
 }
 
 /* icons custom */
