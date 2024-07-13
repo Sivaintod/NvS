@@ -724,7 +724,7 @@ class BankController extends Controller
 					die();
 				}
 				
-				if(true){
+				if($result){
 					$_SESSION['flash'] = ['class'=>'success','message'=>'opération réussie. Vous avez '.$opeVerb.' '.$value.' thunes'];
 				}else{
 					$_SESSION['old_input'] = $_POST;
