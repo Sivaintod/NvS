@@ -315,7 +315,7 @@ CREATE TABLE `banque_log` (
   `montant_transfert` INT NOT NULL,
   `montant_final` INT NOT NULL,
   `is_auteur` tinyint NOT NULL DEFAULT '1',
-  `id_receiver` tinyint NULL,
+  `id_receiver` INT unsigned NULL,
   `details` tinytext NULL;
   `date_log` DATETIME NOT NULL,
   KEY `index_supp_banqueLog` (`id_compagnie`),
@@ -1321,7 +1321,7 @@ ALTER TABLE `message`
 --
 
 CREATE TABLE `message_perso` (
-  `id` int NOT NULL AUTO_INCREMENT UNIQUE,
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY,
   `id_message` int(11) NOT NULL DEFAULT '0',
   `id_perso` int(11) NOT NULL DEFAULT '0',
   `id_dossier` int(11) NOT NULL DEFAULT '0',
