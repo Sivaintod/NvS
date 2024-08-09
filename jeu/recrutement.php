@@ -207,7 +207,7 @@ if($dispo == '1' || $admin){
 										$pg_restant = $pg - $pg_utilise;
 										
 										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='.$id_unite.'";
+										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='$id_unite'";
 										$res = $mysqli->query($sql);
 										$tab = $res->fetch_assoc();
 										
