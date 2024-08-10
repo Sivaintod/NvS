@@ -9,13 +9,11 @@ $mysqli = db_connexion();
 include ('../nb_online.php');
 
 // recuperation config jeu
-$sql = "SELECT valeur_config FROM config_jeu WHERE code_config='disponible'";
-$res = $mysqli->query($sql);
-$t_dispo = $res->fetch_assoc();
+// recupération config jeu
+$dispo = config_dispo_jeu($mysqli);
+$admin = admin_perso($mysqli, $_SESSION["id_perso"]);
 
-$dispo = $t_dispo["valeur_config"];
-
-if($dispo == '1'){
+if($dispo == '1' || $admin){
 	if(isset($_SESSION["id_perso"])){
 		
 		$id_perso = $_SESSION['id_perso'];
@@ -445,5 +443,11 @@ if($dispo == '1'){
 	else{
 		echo "<font color=red>Vous ne pouvez pas acceder a cette page, veuillez vous logguer.</font>";
 	}
+}else {
+	// logout
+	$_SESSION = array(); // On ecrase le tableau de session
+	session_destroy(); // On detruit la session
+	
+	header("Location:../index.php");
 }
 ?>
