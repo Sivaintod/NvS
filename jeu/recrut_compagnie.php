@@ -181,7 +181,7 @@ if(isset($_SESSION["id_perso"])){
 						$unlock = "UNLOCK TABLES";
 						$mysqli->query($unlock);
 						
-						$sql = "INSERT INTO message_perso VALUES ('$id_message','$new_recrue','1','0','1','0')";
+						$sql = "INSERT INTO message_perso (id_message,id_perso,id_dossier,lu_message,annonce,supprime_message) VALUES ('$id_message','$new_recrue','1','0','1','0')";
 						$res = $mysqli->query($sql);
 						
 						echo "<center>".$nom_recrue."[".$new_recrue."] vient d'être refusé de la compagnie</center>";
@@ -306,7 +306,7 @@ if(isset($_SESSION["id_perso"])){
 						$unlock = "UNLOCK TABLES";
 						$mysqli->query($unlock);
 						
-						$sql = "INSERT INTO message_perso VALUES ('$id_message','$id_recrue','1','0','1','0')";
+						$sql = "INSERT INTO message_perso (id_message,id_perso,id_dossier,lu_message,annonce,supprime_message) VALUES ('$id_message','$id_recrue','1','0','1','0')";
 						$res = $mysqli->query($sql);
 						
 						echo "<center>".$nom_recrue."[".$id_recrue."] vient d'être refusé de quitter la compagnie</center>";
