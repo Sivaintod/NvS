@@ -102,19 +102,19 @@ if (@$_SESSION["id_perso"]) {
 												$mysqli->query($unlock);
 												
 												// Insertion compagnie_as_contraintes
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '1')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '1')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '2')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '2')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '3')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '3')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '4')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '4')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '5')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '5')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '7')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '7')";
 												$mysqli->query($sql);
-												$sql = "INSERT INTO compagnie_as_contraintes VALUES ('$id_new_comp', '8')";
+												$sql = "INSERT INTO compagnie_as_contraintes (id_compagnie,contrainte_type_perso) VALUES ('$id_new_comp', '8')";
 												$mysqli->query($sql);
 												
 												// Le perso passe de la compagnie mère à chef de la nouvelle section
@@ -134,7 +134,7 @@ if (@$_SESSION["id_perso"]) {
 												
 												if ($montant_comp_chef_section > 0) {	
 													// Mise à jour de la thune de la banque de la compagnie mère
-													$sql = "UPDATE banque_as_compagnie montant = montant - $montant_comp_chef_section WHERE id_compagnie='$id_compagnie'";
+													$sql = "UPDATE banque_as_compagnie set montant = montant - $montant_comp_chef_section WHERE id_compagnie='$id_compagnie'";
 													$mysqli->query($sql);
 													
 													$sql = "SELECT montant FROM banque_as_compagnie WHERE id_compagnie='$id_compagnie'";
@@ -475,8 +475,14 @@ if (@$_SESSION["id_perso"]) {
 												
 												$date = time();
 												
+												$sql = "SELECT id FROM banque_as_compagnie WHERE id_compagnie='$id_compagnie'";
+												$res = $mysqli->query($sql);
+												$t = $res->fetch_assoc();
+												
+												$value_idbanque = $t['id'];
+												
 												// banque log
-												$sql = "INSERT INTO banque_log (date_log, id_compagnie, id_perso, montant_transfert, montant_final) VALUES (FROM_UNIXTIME($date), '$id_compagnie', '$id_perso_section', '$montant_perso_section', '$montant_final_banque_compagnie')";
+												$sql = "INSERT INTO banque_log (id_bank, date_log, id_compagnie, id_perso, montant_transfert, montant_final,operation) VALUES ('$value_idbanque ',FROM_UNIXTIME($date), '$id_compagnie', '$id_perso_section', '$montant_perso_section', '$montant_final_banque_compagnie',4)";
 												$mysqli->query($sql);
 												
 												// On transfert le perso de la section à la compagnie en simple membre
