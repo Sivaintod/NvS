@@ -253,8 +253,13 @@ if(isset($_SESSION["id_perso"])){
 			$sql = "UPDATE perso_in_compagnie SET attenteValidation_compagnie='0' WHERE id_perso=$id_perso_a_valider";
 			$mysqli->query($sql);
 			
+			$sql = "SELECT id FROM banque_as_compagnie WHERE id_compagnie='$id_compagnie_select'";
+				$res = $mysqli->query($sql);
+				$t = $res->fetch_assoc();
+				$value_idbanque = $t['id'];
+			
 			// insertion dans la table banque compagnie
-			$sql = "INSERT INTO banque_compagnie VALUES ($id_perso_a_valider,'0','0','0')";
+			$sql = "INSERT INTO banque_compagnie (id_perso,bank_id,montant,demande_emprunt,montant_emprunt) VALUES ($id_perso_a_valider,$value_idbanque,'0','0','0')";
 			$mysqli->query($sql);
 			
 			if ($genie_compagnie) {
@@ -304,7 +309,7 @@ if(isset($_SESSION["id_perso"])){
 			$unlock = "UNLOCK TABLES";
 			$mysqli->query($unlock);
 			
-			$sql = "INSERT INTO message_perso VALUES ('$id_message','$id_perso_a_valider','1','0','1','0')";
+			$sql = "INSERT INTO message_perso (id_message,id_perso,id_dossier,lu_message,annonce,supprime_message) VALUES ('$id_message','$id_perso_a_valider','1','0','1','0')";
 			$res = $mysqli->query($sql);
 			
 			$mess = "le perso ".$nom_recrue." [".$id_perso_a_valider."] a bien été intégré à la compagnie ".$nom_compagnie;
