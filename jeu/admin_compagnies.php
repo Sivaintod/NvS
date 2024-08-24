@@ -53,9 +53,15 @@ if(isset($_SESSION["id_perso"])){
 				$mysqli->query($sql);
 				
 				$date = time();
+				
+				$sql = "SELECT id FROM banque_as_compagnie WHERE id_compagnie='$id_compagnie_select'";
+				$res = $mysqli->query($sql);
+				$t = $res->fetch_assoc();
+				$value_idbanque = $t['id'];
 										
 				// banque log
-				$sql = "INSERT INTO banque_log (date_log, id_compagnie, id_perso, montant_transfert, montant_final) VALUES (FROM_UNIXTIME($date), '$id_compagnie_select', '1', '0', '$thune_compagnie')";
+				// 0 = action admin
+				$sql = "INSERT INTO banque_log (id_bank,date_log, id_compagnie, id_perso, montant_transfert, montant_final,operation) VALUES ('$value_idbanque',FROM_UNIXTIME($date), '$id_compagnie_select', '1', '0', '$thune_compagnie',0)";
 				$mysqli->query($sql);
 				
 				$mess = "La thune de la banque de la compagnie est passée à ".$thune_compagnie;
