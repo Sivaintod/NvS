@@ -8,8 +8,11 @@ ob_start();
 </div>
 <div class="row justify-content-center">
 	<div class="col mx-2 rounded bg-light py-3 bg-opacity-75">
-		<img class='float-left me-3' src='../images/<?php echo $image_em; ?>' width="80" height="60" alt="">
-		<h2 class='mb-3'>Etat Major</h2>
+		<div class='mb-3'>
+			<a class='btn btn-outline-secondary' href='jouer.php'>Retour au jeu</a>
+		</div>
+		<img class='float-start me-3' src='../images/<?php echo $image_em; ?>' width="80" height="60" alt="">
+		<h2 class='mb-4 pt-2'>Etat Major</h2>
 		<?= $nb_persos_em ?> membres dans l'Etat Major :
 		<?php if(isset($em_members) && !empty($em_members)):?>
 		<ul class='list-group list-group-horizontal mt-1 mb-3'>
@@ -30,7 +33,6 @@ ob_start();
 					<a class="dropdown-item" href="em_message.php?cible=em">Messages aux membres de l'Etat Major</a>
 				</div>
 			</div>
-			<a class="nav-link" href="jouer.php">Retour au jeu</a>
 		</nav>
 	</div>
 </div>
@@ -64,8 +66,18 @@ ob_start();
 				<h4>Gestion des compagnies</h4>
 				<nav>
 					<div class='nav nav-tabs mt-3' id="comp-nav" role="tablist">
-						<button class="nav-link active" id="nav-compagnies-tab" data-bs-toggle="tab" data-bs-target="#nav-compagnies" type="button" role="tab" aria-controls="nav-compagnies" aria-selected="true">Liste des compagnies</button>
-						<button class="nav-link" id="nav-demands-tab" data-bs-toggle="tab" data-bs-target="#nav-demands" type="button" role="tab" aria-controls="nav-demands" aria-selected="false">Demandes de création <span class='badge rounded-pill bg-danger'><?php if(isset($waiting_votes) && $waiting_votes>0): echo $waiting_votes; endif ?></span></button>
+						<button class="nav-link active" id="nav-compagnies-tab" data-bs-toggle="tab" data-bs-target="#nav-compagnies" type="button" role="tab" aria-controls="nav-compagnies" aria-selected="true">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+							</svg>
+							Liste des compagnies
+						</button>
+						<button class="nav-link" id="nav-demands-tab" data-bs-toggle="tab" data-bs-target="#nav-demands" type="button" role="tab" aria-controls="nav-demands" aria-selected="false">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+							</svg>
+							Demandes de création <span class='badge rounded-pill bg-danger'><?php if(isset($waiting_votes) && $waiting_votes>0): echo $waiting_votes; endif ?></span>
+						</button>
 					</div>
 				</nav>
 			</div>
@@ -91,7 +103,13 @@ ob_start();
 									<tr>
 										<th scope="row" class='p-4'>
 											<?= $company->nom_compagnie?><br>
-											<img class="img-fluid" src="../public/img/compagnies/objet1.png" alt='Image compagnie'>
+											<?php if(empty($company->image_compagnie)){
+												$img_company = 'Sample_logo.png';
+											}else{
+												$img_company = $company->image_compagnie;
+											}
+											?>
+											<img class="img-fluid" src="../public/img/compagnies/<?= $img_company?>" alt='Image compagnie'>
 										</th>
 										<td>
 											<?= $company->resume_compagnie?>

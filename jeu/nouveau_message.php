@@ -125,7 +125,7 @@ if(isset($_SESSION["id_perso"])){
 								$id_j = $t_p['idJoueur_perso'];
 
 								// assignation du message au perso
-								$sql = "INSERT INTO message_perso VALUES ('$id_message', '$id_p', '1', '0', '0', '0')";
+								$sql = "INSERT INTO message_perso (id_message,id_perso,	id_dossier,lu_message,annonce,supprime_message) VALUES ('$id_message', '$id_p', '1', '0', '0', '0')";
 								$mysqli->query($sql);
 
 								// On récupère la config envoi_mail_mp du joueur 

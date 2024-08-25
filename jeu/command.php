@@ -29,7 +29,7 @@ if(isset($_SESSION["id_perso"])){
 				if(!isset($_POST['compId']) AND !isset($_GET['id']) AND $_POST['compId']!=$_GET['id']){
 					$commandController->index($perso);
 				}else{
-					$commandController->compValidation($perso);
+					$commandController->compValidation();
 				}
 				break;
 			case "delete_demand":

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("../fonctions.php");
+require_once("../mvc/model/Company.php");
 
 $mysqli = db_connexion();
 
@@ -154,10 +155,15 @@ if($dispo == '1' || $admin){
 											if ($nb_res >= 1) {
 												
 												// mise a jour de la table perso_in_compagnie
-												$sql = "INSERT INTO perso_in_compagnie VALUES ('$id','$id_compagnie','10','1')";
-												$mysqli->query($sql);
+												$company = new Company();
+												$company->id_compagnie = $id_compagnie;
+												$addPerso = $company->assignPerso($id,10,1);
 												
-												echo "<center><font color='blue'>Vous venez de poser votre candidature dans une compagnie, vous devez attendre que le chef de compagnie ou le recruteur valide votre adhésion</font></center><br>";
+												if($addPerso){
+													echo "<center><font color='blue'>Vous venez de poser votre candidature dans une compagnie, vous devez attendre que le chef de compagnie ou le recruteur valide votre adhésion</font></center><br>";
+												}else{
+													echo "<center><font color='blue'>Une erreur est survenue. Veuillez recommencer. Si le problème persiste, merci de contacter l'administrateur</font></center><br>";
+												}
 												
 											} else {
 												echo "<center><font color='red'>Vous ne pouvez pas postuler dans cette compagnie, contraintes non respectées</font></center>";
@@ -219,7 +225,7 @@ if($dispo == '1' || $admin){
 										echo "<center><a href='compagnie.php' class='btn btn-outline-secondary'> retour </a></center>";
 									}
 									else {
-										echo "<center><font color = red>Vous devez d'abords vous acquitter de vos dette avant de quitter la compagnie</font></center><br>";
+										echo "<center><font color = red>Vous devez d'abord vous acquitter de vos dettes avant de quitter la compagnie</font></center><br>";
 										echo "<center><a href='compagnie.php' class='btn btn-outline-secondary'> retour </a></center>";
 									}
 								}
@@ -404,7 +410,7 @@ if($dispo == '1' || $admin){
 					$poste_compagnie	= $c[1];
 					
 					// recuperation des information sur la compagnie
-					$sql = "SELECT id_compagnie, nom_compagnie, image_compagnie, resume_compagnie, description_compagnie, genie_civil, id_parent FROM compagnies WHERE id_compagnie=$id_compagnie";
+					$sql = "SELECT compagnies.id_compagnie, compagnies.nom_compagnie, compagnies.image_compagnie, compagnies.resume_compagnie, compagnies.description_compagnie, compagnies.genie_civil, compagnies.id_parent, banque_as_compagnie.id as id_bank FROM compagnies LEFT JOIN banque_as_compagnie ON compagnies.id_compagnie=banque_as_compagnie.id_compagnie WHERE compagnies.id_compagnie=$id_compagnie";
 					$res = $mysqli->query($sql);
 					$sec = $res->fetch_assoc();
 					
@@ -415,6 +421,7 @@ if($dispo == '1' || $admin){
 					$description_compagnie 	= $sec["description_compagnie"];
 					$genie_compagnie		= $sec["genie_civil"];
 					$id_parent				= $sec["id_parent"];
+					$id_bank				= $sec["id_bank"];
 					
 					if (isset($id_parent) && $id_parent != 0) {
 						$titre_compagnie = "section";
@@ -423,7 +430,7 @@ if($dispo == '1' || $admin){
 						$titre_compagnie = "compagnie";
 					}
 					
-					echo "<div align='center'><a class='btn btn-outline-info' href='banque_compagnie.php?id_compagnie=$id_compagnie'>Banque de la ".$titre_compagnie."</a>";
+					echo "<div align='center'><a class='btn btn-outline-info' href='bank.php?id=$id_bank&action=show'>Vos thunes en banque</a>";
 					
 					// verification si le perso est le chef de la compagnie
 					$sql = "SELECT poste_compagnie FROM perso_in_compagnie WHERE id_perso=$id";
@@ -435,7 +442,7 @@ if($dispo == '1' || $admin){
 					if($poste_s != 10) {
 						
 						// c'est le tresorier
-						if($poste_s == 1 || $poste_s == 3){ 
+						if($poste_s == 1 || $poste_s == 3){
 						
 							// verification si quelqu'un a demande un emprunt
 							$sql = "SELECT banque_compagnie.id_perso FROM banque_compagnie, perso_in_compagnie WHERE demande_emprunt='1' AND id_compagnie=$id_compagnie AND banque_compagnie.id_perso=perso_in_compagnie.id_perso";
@@ -443,9 +450,9 @@ if($dispo == '1' || $admin){
 							
 							$nb = $res->num_rows;
 							
-							echo " <a class='btn btn-outline-primary' href='tresor_compagnie.php?id_compagnie=$id_compagnie'> Page tresorerie de la ".$titre_compagnie." ";
+							echo "<div align='center'><a class='btn btn-outline-primary' href='bank.php?id=$id_bank&action=treasury'>Trésorerie de la ".$titre_compagnie."";
 							if ($nb > 0) {
-								echo "<span class='badge badge-pill badge-warning'>$nb</span>";
+								echo " <span class='badge badge-pill badge-warning'>$nb</span>";
 							}
 							echo "</a>";
 						}
