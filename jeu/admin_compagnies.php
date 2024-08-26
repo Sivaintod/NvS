@@ -165,7 +165,7 @@ if(isset($_SESSION["id_perso"])){
 			
 			if ($thune_en_banque > 0) {
 				$sql = "UPDATE banque_as_compagnie SET montant = montant - $thune_en_banque 
-						WHERE id_compagnie='$id_compagnie_select')";
+						WHERE id_compagnie='$id_compagnie_select'";
 				$mysqli->query($sql);
 				
 				$sql = "SELECT montant FROM banque_as_compagnie WHERE id_compagnie='$id_compagnie_select'";
