@@ -36,10 +36,13 @@ if($dispo == '1' || $admin){
 		<title>Nord VS Sud</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<link href="../style.css" rel="stylesheet" type="text/css">
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	
 	</head>
 	<body>
-		<p align="center"><input type="button" value="Fermer la fenêtre de diplomatie" onclick="window.close()"></p>
 	<?php
+	echo "<center><a href='compagnie.php' class='btn btn-outline-secondary'>Retour à la page de compagnie</a></center>";
 	if (isset($_GET["id_compagnie"])){
 		
 		//verification que le perso appartiens bien à la compagnie
