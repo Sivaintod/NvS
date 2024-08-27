@@ -338,7 +338,8 @@ CREATE TABLE `batiment` (
   `taille_batiment` int(11) unsigned NOT NULL DEFAULT '1',
   `capacity` int unsigned NOT NULL DEFAULT '0',
   `passable` tinyint NOT NULL DEFAULT '0',
-  `respawn_allowed` tinyint NOT NULL DEFAULT '0'
+  `respawn_allowed` tinyint NOT NULL DEFAULT '0',
+  `respawn_order` tinyint NOT NULL DEFAULT '0',
   `capturable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_batiment`),
   KEY `index_taille_bat` (`taille_batiment`,`id_batiment`) USING BTREE
@@ -362,7 +363,9 @@ CREATE TABLE `camp` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `desc` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `color` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `img_suffix` tinytext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `for_gamers` tinyint unsigned NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -588,6 +591,7 @@ ALTER TABLE `compagnie_demande_anim`
 CREATE TABLE `competence` (
   `id_competence` int(11) NOT NULL,
   `nom_competence` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `slug_competence` tinytext NOT NULL,
   `niveau_competence` int(11) NOT NULL DEFAULT '0',
   `nbPoints_competence` int(11) NOT NULL DEFAULT '0',
   `description_competence` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
@@ -772,11 +776,12 @@ ALTER TABLE `decorations`
 --
 
 CREATE TABLE `dernier_tombe` (
-	`date_capture` DATETIME NOT NULL ,
+	`id` int NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 	`id_perso_capture` INT NOT NULL ,
 	`camp_perso_capture` tinyint(4) NOT NULL,
 	`id_perso_captureur` INT NOT NULL,
-	`camp_perso_captureur` tinyint(4) NOT NULL
+	`camp_perso_captureur` tinyint(4) NOT NULL,
+	`date_capture` DATETIME NOT NULL
 ) ENGINE = MyISAM;
 
 ALTER TABLE `dernier_tombe`
@@ -925,7 +930,8 @@ CREATE TABLE `grades` (
   `id_grade` int(11) NOT NULL,
   `nom_grade` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `pc_grade` int(11) NOT NULL,
-  `point_armee_grade` int(11) NOT NULL
+  `point_armee_grade` int(11) NOT NULL,
+  `image_grade` text COLLATE 'latin1_swedish_ci' NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `grades`
@@ -996,10 +1002,11 @@ ALTER TABLE `historique_punitions`
 --
 
 CREATE TABLE `histo_stats_camp_pv` (
-	`date_pvict` DATETIME NOT NULL ,
+	`id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 	`id_camp` INT NOT NULL ,
 	`gain_pvict` INT NOT NULL ,
-	`texte` TEXT NOT NULL
+	`texte` TEXT NOT NULL ,
+	`date_pvict` DATETIME NOT NULL
 ) ENGINE=MyISAM;
 
 ALTER TABLE `histo_stats_camp_pv`
@@ -1134,7 +1141,8 @@ CREATE TABLE `joueur` (
   `valid_case` INT NOT NULL DEFAULT '0',
   `afficher_rosace` INT NOT NULL DEFAULT '1',
   `bousculade_deplacement` INT NOT NULL DEFAULT '1',
-  `pendu` tinyint(1) NOT NULL DEFAULT '0'
+  `pendu` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `joueur`
@@ -1504,6 +1512,8 @@ CREATE TABLE `perso` (
   `idJoueur_perso` int(11) NOT NULL,
   `nom_perso` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `type_perso` int(11) NOT NULL DEFAULT '1',
+  `id_grade` INT NOT NULL DEFAULT '2',
+  `est_pnj` tinyint(1) NOT NULL DEFAULT '0',
   `x_perso` int(11) NOT NULL DEFAULT '0',
   `y_perso` int(11) NOT NULL DEFAULT '0',
   `xp_perso` int(11) NOT NULL DEFAULT '0',
@@ -1527,14 +1537,14 @@ CREATE TABLE `perso` (
   `bonusPA_perso` int(11) NOT NULL DEFAULT '0',
   `bonus_perso` int(11) NOT NULL DEFAULT '0',
   `image_perso` varchar(200) NOT NULL DEFAULT '',
-  `message_perso` text NOT NULL,
+  `message_perso` text NULL,
   `bourre_perso` int(11) NOT NULL DEFAULT '0',
   `nb_kill` int(11) NOT NULL DEFAULT '0',
   `nb_mort` int(11) NOT NULL DEFAULT '0',
   `nb_pnj` int(11) NOT NULL DEFAULT '0',
   `dateCreation_perso` datetime DEFAULT NULL,
   `DLA_perso` datetime DEFAULT NULL,
-  `description_perso` longtext,
+  `description_perso` longtext NULL,
   `clan` tinyint(4) NOT NULL,
   `etat_major` tinyint unsigned NOT NULL DEFAULT '0',
   `a_gele` tinyint(1) NOT NULL DEFAULT '0',
@@ -1603,6 +1613,7 @@ ALTER TABLE `perso`
 --
 
 CREATE TABLE `perso_as_arme` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL DEFAULT '0',
   `id_arme` int(11) NOT NULL DEFAULT '0',
   `est_portee` enum('0','1') NOT NULL DEFAULT '0'
@@ -1639,13 +1650,14 @@ ALTER TABLE `perso_as_armure`
 --
 
 CREATE TABLE `perso_as_competence` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `id_competence` int(11) NOT NULL,
   `nb_points` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `perso_as_competence`
-  ADD PRIMARY KEY (`id_perso`,`id_competence`),
+  ADD UNIQUE KEY (`id_perso`,`id_competence`),
   ADD KEY `index_supp_competence` (`id_perso`),
   ADD KEY `index_actionOK` (`id_competence`,`nb_points`),
   ADD KEY `index_allpersoasCompetence` (`id_perso`,`id_competence`,`nb_points`);
@@ -1692,6 +1704,7 @@ ALTER TABLE `perso_as_decoration`
 --
 
 CREATE TABLE `perso_as_dossiers` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `id_dossier` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -1723,6 +1736,7 @@ ALTER TABLE `perso_as_entrainement`
 --
 
 CREATE TABLE `perso_as_grade` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `id_grade` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -1794,14 +1808,13 @@ ALTER TABLE `perso_as_respawn`
 --
 
 CREATE TABLE `perso_bagne` (
-	`id` INT NOT NULL AUTO_INCREMENT ,
+	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`id_perso` INT NOT NULL ,
 	`date_debut` DATETIME NOT NULL ,
 	`duree` INT NULL , PRIMARY KEY (`id`)
 ) ENGINE = MyISAM;
 
 ALTER TABLE `perso_bagne`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `index_perso_banni` (`id_perso`,`date_debut`),
   ADD KEY `index_delete_bagne1` (`id_perso`);
 
@@ -1827,12 +1840,12 @@ ALTER TABLE `perso_demande_anim`
 --
 
 CREATE TABLE `perso_in_batiment` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL DEFAULT '0',
   `id_instanceBat` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `perso_in_batiment`
-  ADD PRIMARY KEY (`id_perso`,`id_instanceBat`),
   ADD KEY `index_perso_bat_inBat` (`id_perso`),
   ADD KEY `index_batvide` (`id_instanceBat`);
 
@@ -2087,6 +2100,7 @@ CREATE TABLE `type_unite` (
   `pa_unite` int(11) NOT NULL,
   `pm_unite` int(11) NOT NULL,
   `image_unite` VARCHAR(255) NULL,
+  `img_extension` tinytext COLLATE latin1_swedish_ci NULL,
   `cout_pg` int(11) NOT NULL,
   `capturer_bat` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -2121,6 +2135,7 @@ ALTER TABLE `user_failed_logins`
 --
 
 CREATE TABLE `user_ok_logins` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_joueur` int(11) NOT NULL DEFAULT '0',
   `ip_joueur` varchar(100) NOT NULL DEFAULT '000.000.000.000',
   `time` datetime NOT NULL,
@@ -2182,7 +2197,7 @@ ALTER TABLE `zones`
 --
 
 CREATE TABLE IF NOT EXISTS `zone_respawn_camp` (
-  `id_zone` int(11) NOT NULL DEFAULT '0',
+  `id_zone` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_camp` int(11) NOT NULL,
   `x_min_zone` int(11) NOT NULL,
   `x_max_zone` int(11) NOT NULL,
