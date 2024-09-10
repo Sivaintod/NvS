@@ -19,7 +19,8 @@ ob_start();
 		</h2>
 		<p class='mt-3'>
 			<span class='fw-semibold'>Votre compagnie possède :</span><br>
-			<span class='fw-bold'><?= $bank->montant ?></span> thune(s)
+			Total : <span class='fw-bold'><?= $bank->montant ?></span> thune(s)<br>
+			Argent disponible : <span class='fw-bold'><?= $disposableIncome ?></span> thune(s)<br>
 		</p>
 		<div class='row'>
 			<div class='col col-md-3'>
