@@ -76,6 +76,12 @@ class BankController extends Controller
 					}
 				}
 				
+				$accounts = new Account();
+				$loansBalance = $accounts->select('SUM(montant_emprunt) as balance')->where('bank_id',$bank->id)->get();
+				$loansBalance = $loansBalance[0]->balance;
+				
+				$disposableIncome = $bank->montant - $loansBalance;
+				
 				$antizerk = $bank->antiZerkDeposit($perso->id_perso);
 				
 				return require_once('../mvc/view/bank/show.php');
@@ -177,6 +183,8 @@ class BankController extends Controller
 						$loansBalance += $account->montant_emprunt;
 					}
 				}
+				
+				$disposableIncome = $bank->montant - $loansBalance;
 
 				$overview_limit = 15;
 				$bank_log = $bank->getBankLog($overview_limit,true,null);
@@ -221,6 +229,7 @@ class BankController extends Controller
      */
     public function store()
     {
+		/*
 		if($_SERVER['REQUEST_METHOD']==='POST'){
 
 			// Validation du formulaire
@@ -263,6 +272,7 @@ class BankController extends Controller
 			header('location:?action=create');
 			die();
 		}
+		*/
     }
 	
 	/**
@@ -283,6 +293,7 @@ class BankController extends Controller
      */
     public function update(int $id)
 	{
+		/*
 		if($_SERVER['REQUEST_METHOD']==='POST'){
 
 			// Validation du formulaire
@@ -326,6 +337,7 @@ class BankController extends Controller
 			header("location:?action=edit&id=$id");
 			die();
 		}
+		*/
     }
 	
 	/**
@@ -431,6 +443,12 @@ class BankController extends Controller
 				$bank = new Bank();
 				$bank = $bank->select('*')->find($bankId);
 				
+				$accounts = new Account();
+				$loansBalance = $accounts->select('SUM(montant_emprunt) as balance')->where('bank_id',$bank->id)->get();
+				$loansBalance = $loansBalance[0]->balance;
+				
+				$disposableIncome = $bank->montant - $loansBalance;
+				
 				$id_perso = $_SESSION['id_perso'];
 				$perso = new Character();
 				$perso = $perso->select('perso.id_perso, nom_perso, id_compagnie, or_perso, poste_compagnie')->leftJoin('perso_in_compagnie','perso.id_perso','=','perso_in_compagnie.id_perso')->find($id_perso);
@@ -451,7 +469,7 @@ class BankController extends Controller
 								$result = false;
 								$message = "l'opération a échouée. Vous avez retiré de la thune il y a moins de 8h";
 							}
-							elseif($perso->or_perso<=$value){
+							elseif($perso->or_perso<$value){
 								$result = false;
 								$message = "l'opération a échouée. Vous n'avez pas assez de thunes sur vous";
 							}
@@ -476,13 +494,15 @@ class BankController extends Controller
 								$bank->montant += $value;
 								
 								if($remainingLoan>0){
-									if($value>$remainingLoan){
+									if($value>=$remainingLoan){
 										$deposit = $value-$remainingLoan;
 										$account->montant += $deposit;
 										$account->montant_emprunt = 0;
 										
 										$bank->addBanklog($bank->id_compagnie,$perso->id_perso,3,$remainingLoan,$bank->montant,'dernier versement');
-										$bank->addBanklog($bank->id_compagnie,$perso->id_perso,0,$deposit,$bank->montant);
+										if($deposit>0){
+											$bank->addBanklog($bank->id_compagnie,$perso->id_perso,0,$deposit,$bank->montant);
+										}
 										
 										$account->montant_emprunt = 0;
 										
@@ -513,7 +533,7 @@ class BankController extends Controller
 								$result = false;
 								$message = "l'opération a échouée. Vous n'avez pas assez de thunes en banque";
 							}
-							elseif($bank->montant<$value){
+							elseif($disposableIncome<$value){
 								$result = false;
 								$message = "l'opération a échouée. Il n'y a pas assez d'argent dans la banque de compagnie";
 							}
@@ -541,7 +561,7 @@ class BankController extends Controller
 								$result = false;
 								$message = "l'opération a échouée. Vous n'avez pas assez de thunes en banque";
 							}
-							elseif($bank->montant<$value){
+							elseif($disposableIncome<$value){
 								$result = false;
 								$message = "l'opération a échouée. Il n'y a pas assez d'argent dans la banque de compagnie";
 							}
@@ -579,7 +599,7 @@ class BankController extends Controller
 							break;
 						case 'loan_demand'://demande d'emprunt
 							unset($perso->poste_compagnie);
-							if($bank->montant<$value){
+							if($disposableIncome<$value){
 								$result = false;
 								$message = "l'opération a échouée. Il n'y a pas assez d'argent dans la banque de compagnie";
 							}
@@ -644,13 +664,11 @@ class BankController extends Controller
 										
 										$targetAccount->demande_emprunt = 0;
 										$targetAccount->montant += $value;
-										$bank->montant -= $value;
 										$opeVerb = "accepté la demande d'emprunt de";
 										
 										$result1 = $targetAccount->update();
-										$result2 = $bank->update();
 										
-										if($result1 AND $result2){
+										if($result1){
 											$bank->addBanklog($bank->id_compagnie,$target->id_perso,2,$value,$bank->montant,'emprunt autorisé de '.$value.' thune(s)',0,$perso->id_perso);
 											$result = True;
 											$notificationSubject = "Validation d'emprunt";

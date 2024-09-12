@@ -15,7 +15,7 @@ ob_start();
 		<h2 class='mb-3'>
 			<span class='position-relative'>
 				Banque de la compagnie
-					<a class='text-primary btn btn-sm rounded-pill position-absolute top-0 start-100 text-nowrap ps-0' href='#'>
+					<a class='text-primary btn btn-sm rounded-pill position-absolute top-0 start-100 text-nowrap ps-0' href='https://encyclopedienvs.nord-vs-sud.fr/index.php/Accueil'>
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 							<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 						</svg>
@@ -24,8 +24,8 @@ ob_start();
 			<span>
 		</h2>
 		<p class='mt-3'>
-			Votre compagnie possède :<br>
-			<span class='fw-bold'><?= $bank->montant ?></span> thune(s)
+			Votre compagnie dispose de :<br>
+			<span class='fw-bold'><?= $disposableIncome?></span> thune(s)
 		</p>
 		<h3 class='mb-1 fs-5'>Vos thunes</h3>
 		<div class='row'>
@@ -267,8 +267,8 @@ ob_start();
 												<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 											</svg>
 											<span class='align-middle'><?= $account->montant?> thune(s) en banque</span>
-											<?php if($bank->montant<$account->montant): ?>
-											<br><span span class='align-middle'>montant maximum : <?= $bank->montant?> thune(s)</span>
+											<?php if($disposableIncome<$account->montant): ?>
+											<br><span span class='align-middle'>retrait maximum : <?= $disposableIncome?> thune(s)</span>
 											<?php else: ?>
 											<br><span span class='align-middle'>retrait maximum : <?= $account->montant?> thune(s)</span>
 											<?php endif; ?>
@@ -288,12 +288,12 @@ ob_start();
 										</p>
 										<?php endif ?>
 										<p class="card-text">
-											<?php if($bank->montant<=0): ?>
+											<?php if($disposableIncome<=0): ?>
 											<p class='alert alert-warning' role='alert'>
 												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 													<path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 												</svg>
-												<span class='align-middle'>Votre compagnie a <?= $bank->montant ?> thune(s) en banque.<br>
+												<span class='align-middle'>Votre compagnie a <?= $disposableIncome ?> thune(s) disponible(s).<br>
 												Vous ne pouvez pas retirer d'argent.</span>
 											</p>
 											<?php elseif($account->montant<=0): ?>
@@ -308,7 +308,7 @@ ob_start();
 											<div class='row'>
 												<div class='col col-sm-9 col-md-12 col-lg-9'>
 													<form class='input-group mb-3' action="?id=<?= $bank->id ?>&action=ope&id_bank=<?= $bank->id ?>" method="post" name="withdrawalForm">
-														<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$bank->montant?>' aria-label="retirer des thunes" aria-describedby='withdrawal_btn'>
+														<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$disposableIncome?>' aria-label="retirer des thunes" aria-describedby='withdrawal_btn'>
 														<input id="operation" name="operation" type="hidden" value="withdrawal" />
 														<input id="id_company" name="id_company" type="hidden" value="<?= $bank->id_compagnie ?>" />
 														<input id="id_perso" name="id_perso" type="hidden" value="<?= $perso->id_perso ?>" />
@@ -443,10 +443,10 @@ ob_start();
 													<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 												</svg>
 												<span class='align-middle'><?= $account->montant?> thune(s) en banque</span>
-												<br><span span class='align-middle'>montant maximum : <?= $bank->montant?> thune(s)</span>
+												<br><span span class='align-middle'>montant maximum : <?= $disposableIncome?> thune(s)</span>
 											</small>
 											<form class='input-group my-3' action="?id=<?= $bank->id ?>&action=ope&id_bank=<?= $bank->id ?>" method="post" name="loanDemandForm">
-												<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$bank->montant?>' aria-label="montant de l'emprunt" aria-describedby='loan_demand_btn'>
+												<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$disposableIncome?>' aria-label="montant de l'emprunt" aria-describedby='loan_demand_btn'>
 												<input id="operation" name="operation" type="hidden" value="loan_demand" />
 												<input id="id_company" name="id_company" type="hidden" value="<?= $bank->id_compagnie ?>" />
 												<input id="id_perso" name="id_perso" type="hidden" value="<?= $perso->id_perso ?>" />
@@ -494,7 +494,7 @@ ob_start();
 															default :
 																$ope = "inconnu";
 														}
-														echo $ope
+														echo $ope;
 														?>
 													</th>
 													<td>
@@ -555,10 +555,10 @@ ob_start();
 													<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 												</svg>
 												<span class='align-middle'><?= $account->montant?> thune(s) en banque</span>
-												<br><span span class='align-middle'>montant maximum : <?= $bank->montant?> thune(s)</span>
+												<br><span span class='align-middle'>montant maximum : <?= $disposableIncome?> thune(s)</span>
 											</small>
 											<form class='input-group my-3' action="?id=<?= $bank->id ?>&action=ope&id_bank=<?= $bank->id ?>" method="post" name="loanDemandForm">
-												<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$bank->montant?>' aria-label="montant de l'emprunt" aria-describedby='loan_demand_btn'>
+												<input id='value' name='value' type="number" class="form-control" placeholder="0" min='1' max='<?=$disposableIncome?>' aria-label="montant de l'emprunt" aria-describedby='loan_demand_btn'>
 												<input id="operation" name="operation" type="hidden" value="loan_demand" />
 												<input id="id_company" name="id_company" type="hidden" value="<?= $bank->id_compagnie ?>" />
 												<input id="id_perso" name="id_perso" type="hidden" value="<?= $perso->id_perso ?>" />
