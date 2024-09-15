@@ -12,6 +12,7 @@ define ("BDD_PASSWORD", "yolo");
 define ("BROUILLARD_DE_GUERRE_S", 24*3600*1);
 // Difference nombre de joueurs max pour inscription
 define ("MAX_NB_JOUEUR_DIFF", 3);
+date_default_timezone_set('Europe/Paris');
 
 // Parametres pour test / version alpha
 //define ("DUREE_TOUR", 5*60);

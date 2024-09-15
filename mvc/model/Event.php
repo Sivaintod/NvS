@@ -3,6 +3,12 @@ require_once("Model.php");
 
 class Event extends Model
 {
+	protected $table = "evenement";
+	protected $primaryKey = "ID_evenement";
+	// protected $fillable = [];
+	protected $guarded = [];
+	
+	// A supprimer avec la refacto. Vérifier les implications avant suppression
 	private $IDActeur_evenement;
 	private	$nomActeur_evenement;
 	private $phrase_evenement;
@@ -26,12 +32,22 @@ class Event extends Model
 		return $this->$name;
 	}
 	
-	public function createEvent(){
-		$db = $this->dbConnectPDO();
-		// SQL à préparer et executer
-		return "fonction d'enregistrement à programmer";
+	// A supprimer après la refacto
+	/* fonction pour ajouter un évènement à un perso
+	 * @return number of row created
+	*/
+	public function addEvent(int $charac_id, string $charac_name,string $desc, $date, string $effect=NULL, int $targetId=NULL, string $targetName=NULL, int $special=0) {
+	
+		$query = 'INSERT INTO evenement (IDActeur_evenement,nomActeur_evenement,phrase_evenement,date_evenement,effet_evenement,IDCible_evenement,nomCible_evenement,special) VALUES (?,?,?,?,?,?,?,?)';
+		$values = [$charac_id,$charac_name,$desc,$date,$effect,$targetId,$targetName,$special];
+		
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
 	}
 	
+	// A supprimer après la refacto
 	public function getEvent($id,$attributs = []){
 		$db = $this->dbConnectPDO();
 		
@@ -52,6 +68,7 @@ class Event extends Model
 		return $result;
 	}
 	
+	// A supprimer après la refacto
 	public function getUserEvents($id,$attributs = []){
 		$db = $this->dbConnectPDO();
 		
@@ -71,6 +88,7 @@ class Event extends Model
 		return $result;
 	}
 
+	// A supprimer après la refacto
 	public function putEventAttaque($id, $couleur_clan_perso, $nom_perso, $attaque_str, $id_cible, $couleur_clan_cible, $nom_cible, $touche, $precision_final, $degats_final, $gain_xp, $gain_pc){
 		$db = $this->dbConnectPDO();
 		$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id,'<font color=$couleur_clan_perso><b>$nom_perso</b></font>','a $attaque_str ','$id_cible','<font color=$couleur_clan_cible><b>$nom_cible</b></font>',' ( Précision : $touche / $precision_final ; Dégâts : $degats_final ; Gain XP : $gain_xp ; Gain PC : $gain_pc )',NOW(),'0')";

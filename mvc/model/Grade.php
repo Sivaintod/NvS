@@ -3,6 +3,12 @@ require_once("Model.php");
 
 class Grade extends Model
 {
+	protected $table = "grades";
+	protected $primaryKey = "id_grade";
+	// protected $fillable = [];
+	protected $guarded = [];
+	
+	// ancien code à contrôler (impact) et supprimer
 	private $id_grade;
 	private $nom_grade;
 	private $pc_grade;
@@ -46,6 +52,19 @@ class Grade extends Model
 		$request->execute();
 		$request->setFetchMode(PDO::FETCH_CLASS,get_class($this));
 		$result = $request->fetch();
+
+		return $result;
+	}
+	
+	// A terme supprimer la table PIVOT perso_as_grade inutile et intégrer une colonne grade_id dans la table Perso.
+	// cette fonction sera donc obsolète
+	public function addGrade(int $charac_id, int $grade_id) {
+	
+		$query = 'INSERT INTO perso_as_grade (id_perso,id_grade) VALUES (?,?)';
+		$values = [$charac_id,$grade_id];
+		
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
 
 		return $result;
 	}

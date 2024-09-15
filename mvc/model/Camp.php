@@ -3,6 +3,8 @@ require_once("Model.php");
 
 class Camp extends Model
 {
+	// protected $table = "camp";
+	// protected $primaryKey = "id";
 	// protected $fillable = [];
 	protected $guarded = [];
 

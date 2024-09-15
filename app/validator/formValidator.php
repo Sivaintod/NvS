@@ -1,5 +1,6 @@
 <?php
-require_once("../mvc/model/Model.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/mvc/Db/Db.php");
+// require_once("../mvc/model/Model.php");
 
 //Form validator
 class formValidator
@@ -20,16 +21,13 @@ class formValidator
 	* Vérifie que la donnée existe dans une table
 	* @return bool
 	*/
-	private function exists($key,$value,$table,$column=null) {
+	private static function exists($table,$column,$value) {
 		
-		if($column===null){
-			$column = $key;
-		}
-		$db = $this->dbConnectPDO();// à adapter à la DAO
-		$query = "SELECT * FROM $table WHERE $column='$value'";
+		$db = Db::getInstance();
+		$query = "SELECT * FROM $table WHERE $column=?";
 	
 		$request = $db->prepare($query);
-		$request->execute();
+		$request->execute([$value]);
 		$result = $request->fetch(PDO::FETCH_ASSOC);
 		
 		if($result){
@@ -40,22 +38,19 @@ class formValidator
 	}
 	
 	/**
-	* Vérifie que la donnée est unique dans une table
+	* Vérifie que la donnée n'existe pas dans une table
 	* @return bool
 	*/
-	private function unique($key,$value,$table,$column=null) {
+	private static function unique($table,$column,$value) {
 		
-		if($column===null){
-			$column = $key;
-		}
-		$db = $this->dbConnectPDO(); //à adapter à la DAO
-		$query = "SELECT COUNT(*) FROM $table WHERE $column='$value'";
+		$db = Db::getInstance();
+		$query = "SELECT COUNT(*) FROM $table WHERE $column=?";
 	
 		$request = $db->prepare($query);
-		$request->execute();
-		$result = $request->fetch(PDO::FETCH_ASSOC);
-		
-		if($result<2){
+		$request->execute([$value]);
+		$result = $request->fetch();
+
+		if($result[0]<1){
 			return true;
 		}else{
 			return false;
@@ -106,7 +101,9 @@ class formValidator
 					$condition = strstr($condition,':',true);
 					
 					if($condition!='in'){
-						if(strpos($value,',')){
+						if($condition=='regex'){
+							$value = $value;
+						}elseif(strpos($value,',')){
 							$detail = substr(strstr($value,','),1);
 							$value = strstr($value,',',true);
 						}
@@ -115,7 +112,6 @@ class formValidator
 							$value = explode(',',$value);
 						}
 					}
-					
 				}
 
 				//règles de vérification. Il faudra en ajouter selon le besoin. Attention à bien utiliser les "condition:valeur,detail" si nécessaire
@@ -161,6 +157,22 @@ class formValidator
 						case 'nullable':
 							if($_POST[$key]==null || $_POST[$key]=='null'){
 								break;
+							}else{
+								$bail = 0;
+							}
+							break;
+						case 'email':
+							$value = preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',$_POST[$key]);
+							if($value===0 OR $value===False){
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas une adresse mail conforme';
+							}else{
+								$bail = 0;
+							}
+							break;
+						case 'regex':
+							$value = preg_match($value,$_POST[$key]);
+							if($value===0 OR $value===False){
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas un format conforme';
 							}else{
 								$bail = 0;
 							}
@@ -237,15 +249,17 @@ class formValidator
 							}
 							break;
 						case 'exists':
-							if(!$this->exists($key,$_POST[$key],$value,$detail)){
-								$errors[$key][$condition] = "l'élément doit exister dans la table ".$value."";
+							$result = self::exists($value,$detail,$_POST[$key]);
+							if(!$result){
+								$errors[$key][$condition] = "".$key_name." n'existe pas. Veuillez en choisir un autre";
 							}else{
 								$bail = 0;
 							}
 							break;
 						case 'unique':
-							if(!$this->unique($key,$_POST[$key],$value,$detail)){
-								$errors[$key][$condition] = "l'élément existe déjà dans la table ".$value."";
+							$result = self::unique($value,$detail,$_POST[$key]);
+							if(!$result){
+								$errors[$key][$condition] = "".$key_name." existe déjà. Veuillez en choisir un autre";
 							}else{
 								$bail = 0;
 							}

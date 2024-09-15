@@ -3,6 +3,7 @@ session_start();
 
 require_once("fonctions.php");
 require_once("f_login.php");
+require_once("mvc/model/User.php");
 
 $mysqli = db_connexion();
 
@@ -60,13 +61,15 @@ if(isset ($_POST['pseudo']) && isset ($_POST['password']) && isset ($_POST['capt
 							$_SESSION["id_perso"] = $t_user["id_perso"];
 							$date = time();
 							
-							// recuperation de l'ip du joueur
-							$ip_joueur = realip();
+							// on enregistre les données utilisateurs pour la triche
+							$ip_joueur = $_SERVER["REMOTE_ADDR"];
 							$user_agent = get_user_agent();
-							$cookie_val = filter_input(INPUT_COOKIE, "PHPSESSID", FILTER_SANITIZE_STRING);
+							$cookie_val = htmlspecialchars($_COOKIE["PHPSESSID"]);
+							$nowDate = new DateTimeImmutable('NOW');
+							$loginDate = $nowDate->format('Y-m-d H:i:s');
 							
-							$sql = "INSERT INTO user_ok_logins VALUES ('$id_joueur','$ip_joueur',FROM_UNIXTIME($date),'$user_agent','$cookie_val', 0)";
-							$mysqli->query($sql);
+							$user = new User();
+							$user = $user->addUserOkLogin($id_joueur,$ip_joueur,$user_agent,$cookie_val,$loginDate);
 							
 							header("location:jeu/jouer.php?login=ok");
 						}

@@ -4,6 +4,12 @@ require_once("Model.php");
 
 class Map extends Model
 {
+	protected $table = "carte";
+	// protected $primaryKey = "";
+	// protected $fillable = [];
+	protected $guarded = [];
+	
+	// à refactoriser à partir de ce commentaire. Vérifier les implications
 	public $x_carte;
 	public $y_carte;
 	public $occupee_carte;
@@ -378,6 +384,79 @@ class Map extends Model
 		$request = $db->prepare($query);
 		$request->execute();
 		return $request;
+	}
+	
+	/* fonction pour récupérer les cases libres à une distance donnée
+	 * @var x (int)
+	 * @var y (int)
+	 * @var distance (int)
+	 * @return data
+	*/
+	public function freeSpace(int $x,int $y, int $distance=null) {
+	
+		if($distance){
+			$query = "SELECT x_carte, y_carte FROM carte 
+					WHERE occupee_carte='0'
+					AND x_carte <= ? + ".$distance."
+					AND x_carte >= ? - ".$distance."
+					AND y_carte <= ? + ".$distance."
+					AND y_carte >= ? - ".$distance;
+			$values = [$x,$x,$y,$y];
+		}else{
+			$query = "SELECT occupee_carte FROM carte
+					WHERE x_carte= ? AND y_carte= ?";
+			$values = [$x,$y];
+		}
+
+		$request = $this->request($query,$values);
+		$result = $request->fetchAll();
+
+		return $result;
+	}
+	
+	/* fonction pour récupérer les cases libres dans une zone donnée
+	 * @var x_min (int)
+	 * @var x_max (int)
+	 * @var y_min (int)
+	 * @var y_max (int)
+	 * @return data
+	*/
+	public function freeSpaceInZone(int $x_min,int $x_max,int $y_min,int $y_max) {
+	
+		$query = "SELECT x_carte, y_carte FROM carte 
+				WHERE occupee_carte='0'
+				AND x_carte >= ?
+				AND x_carte <= ?
+				AND y_carte >= ?
+				AND y_carte <= ?";
+		$values = [$x_min,$x_max,$y_min,$y_max];
+
+		$request = $this->request($query,$values);
+		$result = $request->fetchAll();
+
+		return $result;
+	}
+	
+	/* fonction pour insérer un perso sur la carte
+	 * @var charac_id (int)
+	 * @var charac_img (string)
+	 * @var x (int)
+	 * @var y (int)
+	 * @return int
+	*/
+	public function addCharacter(int $charac_id,string $charac_img,int $x,int $y) {
+	
+		$query = "UPDATE carte SET
+				occupee_carte='1', idPerso_carte=?, image_carte=?
+				WHERE x_carte=?
+				AND y_carte=?";
+				
+		$values = [$charac_id,$charac_img,$x,$y];
+
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
 	}
 
 	/**

@@ -9,11 +9,13 @@ abstract class Model extends Db
 	protected $fillable = []; // seuls les champs de ce tableau seront autorisés dans une hydratation
 	protected $guarded; //  tous les champs de ce tableau seront enlevés d'une hydratation
 	
-	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','joinedTables','groupByConditions','db'];
+	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db'];
 	private $selectedCols = '';
 	private $whereConditions = [];
 	private $joinedTables = '';
 	private $groupByConditions = '';
+	private $orderByConditions = '';
+	private $limitCondition = '';
 	private $db;
 	
 	public function __construct()
@@ -127,6 +129,8 @@ abstract class Model extends Db
 		$selected = (empty($this->selectedCols))?'*':$this->selectedCols;
 		$joined = (empty($this->joinedTables))?'':$this->joinedTables;
 		$grouped = (empty($this->groupByConditions))?'':' GROUP BY '.$this->groupByConditions;
+		$ordered = (empty($this->orderByConditions))?'':' ORDER BY '.$this->orderByConditions;
+		$limit = (empty($this->limitCondition))?'':' LIMIT '.$this->limitCondition;
 		
 		if(empty($this->whereConditions)){
 			$where = '';
@@ -137,13 +141,21 @@ abstract class Model extends Db
 			
 			foreach($this->whereConditions as $condition){
 				$columns[] = $condition[0];
-				$values[] = $condition[1];
+				
+				if(is_array($condition[1])){
+					foreach($condition[1] as $val){
+						$values[] = $val;
+					}
+				}else{
+					$values[] = $condition[1];
+				}
 			}
 			
 			$where = ' WHERE '.implode(' AND ',$columns);
+
 		}
 
-		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$grouped;
+		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$grouped.$ordered.$limit;
 		
 		$request = $this->request($query,$values);
 
@@ -279,9 +291,9 @@ abstract class Model extends Db
 	 * 
 	 * @return *this
 	 */
-	public function where(string $attr, string $operator, $value=null){
+	public function where(string $attr, string $operator,int $value=null){
 		
-		if(!$value){
+		if($value === null){
 			$value = $operator;
 			$operator = '=';
 		}
@@ -290,7 +302,26 @@ abstract class Model extends Db
 		$this->whereConditions[] = [$condition,$value];
 		
 		return $this;
+	}
+	
+	/**
+	 * Ajouter une condition WHERE IN à la requête
+	 * 
+	 * @return *this
+	 */
+	public function whereIn(string $attr, array $values){
 		
+		foreach($values as $value){
+			$columns[] = '?';
+		}
+		$columns = implode(', ',$columns);
+		$whereIn = 'IN ('.$columns.')';
+		
+		$condition = $attr.' '.$whereIn;
+
+		$this->whereConditions[] = [$condition,$values];
+		
+		return $this;
 	}
 	
 		
@@ -310,7 +341,39 @@ abstract class Model extends Db
 		$this->groupByConditions = $columns; 
 		
 		return $this;
-
+	}
+	
+	/**
+     * Ajouter un tri de résultats (ORDER BY) à la requête
+     * 
+     * @return $this
+     */
+	public function orderBy(...$attributs){
+		
+		$columns = [];
+		foreach($attributs as $attr){
+			$columns[] = $attr;
+		}
+		
+		$columns = implode(', ',$columns);
+		$this->orderByConditions = $columns; 
+		
+		return $this;
+	}
+	
+	/**
+     * Ajouter un tri de résultats (ORDER BY) à la requête
+     * 
+     * @return $this
+     */
+	public function limit(int $limit){
+		
+		if($limit<0){
+			$limit=0;
+		}
+		$this->limitCondition = $limit; 
+		
+		return $this;
 	}
 	
 	/**
@@ -325,7 +388,6 @@ abstract class Model extends Db
 		$this->joinedTables .= $query;
 		
 		return $this;
-		
 	}
 	
 	/**
