@@ -5,6 +5,7 @@ require_once("../fonctions.php");
 require_once("f_carte.php");
 require_once("f_combat.php");
 require_once("f_popover.php");
+require_once("../mvc/model/Building.php");
 
 $mysqli = db_connexion();
 
@@ -852,8 +853,8 @@ if($dispo == '1' || $admin){
 															$res = $mysqli->query($sql);
 
 															// insertion du perso dans la table perso_in_batiment
-															$sql = "INSERT INTO `perso_in_batiment` VALUES ('$id_perso','$id_inst_bat')";
-															$mysqli->query($sql);
+															$enterInBat = new Building();
+															$enterInBat = $enterInBat->insertCharacters([$id_perso],$id_inst_bat);
 
 															echo"<font color = blue>vous êtes entré(e) dans le bâtiment $id_inst_bat</font><br>";
 
@@ -1180,8 +1181,10 @@ if($dispo == '1' || $admin){
 															$res = $mysqli->query($sql);
 
 															// insertion du perso dans la table perso_in_batiment
-															$sql = "INSERT INTO `perso_in_batiment` VALUES ('$id_perso','$id_inst_bat')";
-															$mysqli->query($sql);
+															$enterInBat = new Building();
+															$enterInBat = $enterInBat->insertCharacters([$id_perso],$id_inst_bat);
+															// $sql = "INSERT INTO `perso_in_batiment` VALUES ('$id_perso','$id_inst_bat')";
+															// $mysqli->query($sql);
 
 															echo"<font color = blue>vous êtes entré(e) dans le bâtiment $nom_bat</font>";
 

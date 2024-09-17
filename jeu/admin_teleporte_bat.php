@@ -67,8 +67,8 @@ if(isset($_SESSION["id_perso"])){
 					}
 					
 					$id = $perso['id_perso'];
-					$query = "INSERT INTO `perso_in_batiment` VALUES ('$id','$id_fort')";
-					$mysqli->query($query);
+					$enterInBat = new Building();
+					$enterInBat = $enterInBat->insertCharacters([$id],$id_fort);
 					
 					// calcul bonus perception perso
 					$bonus_visu = getBonusObjet($mysqli, $id);
@@ -123,8 +123,8 @@ if(isset($_SESSION["id_perso"])){
 			$mysqli->query($sql);
 			
 			// Ajout du perso dans le batiment
-			$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_teleport','$bat_teleport')";
-			$mysqli->query($sql);
+			$enterInBat = new Building();
+			$enterInBat = $enterInBat->insertCharacters([$id_perso_teleport],$bat_teleport);
 			
 			$mess = "Le perso d'id $id_perso_teleport a bien été téléporté dans le bâtiment $nom_instance_bat [".$bat_teleport."]";
 		}
