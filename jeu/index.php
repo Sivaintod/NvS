@@ -3,7 +3,7 @@ session_start();
 require_once('../mvc/controller/homeController.php');
 
 if(!empty($_SESSION) AND isset($_SESSION["id_perso"])){
-	header('location:jeu/jouer.php');
+	header('location:jouer.php');
 }else{
 	$homeController = new homeController();
 	$action = (empty($_GET['action'])) ? '' : $_GET['action'];
