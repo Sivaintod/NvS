@@ -2,6 +2,7 @@
 @session_start();  
 require_once("fonctions.php");
 require_once("jeu/f_carte.php");
+require_once("mvc/model/Building.php");
 	
 $mysqli = db_connexion();
 
@@ -163,8 +164,8 @@ if(isset($_SESSION["ID_joueur"])){
 					$id_bat	= $t_b['id_batiment'];
 					
 					// On met le perso et ses grouillots dans le batiment
-					$sql = "INSERT INTO perso_in_batiment VALUES('$id_perso_degele','$id_instance_bat')";
-					$mysqli->query($sql);
+					$enterInBat = new Building();
+					$enterInBat = $enterInBat->insertCharacters([$id_perso_degele],$id_instance_bat);
 					
 					// calcul bonus perception perso
 					$bonus_visu = getBonusObjet($mysqli, $id_perso);
@@ -181,7 +182,7 @@ if(isset($_SESSION["ID_joueur"])){
 					if ($chef_perso && ($id_bat == 8 || $id_bat == 9)) {
 						
 						// recup grade / pc chef
-						$sql = "SELECT perso.id_perso, pc_perso, id_grade FROM perso, perso_as_grade WHERE perso.id_perso = perso_as_grade.id_perso AND perso.id_perso='$id_perso'";
+						$sql = "SELECT perso.id_perso, pc_perso, perso_as_grade.id_grade FROM perso, perso_as_grade WHERE perso.id_perso = perso_as_grade.id_perso AND perso.id_perso='$id_perso'";
 						$res = $mysqli->query($sql);
 						$t_chef = $res->fetch_assoc();
 						
@@ -367,8 +368,8 @@ function nouveau_tour_joueur($mysqli, $id_joueur, $new_dla, $clan, $couleur_clan
 				$id_bat	= $t_b['id_batiment'];
 				
 				// On met le perso dans le batiment
-				$sql = "INSERT INTO perso_in_batiment VALUES('$id_perso_nouveau_tour','$id_instance_bat')";
-				$mysqli->query($sql);
+				$enterInBat = new Building();
+				$enterInBat = $enterInBat->insertCharacters([$id_perso_nouveau_tour],$id_instance_bat);
 				
 				// mise a jour des evenements
 				$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
@@ -379,7 +380,7 @@ function nouveau_tour_joueur($mysqli, $id_joueur, $new_dla, $clan, $couleur_clan
 				if ($chef_perso_nouveau_tour && ($id_bat == 8 || $id_bat == 9)) {
 					
 					// recup grade / pc chef
-					$sql_chef = "SELECT perso.id_perso, pc_perso, id_grade FROM perso, perso_as_grade 
+					$sql_chef = "SELECT perso.id_perso, pc_perso, perso_as_grade.id_grade FROM perso, perso_as_grade 
 									WHERE perso.id_perso = perso_as_grade.id_perso AND perso.id_perso='$id_perso_nouveau_tour'";
 					$res_chef = $mysqli->query($sql_chef);
 					$t_chef = $res_chef->fetch_assoc();
@@ -579,8 +580,8 @@ function respawn_perso($mysqli, $id_perso, $nom_perso, $x_perso, $y_perso, $imag
 		$mysqli->query($sql);
 		
 		// On met le perso dans le batiment
-		$sql = "INSERT INTO perso_in_batiment VALUES('$id_perso','$id_instance_bat')";
-		$mysqli->query($sql);
+		$enterInBat = new Building();
+		$enterInBat = $enterInBat->insertCharacters([$id_perso],$id_instance_bat);
 		
 		// mise a jour des evenements
 		$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
@@ -591,7 +592,7 @@ function respawn_perso($mysqli, $id_perso, $nom_perso, $x_perso, $y_perso, $imag
 		if ($chef_perso && ($id_bat == 8 || $id_bat == 9)) {
 			
 			// recup grade / pc chef
-			$sql = "SELECT perso.id_perso, pc_perso, id_grade FROM perso, perso_as_grade WHERE perso.id_perso = perso_as_grade.id_perso AND perso.id_perso='$id_perso'";
+			$sql = "SELECT perso.id_perso, pc_perso, perso_as_grade.id_grade FROM perso, perso_as_grade WHERE perso.id_perso = perso_as_grade.id_perso AND perso.id_perso='$id_perso'";
 			$res = $mysqli->query($sql);
 			$t_chef = $res->fetch_assoc();
 			
