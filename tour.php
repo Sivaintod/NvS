@@ -579,7 +579,7 @@ function respawn_perso($mysqli, $id_perso, $nom_perso, $x_perso, $y_perso, $imag
 		$mysqli->query($sql);
 		
 		// On met le perso dans le batiment
-		$sql = "INSERT INTO perso_in_batiment VALUES('$id_perso','$id_instance_bat')";
+		$sql = "INSERT INTO perso_in_batiment (id_perso,id_instanceBat) VALUES('$id_perso','$id_instance_bat')";
 		$mysqli->query($sql);
 		
 		// mise a jour des evenements
