@@ -3,6 +3,7 @@
 require_once("../fonctions.php");
 require_once("f_carte.php");
 require_once("f_action.php");
+require_once("../mvc/model/Weapon.php");
 
 $mysqli = db_connexion();
 
@@ -172,8 +173,8 @@ if($dispo == '1' || $admin){
 											if($or >= $coutOr_arme){
 
 												// insertion perso_as_arme
-												$sql_i = "INSERT INTO perso_as_arme VALUES('$id_perso','$id_arme','0')";
-												$mysqli->query($sql_i);
+												$addWeapon = new Weapon();
+												$addWeapon = $addWeapon->addWeapon($id_perso,$id_arme,0);
 
 												// mis à jour or/charge perso
 												$sql_m = "UPDATE perso SET or_perso=or_perso-$coutOr_arme, charge_perso=charge_perso+$poids_arme, pa_perso=pa_perso-2 WHERE id_perso='$id_perso'";

@@ -12,7 +12,6 @@ require_once("../mvc/model/Weapon.php");
 require_once("../mvc/model/Skill.php");
 require_once("../mvc/model/Notification.php");
 require_once("../mvc/model/Event.php");
-require_once("../mvc/model/User.php");
 
 require_once("../app/validator/formValidator.php");
 require_once("controller.php");
@@ -31,7 +30,7 @@ class AuthController extends Controller
     }
 	
 	/**
-     * Display the presentation page
+     * Display the register page
      *
      * @return view
      */
@@ -71,7 +70,7 @@ class AuthController extends Controller
     }
 	
 	/**
-     * Display the FAQ page
+     * Store de registration
      *
      * @return view
      */
@@ -243,7 +242,8 @@ class AuthController extends Controller
 				$leader->recup_perso = $unitLeader->recup_unite;
 				$leader->protec_perso = $unitLeader->protection_unite;
 				$leader->pa_perso = $unitLeader->pa_unite;
-				$leader->image_perso = $unitLeader->image_unite.'_'.$camp->img_suffix.$unitInfantry->img_extension;
+				$leader->paMax_perso = $unitLeader->pa_unite;
+				$leader->image_perso = $unitLeader->image_unite.'_'.$camp->img_suffix.$unitLeader->img_extension;
 				$leader->or_perso = 20;
 				$leader->chef = 1;
 				$leader->clan = $camp->id;
@@ -265,6 +265,7 @@ class AuthController extends Controller
 				$infantry->recup_perso = $unitInfantry->recup_unite;
 				$infantry->protec_perso = $unitInfantry->protection_unite;
 				$infantry->pa_perso = $unitInfantry->pa_unite;
+				$infantry->paMax_perso = $unitInfantry->pa_unite;
 				$infantry->image_perso = $unitInfantry->image_unite.'_'.$camp->img_suffix.$unitInfantry->img_extension;
 				$infantry->or_perso = 0;
 				$infantry->chef = 0;
@@ -411,34 +412,5 @@ class AuthController extends Controller
 			header('location:?action=register');
 			die();
 		}
-    }
-	
-	/**
-     * Display the Forum page
-     *
-     * @return view
-     */
-    public function forum()
-    {
-		require_once('../mvc/view/home/faq.php');
-    }
-	
-	/**
-     * Display the ranking page
-     *
-     * @return view
-     */
-    public function ranking()
-    {
-    }
-	
-	/**
-     * Display the Forum page
-     *
-     * @return view
-     */
-    public function credits()
-    {
-		require_once('../mvc/view/home/credits.php');
     }
 }
