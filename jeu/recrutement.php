@@ -2,6 +2,15 @@
 session_start();
 require_once("../fonctions.php");
 require_once("f_recrutement.php");
+require_once("../mvc/model/Character.php");
+require_once("../mvc/model/Building.php");
+require_once("../mvc/model/Camp.php");
+require_once("../mvc/model/Unit.php");
+require_once("../mvc/model/MailFile.php");
+require_once("../mvc/model/Grade.php");
+require_once("../mvc/model/Weapon.php");
+require_once("../mvc/model/Skill.php");
+require_once("../mvc/model/Event.php");
 
 $mysqli = db_connexion();
 
@@ -49,35 +58,28 @@ if($dispo == '1' || $admin){
 			echo "<font color=red>Vous êtes mort...</font>";
 		}
 		else {
+			$sessionCharacter = new Character();
+			$camp = new Camp();
 			
-			$sql = "SELECT idJoueur_perso, nom_perso, pc_perso, pa_perso, chef, clan, bataillon, point_armee_grade, grades.id_grade FROM perso, perso_as_grade, grades 
-					WHERE perso.id_perso = perso_as_grade.id_perso
-					AND perso_as_grade.id_grade = grades.id_grade 
-					AND perso.id_perso ='$id'";
-			$res = $mysqli->query($sql);
-			$tab = $res->fetch_assoc();
+			$sessionCharacter = $sessionCharacter->select('perso.idJoueur_perso, perso.nom_perso, perso.est_pnj, perso.pc_perso, perso.pa_perso, perso.chef, perso.clan, perso.bataillon, grades.point_armee_grade, grades.id_grade')
+												->leftJoin('perso_as_grade','perso.id_perso','=','perso_as_grade.id_perso')
+												->leftJoin('grades','grades.id_grade','=','perso_as_grade.id_grade')
+												->where('perso.id_perso',$_SESSION["id_perso"])
+												->get();
+			$sessionCharacter = $sessionCharacter[0];
 			
-			$id_joueur	= $tab["idJoueur_perso"];
-			$nom_perso	= $tab["nom_perso"];
-			$pc 		= $tab["pc_perso"];
-			$pa_perso	= $tab["pa_perso"];
-			$chef 		= $tab["chef"];
-			$clan		= $tab["clan"];
-			$bataillon	= $tab["bataillon"];
-			$pg			= $tab["point_armee_grade"];
-			$id_grade	= $tab["id_grade"];
+			$id_joueur	= $sessionCharacter->idJoueur_perso;
+			$nom_perso	= $sessionCharacter->nom_perso;
+			$est_pnj	= $sessionCharacter->est_pnj;
+			$pc 		= $sessionCharacter->pc_perso;
+			$pa_perso	= $sessionCharacter->pa_perso;
+			$chef 		= $sessionCharacter->chef;
+			$clan		= $sessionCharacter->clan;
+			$bataillon	= $sessionCharacter->bataillon;
+			$pg			= $sessionCharacter->point_armee_grade;
+			$id_grade	= $sessionCharacter->id_grade;
 			
-			if ($clan == 1) {
-				$camp = "nord";
-				$couleur_clan_perso = "blue";
-			} else if ($clan == 2) {
-				$camp = "sud";
-				$couleur_clan_perso = "red";
-			} else {
-				// ???
-				$camp = "nord";
-				$couleur_clan_perso = "blue";
-			}
+			$camp = $camp->find($clan);
 			
 			// Seul le chef peut recruter des grouillots
 			if ($chef) {
@@ -188,831 +190,193 @@ if($dispo == '1' || $admin){
 								echo "<center><font color='red'>Ce batiment est considéré en état de siege, il ne sera pas possible de recruter des grouillots tant que ses PV ne seront pas suffisamment remontés ou que la zone ne sera pas nettoyée des ennemis</font></center><br />";
 								echo "<center>PV actuel : $pv_instance / $pv_max_instance</center>";
 								
-							} else {
-						
-								// Cavalerie lourde et légère
-								if (isset($_POST["2"]) || isset($_POST["7"])) {
-
-									$id_unite = 2;
-									if (isset($_POST["7"]))
-										$id_unite = 7;
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='$id_unite'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-											
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-											
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-											
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-											
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-											
-											while ($nom_pas_trouve) {
-												
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-												
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-												
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-													
-													$i++;
-												}
-											}
-											
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-											
-											$bataillon = addslashes($bataillon);
-
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, paMax_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', $id_unite, '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', $pa_unite, '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, paMax_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', $id_unite, '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', $pa_unite, '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-											
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-											
-											$id_perso_cree = $tab["id_perso_cree"];
-											
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-											
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-											
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											//------- Ajout des armes à la cavalerie
-											// Arme Cac : sabre
-											if ($id_unite == 7) {
-												$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','24','1')";
-												$mysqli->query($sql);
-											} else {
-												$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','1','1')";
-												$mysqli->query($sql);
-											}
-											
-											// Arme distance : pistolet 
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-													VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-											
-											echo "<center><font color=blue>Vous venez de recruter une $nom_unite</font></center>";
-											
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-								}
-								
-								// Infanterie
-								if (isset($_POST["3"])) {
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='3'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-											
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-											
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-											
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-											
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-											
-											while ($nom_pas_trouve) {
-												
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-												
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-												
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-													
-													$i++;
-												}
-											}
-											
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-											
-											$bataillon = addslashes($bataillon);
-											
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', '3', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', '3', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-											
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-											
-											$id_perso_cree = $tab["id_perso_cree"];
-											
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-											
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-											
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											//------- Ajout des armes à l'infanterie
-											// Arme Cac : baillonette
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','6','1')";
-											$mysqli->query($sql);
-											
-											// Arme distance : fusil 
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','7','1')";
-											$mysqli->query($sql);
-											
-											//------- Competences
-											// Insertion competence construction barricades
-											$sql_c = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','22','1')";
-											$mysqli->query($sql_c);
-											
-											// Insertion competence marche forcée
-											$sql_c = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','6','1')";
-											$mysqli->query($sql_c);
-											
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-													VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-											
-											echo "<center><font color=blue>Vous venez de recruter une $nom_unite</font></center>";
-											
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-									
-								}
-								
-								// Soigneur
-								if (isset($_POST["4"])) {
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='4'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-											
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-											
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-											
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-											
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-											
-											while ($nom_pas_trouve) {
-												
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-												
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-												
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-													
-													$i++;
-												}
-											}
-											
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-											
-											$bataillon = addslashes($bataillon);
-											
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', '4', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', '4', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-											
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-											
-											$id_perso_cree = $tab["id_perso_cree"];
-											
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-											
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-											
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											//------- Ajout des armes au soigneur
-											// Arme Cac : seringue
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','10','1')";
-											$mysqli->query($sql);
-											
-											// Arme distance : bandages 
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','11','1')";
-											$mysqli->query($sql);
-											
-											//------- Competences										
-											// Insertion competence marche forcée
-											$sql_c = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','6','1')";
-											$mysqli->query($sql_c);
-											
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-													VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-											
-											echo "<center><font color=blue>Vous venez de recruter un $nom_unite</font></center>";
-											
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-								}
-								
-								// Artillerie
-								if (isset($_POST["5"])) {
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='5'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-											
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-											
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-											
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-											
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-											
-											while ($nom_pas_trouve) {
-												
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-												
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-												
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-													
-													$i++;
-												}
-											}
-											
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-											
-											$bataillon = addslashes($bataillon);
-											
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', '5', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', '5', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-											
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-											
-											$id_perso_cree = $tab["id_perso_cree"];
-											
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-											
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-											
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											//------- Ajout des armes à l'artillerie
-											// Arme : Canon
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','13','1')";
-											$mysqli->query($sql);
-											
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-													VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-											
-											echo "<center><font color=blue>Vous venez de recruter une $nom_unite</font></center>";
-											
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-								}
-								
-								// Toutou
-								if (isset($_POST["6"])) {
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='6'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-
-											while ($nom_pas_trouve) {
-
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-
-													$i++;
-												}
-											}
-
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-
-											$bataillon = addslashes($bataillon);
-
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, chargeMax_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', '6', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '2', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, chargeMax_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', '6', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '2', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-
-											$id_perso_cree = $tab["id_perso_cree"];
-
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-
-											//------- Ajout des armes au toutou
-											// canines
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','9','1')";
-											$mysqli->query($sql);
-											// griffes
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','12','1')";
-											$mysqli->query($sql);
-
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-												VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-
-											echo "<center><font color=blue>Vous venez de recruter un $nom_unite</font></center>";
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-								}
-								
-								//gtaling
-								if (isset($_POST["8"])) {
-									
-									// Besoin de 3PA pour recruter
-									if ($pa_perso >= 3) {
-										
-										// Calculer PG déjà utilisés par le joueur
-										$pg_utilise = calcul_pg($mysqli, $id_joueur);
-										
-										// Calcul PG restant au joueur
-										$pg_restant = $pg - $pg_utilise;
-										
-										// Récupérer coût PG unite 
-										$sql = "SELECT cout_pg, nom_unite, perception_unite, protection_unite, recup_unite, pv_unite, pa_unite, pm_unite, image_unite FROM type_unite WHERE id_unite='8'";
-										$res = $mysqli->query($sql);
-										$tab = $res->fetch_assoc();
-										
-										$cout_pg_recrutement = $tab["cout_pg"];
-										
-										// Verifier si possibilité de recruter
-										if ($pg_restant >= $cout_pg_recrutement) {
-											
-											// MAJ des PA du chef 
-											$pa_perso = $pa_perso - 3;
-											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
-											$mysqli->query($sql);
-											
-											// Recupération caracs de base du perso 
-											$nom_unite 			= $tab["nom_unite"];
-											$perception_unite 	= $tab["perception_unite"];
-											$protection_unite 	= $tab["protection_unite"];
-											$recup_unite 		= $tab["recup_unite"];
-											$pv_unite 			= $tab["pv_unite"];
-											$pa_unite 			= $tab["pa_unite"];
-											$pm_unite 			= $tab["pm_unite"];
-											$image_unite		= $tab["image_unite"];
-											
-											$image_perso_cree 	= $image_unite."_".$camp.".gif";
-											$nom_perso_cree		= $nom_perso."_junior";
-											
-											$nom_perso_tmp = $nom_perso_cree;
-											$nom_pas_trouve = true;
-											$i = 2;
-											
-											while ($nom_pas_trouve) {
-												
-												$nom_perso_cherche = addslashes($nom_perso_cree);
-												
-												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
-												$res = $mysqli->query($sql);
-												$nb = $res->num_rows;
-												
-												if ($nb == 0) {
-													$nom_pas_trouve = false;
-												}
-												else {
-													$nom_perso_cree = $nom_perso_tmp.$i;
-													
-													$i++;
-												}
-											}
-											
-											// Calcul DLA
-											$date = time();
-											$dla = $date + DUREE_TOUR;
-											
-											$bataillon = addslashes($bataillon);
-											
-											$new_pnj_perso_id = get_pnj_perso_id($mysqli);
-											if ($id < 100 && $new_pnj_perso_id) {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (id_perso, IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$new_pnj_perso_id', '$id_joueur', '8', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											} else {
-												// Créer nouveau Perso et la placer dans ce même batiment
-												$sql = "INSERT INTO perso (IDJoueur_perso, type_perso, nom_perso, x_perso, y_perso, pvMax_perso, pv_perso, pm_perso, pmMax_perso, perception_perso, recup_perso, protec_perso, pa_perso, image_perso, dateCreation_perso, DLA_perso, clan, message_perso, chef, bataillon) 
-													VALUES ('$id_joueur', '8', '$nom_perso_cree', '$x_instance', '$y_instance', '$pv_unite', '$pv_unite', '0', '$pm_unite', '$perception_unite', '$recup_unite', '$protection_unite', '0', '$image_perso_cree', NOW(), FROM_UNIXTIME($dla), $clan, '', 0, '$bataillon')";
-												$mysqli->query($sql);
-											}
-											
-											// Récupération de l'id du perso créé 
-											$sql = "SELECT MAX(id_perso) as id_perso_cree FROM perso WHERE IDJoueur_perso='$id_joueur'";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
-											
-											$id_perso_cree = $tab["id_perso_cree"];
-											
-											// Insertion perso dans batiment 
-											$sql = "INSERT INTO perso_in_batiment VALUES ('$id_perso_cree','$id_instance_bat')";
-											$mysqli->query($sql);
-											
-											//------- Messagerie
-											// dossier courant
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											// dossier archives
-											$sql_i = "INSERT INTO perso_as_dossiers VALUES ('$id_perso_cree','2')";
-											$mysqli->query($sql_i);
-											
-											// grade Grouillot = 2nd classe
-											$sql_i = "INSERT INTO perso_as_grade VALUES ('$id_perso_cree','1')";
-											$mysqli->query($sql_i);
-											
-											//------- Ajout des armes à l'artillerie
-											// Arme : Canon
-											$sql = "INSERT INTO perso_as_arme (id_perso, id_arme, est_portee) VALUES ('$id_perso_cree','14','1')";
-											$mysqli->query($sql);
-											
-											// Insertion competence sieste
-											$sql = "INSERT INTO perso_as_competence (id_perso, id_competence, nb_points) VALUES ('$id_perso_cree','4','1')";
-											$mysqli->query($sql);
-											
-											// Evenement grouillot rejoint bataillon
-											$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
-													VALUES ($id_perso_cree,'<font color=$couleur_clan_perso>$nom_perso_cree</font>',' a rejoint le bataillon $bataillon',NULL,'','',NOW(),'0')";
-											$mysqli->query($sql);
-											
-											echo "<center><font color=blue>Vous venez de recruter une $nom_unite</font></center>";
-											
-										} else {
-											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
-										}
-									} else {
-										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter un grouillot, il vous reste $pa_perso points d'action</font></center>";
-									}
-								}
-								
-								$pg_utilise = calcul_pg($mysqli, $id_joueur);
+							}
+							else{
+								$pg_utilise = intval(calcul_pg($mysqli, $id_joueur));
 								
 								// Calcul PG restant au joueur
 								$pg_restant = $pg - $pg_utilise;
+								
+								
+								if($_SERVER['REQUEST_METHOD']==='POST'){
+
+									if ($pa_perso >= 3) {
+										$unitType= new Unit();
+										$newCharacter = new Character();
+									
+										if (isset($_POST["2"])){
+											// cavalier lourd
+											$id_unite = 2;
+											$weapons = ['Sabre','Pistolet'];
+											$skills = ['resting'];
+										}
+										if (isset($_POST["3"])){
+											// infanterie
+											$id_unite = 3;
+											$weapons = ['Baïonnette','Fusil'];
+											$skills = ['resting','hard_walk','barricade_build'];
+										}
+										if (isset($_POST["4"])){
+											// soigneur
+											$id_unite = 4;
+											$weapons = ['Seringue','Bandages'];
+											$skills = ['resting','hard_walk'];
+											
+										}
+										if (isset($_POST["5"])){
+											// canon
+											$id_unite = 5;
+											$weapons = ['Canon'];
+											$skills = ['resting'];
+										}
+										if (isset($_POST["6"])){
+											// toutou
+											$id_unite = 6;
+											$weapons = ['Canines','Griffes'];
+											$skills = ['resting'];
+										}
+										if (isset($_POST["7"])){
+											// cavalier léger
+											$id_unite = 7;
+											$weapons = ['Sabre léger','Pistolet'];
+											$skills = ['resting'];
+										}
+										if (isset($_POST["8"])){
+											//gatling
+											$id_unite = 8;
+											$weapons = ['Gatling'];
+											$skills = ['resting'];
+										}
+										
+										// Récupérer coût PG unite
+										$unitType = $unitType->find($id_unite);
+										$nom_unite = $unitType->nom_unite;
+										
+										$cout_pg_recrutement = $unitType->cout_pg;
+										
+										if ($pg_restant >= $cout_pg_recrutement) {
+											
+											// calcul DLA
+											$nowDate = new DateTimeImmutable('NOW');
+											$interval = new dateInterval('PT46H');//Tour de 46h
+											$DLA = $nowDate->add($interval);
+											
+											// nom du perso
+											$nom_perso_cree	= $nom_perso."_junior";
+											
+											$nom_perso_tmp = $nom_perso_cree;
+											$nom_pas_trouve = true;
+											$i = 2;
+											
+											while ($nom_pas_trouve) {
+												
+												$nom_perso_cherche = addslashes($nom_perso_cree);
+												
+												$sql = "SELECT id_perso FROM perso WHERE nom_perso='$nom_perso_cherche'";
+												$res = $mysqli->query($sql);
+												$nb = $res->num_rows;
+												
+												if ($nb == 0) {
+													$nom_pas_trouve = false;
+												}
+												else {
+													$nom_perso_cree = $nom_perso_tmp.$i;
+													
+													$i++;
+												}
+											}
+											
+											$newCharacter->nom_perso = $nom_perso_cree;
+											
+											if($est_pnj==1){
+												$newCharacter->est_pnj==1;
+											}
+											
+											// instanciation caracs de base du perso
+											$newCharacter->idJoueur_perso = $id_joueur;
+											$newCharacter->bataillon = $bataillon;
+											$newCharacter->type_perso = $unitType->id_unite;
+											$newCharacter->x_perso = $x_instance;
+											$newCharacter->y_perso = $y_instance;
+											$newCharacter->id_grade = 1;
+											$newCharacter->pvMax_perso = $unitType->pv_unite; 
+											$newCharacter->pv_perso = $unitType->pv_unite; 
+											$newCharacter->pmMax_perso = $unitType->pm_unite;
+											$newCharacter->pm_perso = 0;
+											$newCharacter->perception_perso = $unitType->perception_unite;
+											$newCharacter->recup_perso = $unitType->recup_unite;
+											$newCharacter->protec_perso = $unitType->protection_unite;
+											$newCharacter->pa_perso = 0;
+											$newCharacter->paMax_perso = $unitType->pa_unite;
+											$newCharacter->image_perso = $unitType->image_unite.'_'.$camp->img_suffix.$unitType->img_extension;
+											$newCharacter->or_perso = 0;
+											$newCharacter->chef = 0;
+											$newCharacter->clan = $camp->id;
+											$newCharacter->DLA_perso = $DLA->format('Y-m-d H:i:s');
+											$newCharacter->dateCreation_perso = $nowDate->format('Y-m-d H:i:s');
+											
+											$savedCharacter = $newCharacter->saveWithModel();
+											
+											// Insertion perso dans batiment
+											$enterInBat = new Building();
+											$enterInBat = $enterInBat->insertCharacters([$savedCharacter->id_perso],$id_instance_bat);
+											
+											//on crée les dossiers des messageries des persos
+											$createMailfiles = new MailFile();
+											$createMainMailfile = $createMailfiles->addFiles([$savedCharacter->id_perso],1);
+											$createArchiveMailfile = $createMailfiles->addFiles([$savedCharacter->id_perso],2);
+											
+											// on ajoute le grade grouillot
+											$createGrade = new Grade();
+											$createCharacterGrade = $createGrade->addGrade($savedCharacter->id_perso,1);
+											
+											// on ajoute les armes
+											foreach($weapons as $weapon){
+												$getWeapon = new Weapon();
+												$getWeapon = $getWeapon->select('id_arme, nom_arme')->where('nom_arme',$weapon)->get();
+												$getWeapon = $getWeapon[0];
+												
+												$addWeapon = new Weapon();
+												$addLeaderSabre = $addWeapon->addWeapon($savedCharacter->id_perso,$getWeapon->id_arme,1);
+											}
+											
+											// on ajoute les caractéristiques
+											foreach($skills as $skill){
+												$getSkill = new Skill();
+												$getSkill = $getSkill->select('id_competence, nom_competence')->where('slug_competence',$skill)->get();
+												$getSkill = $getSkill[0];
+												
+												$addSkill = new Skill();
+												$addLeaderSleeping = $addSkill->addSkill($savedCharacter->id_perso,$getSkill->id_competence);
+											}
+											
+											// on crée l'évènement de création du grouillot
+											$event = new Event();
+											$eventDetails = "A rejoint le bataillon ".$newCharacter->bataillon;
+											$eventDate = $nowDate->format('Y-m-d H:i:s');
+											$addCharacterEvent = $event->addEvent($savedCharacter->id_perso, $newCharacter->nom_perso, $eventDetails, $eventDate);
+											
+											// MAJ des PA du chef 
+											$pa_perso = $pa_perso - 3;
+											$sql = "UPDATE perso SET pa_perso=pa_perso-3 WHERE id_perso='$id'";
+											$mysqli->query($sql);
+											
+											echo "<center><font color=blue>Vous venez de recruter une $nom_unite</font></center>";
+										}
+										else{
+											echo "<center><font color=red>Vous n'avez pas assez de point de grouillot pour pouvoir recruter cette unité. Il vous reste $pg_restant points de grouillot</font></center>";
+										}
+									}
+									else{
+										echo "<center><font color=red>Vous n'avez pas assez de point d'action pour recruter ce grouillot, il vous reste $pa_perso points d'action</font></center>";
+									}
+								}
 								
 								?>
 								
 								<center>Vous avez utilisé <b><?php echo $pg_utilise; ?> PG</b> sur un total de <b><?php echo $pg; ?>PG (PG restant : <?php echo $pg_restant; ?>)</b></center>
 								<center>Le recrutement d'un grouillot coute <b>3PA</b>, il vous reste <b><?php echo $pa_perso; ?> PA</b></center>
-								<center>Les grouillots que vous avez renvoyé par le passé peuvent être réactivés dans la page "Gérer ses grouillots".</center>
+								<center>Les grouillots que vous avez renvoyé par le passé peuvent être réactivés dans la page "Gérer ses grouillots".</center><br>
 								
 								<?php
 
@@ -1041,7 +405,7 @@ if($dispo == '1' || $admin){
 									$image_unite 		= $tab["image_unite"];
 									$cout_pg_unite 		= $tab["cout_pg"];
 									
-									$image_affiche = $image_unite."_".$camp.".gif";
+									$image_affiche = $image_unite."_".$camp->img_suffix.".gif";
 									
 									echo "	<tr>";
 									echo "		<td align='center'><img src='../images_perso/".$image_affiche."' alt='".$nom_unite."'/></td>";

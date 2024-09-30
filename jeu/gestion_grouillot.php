@@ -4,6 +4,7 @@ require_once("../fonctions.php");
 require_once("f_combat.php");
 require_once("f_carte.php");
 require_once("f_recrutement.php");
+require_once("../mvc/model/Building.php");
 
 $mysqli = db_connexion();
 
@@ -370,9 +371,9 @@ if($dispo == '1' || $admin){
 										$sql = "DELETE FROM `cv` WHERE IDActeur_cv=$matricule AND IDCible_cv=$matricule AND nomActeur_cv LIKE '%renvoyé%'";
 										$mysqli->query($sql);
 
-										// Insertion perso dans batiment 
-										$sql = "INSERT INTO perso_in_batiment VALUES ('$matricule','$id_instance_bat')";
-										$mysqli->query($sql);
+										// Insertion perso dans batiment
+										$enterInBat = new Building();
+										$enterInBat = $enterInBat->insertCharacters([$matricule],$id_instance_bat);
 
 										// On téléporte le perso
 										$sql = "UPDATE perso SET x_perso=$x_instance, y_perso=$y_instance WHERE id_perso='$matricule'";
