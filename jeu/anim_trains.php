@@ -317,17 +317,17 @@ if($dispo == '1' || $admin){
 									
 									$obstacle_train = false;
 									
-									// Récupération infos train
-									$sql_t = "SELECT pv_instance, pvMax_instance, x_instance, y_instance FROM instance_batiment WHERE id_instanceBat='$id_train'";
-									$res_t = $mysqli->query($sql_t);
-									$t_t = $res_t->fetch_assoc();
-									
-									$pv_train		= $t_t['pv_instance'];
-									$pvMax_train	= $t_t['pvMax_instance'];
-									$x_train		= $t_t['x_instance'];
-									$y_train		= $t_t['y_instance'];
-									
 									if ($id_train != NULL && $id_train != 0) {
+										
+										// Récupération infos train
+										$sql_t = "SELECT pv_instance, pvMax_instance, x_instance, y_instance FROM instance_batiment WHERE id_instanceBat='$id_train'";
+										$res_t = $mysqli->query($sql_t);
+										$t_t = $res_t->fetch_assoc();
+									
+										$pv_train		= $t_t['pv_instance'];
+										$pvMax_train	= $t_t['pvMax_instance'];
+										$x_train		= $t_t['x_instance'];
+										$y_train		= $t_t['y_instance'];
 										// Est ce que le train a un obstacle devant lui l'empéchant d'avancer ?
 										$sql_o = "SELECT x_carte, y_carte, idPerso_carte FROM carte 
 													WHERE (fond_carte='rail.gif' OR fond_carte='rail_1.gif' OR fond_carte='rail_2.gif' OR fond_carte='rail_3.gif' OR fond_carte='rail_4.gif' OR fond_carte='rail_5.gif' OR fond_carte='rail_7.gif' OR fond_carte='railP.gif')

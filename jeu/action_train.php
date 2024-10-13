@@ -31,17 +31,17 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 		
 		if ($camp_train == 1) {
 			// Nord
-			$image_train 		= "b12b.png";
+			$image_train 		= "b12b.gif";
 			$couleur_camp_train	= "blue";
 		}
 		else if ($camp_train == 2) {
 			// Sud
-			$image_train 		= "b12r.png";
+			$image_train 		= "b12r.gif";
 			$couleur_camp_train	= "red";
 		}
 		else {
 			// Ne devrait pas arriver
-			$image_train 		= "b12.png";
+			$image_train 		= "b12.gif";
 			$couleur_camp_train	= "black";
 		}	
 		
@@ -57,10 +57,8 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 		$res_g = $mysqli->query($sql_g);
 		$t_g = $res_g->fetch_assoc();
 		$nb_g = $res_g->num_rows;
-		
-		
+
 		if ($nb_g) {
-		
 			$x_gare_arrivee 	= $t_g['x_instance'];
 			$y_gare_arrivee 	= $t_g['y_instance'];
 			$pv_gare_arrivee	= $t_g['pv_instance'];
@@ -70,6 +68,7 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 			// Calcul pourcentage pv du batiment 
 			$pourc_pv_gare_arrivee = ($pv_gare_arrivee / $pvMax_gare_arrivee) * 100;
 			
+			
 			echo "Déplacement du train ". $id_instance_train ." ($x_train / $y_train) vers la gare ". $gare_arrivee ." ($x_gare_arrivee / $y_gare_arrivee)<br />";
 			
 			// récupération derniere case dep train avant sa position actuelle
@@ -77,8 +76,8 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 			$res_ld = $mysqli->query($sql_ld);
 			$t_ld = $res_ld->fetch_assoc();
 
-			$x_last_dep = $t_ld['x_last_dep'];
-			$y_last_dep = $t_ld['y_last_dep'];
+			$x_last_dep = (empty($t_ld['x_last_dep']))?null:$t_ld['x_last_dep'];
+			$y_last_dep = (empty($t_ld['y_last_dep']))?null:$t_ld['y_last_dep'];
 			
 			$x_tmp_dep = '';
 			$y_tmp_dep = '';
@@ -111,7 +110,6 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 				
 				$res_r = $mysqli->query($sql_r);
 				$nb_r = $res_r->num_rows;
-				
 				
 				if ($nb_r) {
 					
