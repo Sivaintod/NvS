@@ -196,12 +196,15 @@ abstract class Model extends Db
 		return $request->rowCount();
 	}
 	
-	//mettre à jour une entrée d'une table via sa clé primaire
-	public function updateWithModel(int $id)
+	//mettre à jour une entrée d'une table via sa clé primaire si celle-ci n'est pas dans le modèle
+	public function updateWithModel(int $id=NULL)
 	{
 		$model_vars = get_object_vars($this);
 		
 		foreach($model_vars as $attr => $value){
+			if($attr=='primaryKey' AND !empty($this->$value)){
+				$id=$this->$value;
+			}
 			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
 				$columns[] = $attr. ' = ?';
 				$values[] = $value;

@@ -2155,6 +2155,45 @@ ALTER TABLE `user_ok_logins`
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `vehicle`
+--
+
+CREATE TABLE `vehicle` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` tinytext NULL,
+  `type_id` tinyint unsigned NOT NULL,
+  `level` tinyint unsigned NOT NULL DEFAULT '1',
+  `health_points` int unsigned NOT NULL,
+  `position_x` int NULL,
+  `position_y` int NULL,
+  `path_id` int unsigned NULL,
+  `camp_origin` tinyint unsigned NOT NULL,
+  `camp_now` tinyint unsigned NOT NULL,
+  `created_at` datetime NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `vehicle_type`
+--
+
+CREATE TABLE `vehicle_type` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` tinytext NOT NULL,
+  `slug` tinytext NOT NULL;
+  `desc` text NOT NULL,
+  `health_points` int unsigned NOT NULL,
+  `capacity` int unsigned NOT NULL,
+  `image_prefix` tinytext NOT NULL,
+  `destructible` tinyint NOT NULL DEFAULT '0',
+  `capturable` tinyint NOT NULL DEFAULT '0',
+  `speed` tinyint unsigned NOT NULL DEFAULT '0'
+);
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `whitelist_triche`
 --
 
