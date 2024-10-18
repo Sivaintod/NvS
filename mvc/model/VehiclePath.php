@@ -1,9 +1,9 @@
 <?php
 require_once("Model.php");
 
-class Vehicle extends Model
+class VehiclePath extends Model
 {
-	protected $table = "vehicle";
+	protected $table = "liaisons_gare";
 	// protected $primaryKey = "id";
 	// protected $fillable = [];
 	protected $guarded = [];

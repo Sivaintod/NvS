@@ -1,6 +1,7 @@
 <?php
 
 require_once("f_carte.php");
+require_once("../mvc/model/Building.php");
 
 /**
  * Fonction permettant de déplacer le train sur une case x/y
@@ -208,8 +209,8 @@ function dechargement_perso_train($mysqli, $id_perso_dechargement, $gare_arrivee
 	$mysqli->query($sql_dt);
 	
 	// On décharge le perso dans la gare
-	$sql_pg = "INSERT INTO perso_in_batiment VALUES ('$id_perso_dechargement','$gare_arrivee')";
-	$mysqli->query($sql_pg);
+	$enterInBat = new Building();
+	$enterInBat = $enterInBat->insertCharacters([$id_perso_dechargement],$gare_arrivee);
 	
 	$sql_p = "UPDATE perso SET x_perso='$x_gare_arrivee', y_perso='$y_gare_arrivee' WHERE id_perso='$id_perso_dechargement'";
 	$mysqli->query($sql_p);
