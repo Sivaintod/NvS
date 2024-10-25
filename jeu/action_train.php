@@ -50,10 +50,10 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 		$gare_arrivee = $train->direction;
 		
 		// Récupération des coordonnées de la direction
+
 		$targetStation = new Vehicle();
 		$targetStation = $targetStation->where('id_instanceBat',$train->direction)->get();
 
-		// if ($nb_g) {
 		if(!empty($targetStation)){
 			$targetStation = $targetStation[0];
 			
@@ -66,20 +66,10 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 			// Calcul pourcentage pv du batiment 
 			$pourc_pv_gare_arrivee = ($pv_gare_arrivee / $pvMax_gare_arrivee) * 100;
 			
-			
 			echo "--- Déplacement du train ". $id_instance_train ." ($x_train / $y_train) vers la gare ". $gare_arrivee ." ($x_gare_arrivee / $y_gare_arrivee) ---<br>";
-			
-			// récupération derniere case dep train avant sa position actuelle
-			$sql_ld = "SELECT x_last_dep, y_last_dep, DeplacementDate FROM train_last_dep WHERE id_train='$id_instance_train' ORDER BY DeplacementDate DESC LIMIT 1;";
-			$res_ld = $mysqli->query($sql_ld);
-			$t_ld = $res_ld->fetch_assoc();
 			
 			// 10 PM
 			$dep_restant = 10;
-			
-			// on initialise avec la position du train pour exclure la case de rail du train de la recherche
-			$tab_dep_train = array();
-			array_push($tab_dep_train, $x_train.';'.$y_train);
 
 			// Une gare n'est active qu'au dessus de 50% de ses PV
 			// Le train circule vers la gare que si la gare d'arrivée est du même camp que le train
@@ -87,16 +77,24 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 				&& $dep_restant > 0 
 				&& $pourc_pv_gare_arrivee >= 50 
 				&& $camp_gare_arrivee == $camp_train) {
-					
+				
+				$movingTrain = new Vehicle();
+				$current_position = $movingTrain->select('id_instanceBat, x_instance, y_instance')->where('id_instanceBat',$id_instance_train)->get();
+				$current_position = $current_position[0];
+				
+				// on initialise avec la position du train pour exclure la case de rail du train de la recherche
+				$tab_dep_train = array();
+				array_push($tab_dep_train, $current_position->x_instance.';'.$current_position->y_instance);
+				
 				$lastMove = new Vehicle();
 				$lastMove =$lastMove->getLastPathTile($train->id_instanceBat);
-				
+
 				// On exclue la dernière case dep_train avant sa position actuelle
 				if ($lastMove) {
 					array_push($tab_dep_train, $lastMove['x_last_dep'].';'.$lastMove['y_last_dep']);
 				}
 					
-				// Récupération des rails autours du train
+				// Récupération des rails autour du train
 				$sql_r = "SELECT x_carte, y_carte, fond_carte, CONCAT(x_carte, ';', y_carte) as coordonnees FROM carte 
 							WHERE (fond_carte='rail.gif' OR fond_carte='rail_1.gif' OR fond_carte='rail_2.gif' OR fond_carte='rail_3.gif' OR fond_carte='rail_4.gif' OR fond_carte='rail_5.gif' OR fond_carte='rail_7.gif' OR fond_carte='railP.gif')
 							AND x_carte >= $x_train-1 AND x_carte <= $x_train+1
@@ -134,28 +132,23 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 						// On supprime le compteur de blocage s'il existe car le train peut se déplacer
 						// Cas où la barricade a été détruite par un joueur
 						suppression_compteur_blocage($mysqli, $id_instance_train);
-						
-						if ($dep_restant < 10) {
-							array_push($tab_dep_train, $x_train.';'.$y_train);
-						}
 
 						// Modification coordonnées instance train
 						$sql_t = "UPDATE instance_batiment set x_instance='$x_r', y_instance='$y_r' WHERE id_instanceBat='$id_instance_train'";
 						$mysqli->query($sql_t);
 						
-						// on enregistre la nouvelle position du train en tant que dernière position connue
+						// on enregistre la position actuelle du train en tant que dernière position connue
 						$newLastMove = new Vehicle();
 						if ($lastMove) {
-							$newLastMove = $newLastMove->updateLastPathTile($id_instance_train,$x_r,$y_r);
+							$newLastMove = $newLastMove->updateLastPathTile($id_instance_train,$current_position->x_instance,$current_position->y_instance);
 						}else{
-							$newLastMove = $newLastMove->setLastPathTile($id_instance_train,$x_r,$y_r);
+							$newLastMove = $newLastMove->setLastPathTile($id_instance_train,$current_position->x_instance,$current_position->y_instance);
 						}
 						
 						$x_train = $x_r;
 						$y_train = $y_r;
 						
 						if (deplacement_train($mysqli, $id_instance_train, $x_train, $y_train, $image_train, $nom_train, $couleur_camp_train)) {
-							array_push($tab_dep_train, $x_train.';'.$y_train);
 							$dep_restant--;
 						}
 						
@@ -164,6 +157,7 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 				}
 				else {
 					// pas de rail trouvé => train bloqué
+					echo "------ Aucun rail trouvé. Le train est bloqué <br>";
 					$sql_e = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) 
 						VALUES ($id_instance_train,'Train','bloqué',NULL,'','en $x_train/$y_train',NOW(),'0')";
 					$mysqli->query($sql_e);
