@@ -1,6 +1,7 @@
 <?php
 require_once("Model.php");
 
+// A supprimer pour la refacto. Voir s'il y a des implications
 class Carte extends Model
 {
 	public $x_carte;
