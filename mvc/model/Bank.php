@@ -14,6 +14,7 @@ class Bank extends Model
 		emprunt = 2;
 		Remboursement emprunt = 3;
 		Virement = 4;
+		départ de compagnie = 5;
 	*/
 
 	/**

@@ -111,7 +111,12 @@ class BankController extends Controller
 		$perso = $perso->select('perso.id_perso, clan, id_compagnie, or_perso')->leftJoin('perso_in_compagnie','perso.id_perso','=','perso_in_compagnie.id_perso')->find($id_perso);
 		
 		$account = new Account();
-		$account = $account->select('banque_compagnie.id, banque_compagnie.id_perso, perso.nom_perso, bank_id, montant, id_compagnie')->leftJoin('perso_in_compagnie','banque_compagnie.id_perso','=','perso_in_compagnie.id_perso')->leftJoin('perso','banque_compagnie.id_perso','=','perso.id_perso')->find($id);
+		$account = $account->select('banque_compagnie.id, banque_compagnie.id_perso, perso.nom_perso, bank_id, montant, id_compagnie')
+							->leftJoin('perso_in_compagnie','banque_compagnie.id_perso','=','perso_in_compagnie.id_perso')
+							->leftJoin('perso','banque_compagnie.id_perso','=','perso.id_perso')
+							->where("banque_compagnie.id",$id)
+							->get();
+		$account = $account[0];
 		
 		if($perso->id_compagnie==$account->id_compagnie){
 			
@@ -119,8 +124,8 @@ class BankController extends Controller
 			$bank = $bank->select('*')->find($account->bank_id);
 
 			$overview_limit = 5;
-			$bank_log = $bank->getBankLog($overview_limit,true,$perso->id_perso);
-			$loans = $bank->getBankLog(10,true,$perso->id_perso,[2,3]);
+			$bank_log = $bank->getBankLog($overview_limit,true,$account->id_perso);
+			$loans = $bank->getBankLog(10,true,$account->id_perso,[2,3]);
 			
 			$remainingLoan = 0;
 			

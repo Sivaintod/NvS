@@ -27,7 +27,7 @@ if(isset($_SESSION["id_perso"])){
 				$bankController->store();
 				break;
 			case "edit":
-				if(!isset($_GET['id'])){
+				if(!isset($_GET['id']) OR empty($_GET['id'])){
 					$bankController->index();
 				}else{
 					$bankController->edit($_GET['id']);
@@ -41,14 +41,14 @@ if(isset($_SESSION["id_perso"])){
 				}
 				break;
 			case "show":
-				if(!isset($_GET['id'])){
+				if(!isset($_GET['id']) OR empty($_GET['id'])){
 					$bankController->index();
 				}else{
 					$bankController->show($_GET['id']);
 				}
 				break;
 			case "treasury":
-				if(!isset($_GET['id'])){
+				if(!isset($_GET['id']) OR empty($_GET['id'])){
 					$bankController->index();
 				}else{
 					$bankController->treasury($_GET['id']);

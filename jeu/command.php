@@ -52,10 +52,7 @@ if(isset($_SESSION["id_perso"])){
 
 	}
 	else {
-		$text_triche = "Accès non autorisé à l'état Major";
-			
-		$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ($id,$text_triche)";
-		$mysqli->query($sql);
+		// moderniser le renvoi en cas de problème
 			
 		header("Location:jouer.php");
 	}
