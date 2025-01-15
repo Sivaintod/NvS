@@ -111,7 +111,7 @@ ob_start();
 				<div class="tab-content" id="nav-accountContent">
 					<div class='tab-pane fade<?php if(!isset($_SESSION['flash']['tab'])):?> show active<?php endif?>' id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab" tabindex="0">
 						<h5 class="card-title mb-3">Vos <?= $overview_limit ?> dernières opérations</h5>
-						<?php if($bank_log AND !empty($bank_log)):?>
+						<?php if(isset($bank_log) AND !empty($bank_log)):?>
 						<div class="table-responsive">
 							<table class="table table-striped table-hover">
 								<caption>opérations récentes</caption>

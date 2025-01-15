@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		detailsBtns.forEach(button => {
 			button.addEventListener("click", function() {
 				
+				detailsContent.innerHTML = '';
 				const idVal = parseInt(this.getAttribute('data-nvs-id'));
 				detailsTitle.textContent = typeof idVal;
 				
@@ -143,4 +144,44 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 		});
 	};
+	
+	// gestion personnalisée des modals
+	const quitCompanyModal = document.getElementById('quitCompModal');
+	if (quitCompanyModal) {
+	  quitCompanyModal.addEventListener('show.bs.modal', event => {
+		// Button that triggered the modal
+		const button = event.relatedTarget;
+		// Extract info from data-bs-* attributes
+		const demandType = button.getAttribute('data-bs-demandtype');
+		
+		switch(demandType){
+			case 'cancel':
+			title_custom = 'Annuler la demande pour ';
+			content_custom = "d'annuler la demande pour";
+			details_custom = "";
+			btn_custom = 'Confirmer';
+			break;
+			case 'quit':
+			title_custom = 'Quitter';
+			content_custom = 'de quitter';
+			details_custom = 'Votre départ devra être validé par un responsable de la compagnie.';
+			btn_custom = 'Quitter';
+			break;
+		}
+
+		// Update the modal's content.
+		const modalTitle = quitCompanyModal.querySelector('.customModalTitle');
+		const modalContent = quitCompanyModal.querySelector('.customModalContent');
+		const modalDetails = quitCompanyModal.querySelector('.customModalDetails');
+		const modalBtn = quitCompanyModal.querySelector('.customModalBtn');
+
+		modalTitle.textContent = title_custom;
+		modalContent.textContent = content_custom;
+		modalDetails.textContent = details_custom;
+		modalBtn.textContent = btn_custom;
+	  })
+	}
+	
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 });

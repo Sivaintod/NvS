@@ -141,6 +141,11 @@ ob_start();
 												$symbol = '';
 												$classColor = 'table-light';
 												break;
+											case 5:
+												$ope = "départ de compagnie";
+												$symbol = '';
+												$classColor = 'table-light';
+												break;
 											default :
 												$ope = "inconnu";
 												$symbol = '?';

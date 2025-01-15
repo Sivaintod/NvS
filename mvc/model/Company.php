@@ -8,7 +8,41 @@ class Company extends Model
 	// protected $fillable = [];
 	protected $guarded = [];
 	
+	
 	// ------- fonctions pour tables pivots ------- //
+	
+	/**
+     * Helper pour le nombre de membres dans une compagnie
+     * @param $id int company id
+     * @return int
+     */
+	public function countMembers($id){
+		$query = "SELECT COUNT(*) as countMembers FROM perso_in_compagnie WHERE id_compagnie=? AND (attenteValidation_compagnie='0' OR attenteValidation_compagnie='2')";
+		$request = $this->request($query,[$id]);
+		
+		$countMembers = $request->fetch(PDO::FETCH_ASSOC);
+		return $countMembers['countMembers'];
+	}
+	
+	/**
+     * Helper pour le type d'unité autorisé dans la compagnie
+     * @param $company_id int company id
+     * @param $unity_id int unity id
+     * @return bool
+     */
+	public function checkUnit($company_id, $unity_id){
+		
+		$query = "SELECT COUNT(*) as checkType FROM compagnie_as_contraintes WHERE id_compagnie=? AND contrainte_type_perso=?";
+		$request = $this->request($query,[$company_id,$unity_id]);
+		
+		$count = $request->fetch(PDO::FETCH_ASSOC);
+
+		if($count['checkType']>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	/**
      * Pivot table "compagnie_as_contraintes" to allow units to integrate a company
@@ -62,7 +96,7 @@ class Company extends Model
 	}
 	
 	/**
-     * Pivot table "perso_in_compagnie" to assign Persos to integrate a company
+     * Pivot table "perso_in_compagnie" to assign characters to integrate a company
      * @param $type array
      * @return bool
      */
@@ -82,18 +116,24 @@ class Company extends Model
 	}
 	
 	/**
-     * Pivot table "perso_in_compagnie" to delete a perso in a company
-     * @param $type array
+     * Pivot table "perso_in_compagnie" to delete a character in a company
+     * @param $id_perso int
+     * @param $demand bool
      * @return bool
      */
-	public function dismissPerso(int $id_perso){
+	public function dismissPerso(int $id_perso,$demand=false){
 		
 		$firstTableKey = $this->primaryKey;
 		$firstTableKeyInPivot = 'id_compagnie';
 		
 		$pivotTable = 'perso_in_compagnie';
 		
-		$query = 'DELETE FROM '.$pivotTable.' WHERE '.$firstTableKeyInPivot.' = ? AND id_perso = ?';
+		if($demand){
+			$query = 'UPDATE '.$pivotTable.' SET attenteValidation_compagnie=2 WHERE '.$firstTableKeyInPivot.' = ? AND id_perso = ?';
+		}else{
+			$query = 'DELETE FROM '.$pivotTable.' WHERE '.$firstTableKeyInPivot.' = ? AND id_perso = ?';
+		}
+		
 		$values = [$this->$firstTableKey,$id_perso];
 
 		$request = $this->request($query,$values);

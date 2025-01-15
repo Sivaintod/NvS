@@ -111,7 +111,17 @@ body{
 }
 
 .w-6 {
+	width:1.5rem;
+}
+
+.size-6 {
+	width:1.5rem;
 	height:1.5rem;
+}
+
+.size-7 {
+	width:1.75rem;
+	height:1.75rem;
 }
 
 /* couleur des camps */
@@ -244,7 +254,31 @@ body{
 	background-size: cover;
 }
 
+/* compagnies */
+.card-company .card-img-top{
+	height:150px;
+}
+
+.card-company{
+	background:center url("../img/backgrounds/company-select-bg.png");
+	background-size: auto;
+}
+
+.card-company:hover .card-body, .card-company:hover .card-img-top  {
+	background-color:rgba(255,255,255,0.3) !important;
+}
+
+.company-img {
+	width:130px;
+	height:130px;
+}
 /* icons custom */
+
+.icon-lg {
+	height:2.5rem;
+	width:2.5rem;
+}
+
 .warning-icon-lg {
 	height:2.5rem;
 	width:2.5rem;

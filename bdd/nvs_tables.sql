@@ -514,6 +514,7 @@ CREATE TABLE `compagnies` (
   `image_compagnie` varchar(255) NOT NULL DEFAULT '0',
   `resume_compagnie` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description_compagnie` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `capacity` tinyint unsigned NOT NULL DEFAULT '80',
   `id_clan` tinyint(4) NOT NULL,
   `genie_civil` tinyint(1) NOT NULL DEFAULT '0',
   `id_parent` int(11) DEFAULT NULL
@@ -1984,12 +1985,12 @@ ALTER TABLE `pnj_in_zone`
 --
 
 CREATE TABLE `poste` (
-  `id_poste` int(11) NOT NULL default '0',
-  `nom_poste` varchar(25) NOT NULL default ''
+  `id_poste` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `nom_poste` tinytext NOT NULL,
+  `slug` tinytext NOT NULL,
+  `description` text NOT NULL,
+  `role_level` tinyint NOT NULL DEFAULT '0'
 );
-
-ALTER TABLE `poste`
-  ADD KEY `index_verif_poste` (`id_poste`);
 
 -- --------------------------------------------------------
 

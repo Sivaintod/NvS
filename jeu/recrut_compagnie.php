@@ -63,7 +63,7 @@ if(isset($_SESSION["id_perso"])){
 			$id_compagnie = $_GET["id_compagnie"];
 		
 			// verification que le perso appartient bien a la compagnie et en est le recruteur ou chef
-			$sql = "SELECT id_compagnie, poste_compagnie FROM perso_in_compagnie WHERE id_perso='$id' AND id_compagnie='$id_compagnie' AND (poste_compagnie='4' OR poste_compagnie='1')";
+			$sql = "SELECT id_compagnie, poste_compagnie FROM perso_in_compagnie WHERE id_perso='$id' AND id_compagnie='$id_compagnie' AND (poste_compagnie='4' OR poste_compagnie='1' OR poste_compagnie='2')";
 			$res = $mysqli->query($sql);
 			$verif = $res->num_rows;
 				

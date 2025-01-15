@@ -9,9 +9,10 @@ abstract class Model extends Db
 	protected $fillable = []; // seuls les champs de ce tableau seront autorisés dans une hydratation
 	protected $guarded; //  tous les champs de ce tableau seront enlevés d'une hydratation
 	
-	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db'];
+	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','orWhereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db'];
 	private $selectedCols = '';
 	private $whereConditions = [];
+	private $orWhereConditions = [];
 	private $joinedTables = '';
 	private $groupByConditions = '';
 	private $orderByConditions = '';
@@ -25,6 +26,12 @@ abstract class Model extends Db
 			$this->table = strtolower(get_class($this));
 		}
 	}
+	
+	// paramétrer ce que retourne le var_dump
+	// public function __debugInfo() {
+        // return [
+        // ];
+    // }
 	
 	/**
      * Display the generic request
@@ -154,8 +161,29 @@ abstract class Model extends Db
 			$where = ' WHERE '.implode(' AND ',$columns);
 
 		}
+		
+		if(empty($this->orWhereConditions)){
+			$orWhere = '';
+		}else{
+			$columns = [];
+			
+			foreach($this->orWhereConditions as $condition){
+				$columns[] = $condition[0];
+				
+				if(is_array($condition[1])){
+					foreach($condition[1] as $val){
+						$values[] = $val;
+					}
+				}else{
+					$values[] = $condition[1];
+				}
+			}
+			
+			$orWhere = implode(' ',$columns);
 
-		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$grouped.$ordered.$limit;
+		}
+
+		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$orWhere.$grouped.$ordered.$limit;
 		
 		$request = $this->request($query,$values);
 
@@ -303,6 +331,24 @@ abstract class Model extends Db
 		$condition = $attr.' '.$operator.' ?';
 
 		$this->whereConditions[] = [$condition,$value];
+		
+		return $this;
+	}
+	
+	/**
+	 * Ajouter une condition OR WHERE à la requête
+	 * 
+	 * @return *this
+	 */
+	public function orWhere(string $attr, string $operator,int $value=null){
+		
+		if($value === null){
+			$value = $operator;
+			$operator = '=';
+		}
+		$condition = ' OR '.$attr.' '.$operator.' ?';
+
+		$this->orWhereConditions[] = [$condition,$value];
 		
 		return $this;
 	}

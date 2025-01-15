@@ -62,7 +62,7 @@ if($dispo == '1' || $admin){
 			$verif_poste = $t_verif["poste_compagnie"];
 			
 			// chef ou diplomate
-			if($verif_poste == '1' || $verif_poste == '5'){
+			if($verif_poste == '1' || $verif_poste == '2' || $verif_poste == '5'){
 				
 				$id_compagnie = $_SESSION["id_compagnie"] = $_GET["id_compagnie"];
 		
