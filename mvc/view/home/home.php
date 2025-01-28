@@ -54,21 +54,33 @@ ob_start();
 						endif;
 					?>
 					<div class='pt-4'>
-						<form class='' action="../login.php" method="post" name="login" id="login">
+						<?php if(isset($_SESSION['flash'])&& !empty($_SESSION['flash'])): ?>
+						<div class="row">
+							<div class='col'>
+								<div class='p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
+									<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class='align-middle fw-semibold'><?= $_SESSION['flash']['message'] ?></span>
+								</div>
+							</div>
+						</div>
+						<?php endif ?>
+						<form class='' action="auth.php?action=login" method="post" name="login" id="login">
 							<div class='row justify-content-center'>
 								<div class="mb-4 col-10">
 									<label for="pseudo" class='form-label fw-semibold'>Pseudo</label>
-									<input type="text" class="form-control" id="pseudo" name='pseudo' placeholder="Pseudo">
+									<input type="text" class="form-control<?php if(isset($_SESSION['errors']['pseudo'])){?> is-invalid<?php };?>" id="pseudo" name='pseudo' placeholder="Pseudo" value="<?php if(isset($_SESSION['old_input']['pseudo'])){echo $_SESSION['old_input']['pseudo'];}?>">
 								</div>
 								<div class="mb-4 col-10">
-									<label for="pseudo" class='form-label fw-semibold'>Mot de Passe</label>
-									<input type="password" class="form-control" id="password" name='password' placeholder="Mot de Passe">
+									<label for="password" class='form-label fw-semibold'>Mot de Passe</label>
+									<input type="password" class="form-control<?php if(isset($_SESSION['errors']['password'])){?> is-invalid<?php };?>" id="password" name='password' placeholder="Mot de Passe">
 								</div>
 								<div class="mb-4 col-10">
-									<label for="pseudo" class='form-label'>Etes-vous un robot ?</label>
+									<label for="captcha" class='form-label'>Etes-vous un robot ?</label>
 									<div class=''>
-										<a href='#' id='reload_captcha' class='mx-2'><img src="../captcha.php" id='captcha'/></a>
-										<input id='captcha_input' name="captcha" type="text" class="form-control mt-2" placeholder="Entrez le texte de l'image">
+										<a href='#' id='reload_captcha' class='mx-2'><img src="../captcha.php"/></a>
+										<input id='captcha' name="captcha" type="text" class="form-control mt-2<?php if(isset($_SESSION['errors']['captcha'])){?> is-invalid<?php };?>" placeholder="Entrez le texte de l'image">
 									</div>
 								</div>
 								<div class="mb-4 col-10">

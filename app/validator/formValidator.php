@@ -273,7 +273,7 @@ class formValidator
 							break;
 						case 'same':
 							if($_POST[$key]!==$value){
-								$errors[$key][$condition] = 'le champ "'.$key_name.'" est incorrect';
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" ne correspond pas';
 							}else{
 								$bail = 0;
 							}

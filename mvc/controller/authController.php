@@ -223,8 +223,9 @@ class AuthController extends Controller
 				}
 
 				// instanciation du joueur
+				$player->pseudo_joueur = $sanitizer->sanitize($_POST['nom_perso']);
 				$player->email_joueur = $sanitizer->sanitize($_POST['email_joueur']);
-				$player->mdp_joueur = md5($_POST['mdp_joueur']);
+				$player->mdp_joueur = password_hash($_POST['mdp_joueur'],PASSWORD_DEFAULT);
 				$player->created_at = $nowDate->format('Y-m-d H:i:s');
 				
 				// instanciation du chef
@@ -413,4 +414,114 @@ class AuthController extends Controller
 			die();
 		}
     }
+	
+	/**
+     * login auth
+     *
+     * @return redirect
+     */
+    public function login()
+    {
+		if($_SERVER['REQUEST_METHOD']==='POST'){
+
+			// Validation du formulaire
+			
+			$errors =[];
+			
+			$errors = formValidator::validate([
+				'pseudo' => [['bail','required'],'Pseudo'],
+				'password' => [['bail','required'],'Mot de passe'],
+				'captcha' => [['bail','required','same:'.$_SESSION["code"]],'Captcha'],
+			]);
+
+			// Si le formulaire contient des erreurs on renvoie :
+			// les erreurs, les anciennes données
+			// et on redirige vers la page de login
+
+			if (!empty($errors)){
+				$_SESSION['old_input'] = $_POST;
+				$_SESSION['errors'] = $errors;
+				$_SESSION['flash'] = ['class'=>'danger','message'=>'Certains champs sont vides ou le CAPTCHA est incorrect. Veuillez réessayer'];
+				
+				header('location:../');
+				die();
+			}else{
+				// on nettoie les données
+				$pseudo	= trim(htmlspecialchars($_POST['pseudo']));
+				$mdp = trim($_POST['password']);
+				$captcha = trim($_POST['captcha']);
+				
+				$mdp_md5 = md5($mdp);
+				$hash_mdp = password_hash($mdp,PASSWORD_DEFAULT);
+				
+				// récupération des infos joueur
+				$user = new User();
+				$user = $user->select("id_joueur, mdp_joueur, admin_perso, permission, id_perso")
+						->leftJoin("perso","perso.idJoueur_perso","=","joueur.id_joueur")
+						->where("nom_perso",$pseudo)->where("chef",1)->where("pendu",0)
+						->get();
+				$user = $user[0];
+
+				$hash_joueur = $user->mdp_joueur;
+				$id_joueur 	= $user->id_joueur;
+				
+				if(empty($user->id_joueur)){
+					$_SESSION['old_input'] = $_POST;
+					$_SESSION['errors']['pseudo'] = 'le champ est incorrect';
+					$_SESSION['errors']['password'] = 'le champ est incorrect';
+					$_SESSION['flash'] = ['class'=>'danger','message'=>"Ce compte n'existe pas ou le mot de passe est incorrect. Veuillez réessayer"];
+					header('location:../');
+					die();
+				}
+				
+				// on récupère les données utilisateur pour les contrôles de triche ou fraude
+				$ip_joueur = $_SERVER["REMOTE_ADDR"];
+				$user_agent = get_user_agent();
+				$cookie_val = htmlspecialchars($_COOKIE["PHPSESSID"]);
+				
+				if($mdp_md5 == $hash_joueur){
+					$_SESSION["ID_joueur"] = $id_joueur;
+					$_SESSION["admin"] = $user->admin_perso;
+					$_SESSION["permission"] = $user->permission;
+					$_SESSION["id_perso"] = $user->id_perso;
+					unset($user->id_perso);
+					
+					$userOkLogin = new User();
+					$userOkLogin = $userOkLogin->addUserOkLogin($id_joueur,$ip_joueur,$user_agent,$cookie_val);
+					
+					// temporaire : on renforce la sécurité du mot de passe
+					$user->mdp_joueur = $hash_mdp;
+					$user->update();
+					
+					header("location:../jeu/jouer.php?login=ok");
+					
+				}elseif(password_verify($mdp,$hash_joueur)){
+					$_SESSION["ID_joueur"] = $id_joueur;
+					$_SESSION["admin"] = $user->admin_perso;
+					$_SESSION["permission"] = $user->permission;
+					$_SESSION["id_perso"] = $user->id_perso;
+					
+					$user = new User();
+					$user = $user->addUserOkLogin($id_joueur,$ip_joueur,$user_agent,$cookie_val);
+					
+					header("location:../jeu/jouer.php?login=ok");
+				}
+				else {
+					
+					$user = new User();
+					$user = $user->addFailedLoginAttempt($id_joueur, $ip_joueur);
+					
+					$_SESSION['old_input'] = $_POST;
+					$_SESSION['errors']['pseudo'] = 'le champ est incorrect';
+					$_SESSION['errors']['password'] = 'le champ est incorrect';
+					$_SESSION['flash'] = ["class" => "danger","message"=>"Ce compte n'existe pas ou le mot de passe est incorrect. Veuillez réessayer"];
+					header('location:../');
+					die();
+				}
+			}
+		}else{
+			header('location:?action=create');
+			die();
+		}
+	}
 }

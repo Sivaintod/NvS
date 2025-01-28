@@ -1129,7 +1129,7 @@ CREATE TABLE `joueur` (
   `id_joueur` int(11) NOT NULL,
   `nom_joueur` varchar(100) DEFAULT NULL,
   `email_joueur` varchar(100) NOT NULL DEFAULT '',
-  `mdp_joueur` varchar(100) NOT NULL DEFAULT '',
+  `mdp_joueur` varchar(255) NOT NULL,
   `age_joueur` int(11) DEFAULT NULL,
   `pays_joueur` varchar(100) DEFAULT NULL,
   `region_joueur` varchar(100) DEFAULT NULL,
@@ -1142,6 +1142,7 @@ CREATE TABLE `joueur` (
   `valid_case` INT NOT NULL DEFAULT '0',
   `afficher_rosace` INT NOT NULL DEFAULT '1',
   `bousculade_deplacement` INT NOT NULL DEFAULT '1',
+  `permission` datetime NULL,
   `pendu` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
