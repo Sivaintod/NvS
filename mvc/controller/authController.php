@@ -223,7 +223,6 @@ class AuthController extends Controller
 				}
 
 				// instanciation du joueur
-				$player->pseudo_joueur = $sanitizer->sanitize($_POST['nom_perso']);
 				$player->email_joueur = $sanitizer->sanitize($_POST['email_joueur']);
 				$player->mdp_joueur = password_hash($_POST['mdp_joueur'],PASSWORD_DEFAULT);
 				$player->created_at = $nowDate->format('Y-m-d H:i:s');

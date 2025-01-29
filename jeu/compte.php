@@ -138,11 +138,10 @@ if($dispo == '1' || $admin){
 				// Changement de MDP
 				if (isset($_POST['mdp_change']) && $_POST['mdp_change'] != "" ) {
 					
-					if (isset($_POST['verif_mdp']) && $mdp_joueur == md5($_POST['verif_mdp'])) {
+					if (isset($_POST['verif_mdp']) && password_verify($_POST['verif_mdp'],$mdp_joueur)) {
 						
 						$mdp = $_POST['mdp_change'];
-						
-						$mdp_hash = md5($_POST['mdp_change']);
+						$mdp_hash = password_hash($_POST['mdp_change'],PASSWORD_DEFAULT);
 						$sql = "UPDATE joueur SET mdp_joueur='$mdp_hash' WHERE id_joueur ='".$id_joueur."'";
 						$mysqli->query($sql);
 						
