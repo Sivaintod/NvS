@@ -28,10 +28,17 @@ abstract class Model extends Db
 	}
 	
 	// paramétrer ce que retourne le var_dump
-	// public function __debugInfo() {
-        // return [
-        // ];
-    // }
+	public function __debugInfo() {
+		$model_vars = get_object_vars($this);
+		$array = [];
+		
+		foreach($model_vars as $attr => $value){
+			if(!in_array($attr,$this->modelAttr)){
+				$array[$attr] = $value;
+			}
+		}
+		return $array;
+    }
 	
 	/**
      * Display the generic request
@@ -207,20 +214,21 @@ abstract class Model extends Db
 	public function update(int $id=NULL)
 	{
 		$model_vars = get_object_vars($this);
-
+		
 		foreach($model_vars as $attr => $value){
 			if($attr=='primaryKey' AND !empty($this->$value)){
 				$id=$this->$value;
 			}
-			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
+			if(!in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
 				$columns[] = $attr. ' = ?';
 				$values[] = $value;
 			}
 		}
 		
 		$columns = implode(', ',$columns);
+		$sql = 'UPDATE '.$this->table.' SET '.$columns.' WHERE '.$this->primaryKey.' = '.$id;
 
-		$request = $this->request('UPDATE '.$this->table.' SET '.$columns.' WHERE '.$this->primaryKey.' = '.$id,$values);
+		$request = $this->request($sql,$values);
 		return $request->rowCount();
 	}
 	
@@ -322,7 +330,7 @@ abstract class Model extends Db
 	 * 
 	 * @return *this
 	 */
-	public function where(string $attr, string $operator,int $value=null){
+	public function where(string $attr, string $operator, $value=null){
 		
 		if($value === null){
 			$value = $operator;
