@@ -39,7 +39,7 @@ ob_start();
 				</div>
 				<div class="mb-3">
 					<label for="mdp_joueur" class='form-label'>Mot de passe:</label>
-					<input type="password" class="form-control form-control<?php if(isset($_SESSION['errors']['mdp_joueur'])){?> is-invalid<?php };?>" id="mdp_joueur" name='mdp_joueur' placeholder="****" >
+					<input type="password" class="form-control<?php if(isset($_SESSION['errors']['mdp_joueur'])){?> is-invalid<?php };?>" id="mdp_joueur" name='mdp_joueur' placeholder="****" >
 					<?php if(isset($_SESSION['errors']['mdp_joueur'])):?>
 					<div class="invalid-feedback">
 						<?php foreach($_SESSION['errors']['mdp_joueur'] as $error): ?>
@@ -51,7 +51,7 @@ ob_start();
 				</div>
 				<div class="mb-3">
 					<label for="nom_perso" class='form-label'>Nom de votre personnage:</label>
-					<input type="text" class="form-control form-control<?php if(isset($_SESSION['errors']['nom_perso'])){?> is-invalid<?php };?>" id="nom_perso" name='nom_perso' value="<?php if(isset($_SESSION['old_input']['nom_perso'])){echo $_SESSION['old_input']['nom_perso'];}?>" placeholder="Alfred le borgne" >
+					<input type="text" class="form-control<?php if(isset($_SESSION['errors']['nom_perso'])){?> is-invalid<?php };?>" id="nom_perso" name='nom_perso' value="<?php if(isset($_SESSION['old_input']['nom_perso'])){echo $_SESSION['old_input']['nom_perso'];}?>" placeholder="Alfred le borgne" >
 					<?php if(isset($_SESSION['errors']['nom_perso'])):?>
 					<div class="invalid-feedback">
 						<?php foreach($_SESSION['errors']['nom_perso'] as $error): ?>
@@ -63,7 +63,7 @@ ob_start();
 				</div>
 				<div class="mb-3">
 					<label for="nom_bataillon" class='form-label'>Nom de votre bataillon:</label>
-					<input type="text" class="form-control form-control<?php if(isset($_SESSION['errors']['nom_bataillon'])){?> is-invalid<?php };?>" id="nom_bataillon" name='nom_bataillon' value="<?php if(isset($_SESSION['old_input']['nom_bataillon'])){echo $_SESSION['old_input']['nom_bataillon'];}?>" placeholder="Les souris en claquette" >
+					<input type="text" class="form-control<?php if(isset($_SESSION['errors']['nom_bataillon'])){?> is-invalid<?php };?>" id="nom_bataillon" name='nom_bataillon' value="<?php if(isset($_SESSION['old_input']['nom_bataillon'])){echo $_SESSION['old_input']['nom_bataillon'];}?>" placeholder="Les souris en claquette" >
 					<?php if(isset($_SESSION['errors']['nom_bataillon'])):?>
 					<div class="invalid-feedback">
 						<?php foreach($_SESSION['errors']['nom_bataillon'] as $error): ?>
@@ -185,37 +185,6 @@ ob_start();
 			</div>
 		</form>
 	</div>	
-</div>
-<div class='row justify-content-center mt-3'>
-	<div class='col-6'>
-	<?php // est ce que ce code est vraiment nécessaire ?
-		if (isset ($_GET["voir"])){
-			$i = 0;
-			$sql = "SELECT nom_perso FROM perso";
-			$resultat = $mysqli->query($sql);
-			
-			if(isset($resultat)):
-			?>
-			<p>
-				<span class='fw-bold'>Personnages(s) existant(s):</span><br/>
-				(choisir un nom différent)<br/><br/>
-			<?php
-				foreach($resultat as $tab){
-					$i++;
-					echo $tab['nom_perso'];
-					if($i>=0 && $i<$resultat->num_rows){
-						echo ' - ';
-					};
-				};
-			?>
-			<br/><br/>Masquer la liste :<br/>
-			<a href="inscription.php"><img src="images/b_ok.gif"></a>
-			</p>
-			<?php
-			endif;
-		};
-	?>
-	</div>
 </div>
 	
 <?php $content = ob_get_clean(); ?>

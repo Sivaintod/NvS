@@ -79,7 +79,7 @@ ob_start();
 								<div class="mb-4 col-10">
 									<label for="captcha" class='form-label'>Etes-vous un robot ?</label>
 									<div class=''>
-										<a href='#' id='reload_captcha' class='mx-2'><img src="../captcha.php"/></a>
+										<div id='reload_captcha' class='mx-2'><img id='captcha_img' src="../captcha.php"/></div>
 										<input id='captcha' name="captcha" type="text" class="form-control mt-2<?php if(isset($_SESSION['errors']['captcha'])){?> is-invalid<?php };?>" placeholder="Entrez le texte de l'image">
 									</div>
 								</div>

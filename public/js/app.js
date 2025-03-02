@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log( "DOM chargé" );
 	
+	// actualisation du captcha
 	$('#reload_captcha').click(function(){
-		$("#captcha").attr("src", "captcha.php?"+(new Date()).getTime());
+		$("#captcha_img").attr("src", "../captcha.php?"+(new Date()).getTime());
 	})
 
 	//aperçu d'une image sélectionnée dans un formulaire

@@ -1,5 +1,5 @@
 <?php
-$title = "erreur 404";
+$title = "erreur 403";
 
 /* ---Header--- */
 ob_start();
@@ -21,10 +21,10 @@ ob_start();
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
 					</svg>
-					Erreur 404
+					Erreur 403
 				</h3>
 				<p>
-					Page non trouvée
+					Requête non autorisée.
 				</p>
 			</div>
 		</div>
@@ -39,9 +39,10 @@ ob_start();
 <div class="row justify-content-center bg-light p-4 rounded">
 	<div class="col text-center mb-4">
 		<h4>
-			Vous êtes perdu soldat ?
+			Accès non autorisé.
 		</h4>
 		<p>
+			Vous n'êtes pas autorisé à entrer dans cette tente soldat !<br>
 			Retournez dans les rangs. Il n'y a rien à voir ici.
 		</p>
 		<a href='/'>
