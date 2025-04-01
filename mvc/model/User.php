@@ -33,4 +33,14 @@ class User extends Model
 
 		return $result;
 	}
+	
+	public function multiAccount(int $user_id, int $target_id,string $details){
+		$query = 'INSERT INTO declaration_multi (id_perso,id_multi,situation,date_declaration) VALUES (?,?,?,NOW())';
+		$values = [$user_id,$target_id,$details];
+
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
+	}
 }

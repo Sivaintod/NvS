@@ -84,52 +84,42 @@ if(isset($_SESSION["id_perso"])){
 						<div id="table_batiments" class="table-responsive">	
 					
 							<?php
-							$sql = "SELECT * FROM declaration_multi ORDER BY id_perso ASC";
+							$sql = "SELECT id_declaration, user_id, target_id, user.nom_perso as user_name, target.nom_perso as target_name, user.clan as user_clan, target.clan as target_clan, situation, date_declaration FROM declaration_multi LEFT JOIN perso as user ON user_id=user.idJoueur_perso LEFT JOIN perso as target ON target_id=target.idJoueur_perso WHERE user.chef=1 AND target.chef=1 ORDER BY declaration_multi.user_id ASC";
 							$res = $mysqli->query($sql);
-							
-							echo "<table class='table'>";
-							echo "	<thead>";
-							echo "		<tr>";
-							echo "			<th style='text-align:center'>Perso qui déclare</th>";
-							echo "			<th style='text-align:center'>Multi</th>";
-							echo "			<th style='text-align:center'>Action</th>";
-							echo "		</tr>";
-							echo "	</thead>";
-							echo "	<tbody>";
-							
+
+							?>
+							<table class='table'>
+								<thead>
+									<tr>
+										<th style='text-align:center'>Perso qui déclare</th>
+										<th style='text-align:center'>Multi</th>
+										<th style='text-align:center'>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+							<?php 
 							while ($t = $res->fetch_assoc()) {
 								
 								$id_decla	= $t['id_declaration'];
-								$id_perso	= $t['id_perso'];
-								$id_multi	= $t['id_multi'];
+								$id_perso	= $t['user_id'];
+								$id_multi	= $t['target_id'];
 								
-								// récup infos perso qui babysitte
-								$sql_p = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_perso'";
-								$res_p = $mysqli->query($sql_p);
-								$t_p = $res_p->fetch_assoc();
+								$nom_perso 	= $t['user_name'];
+								$camp_perso	= $t['user_clan'];
 
-								$nom_perso 	= $t_p['nom_perso'];
-								$camp_perso	= $t_p['clan'];
-								
-								// récup infos perso multi
-								$sql_m = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_multi'";
-								$res_m = $mysqli->query($sql_m);
-								$t_m = $res_m->fetch_assoc();
-
-								$nom_multi 	= $t_m['nom_perso'];
-								$camp_multi	= $t_m['clan'];
-								
-								echo "		<tr>";
-								echo "			<td align='center'>".$nom_perso." [".$id_perso."]</td>";
-								echo "			<td align='center'>".$nom_multi." [".$id_multi."]</td>";
-								echo "			<td align='center'><a href='admin_multi.php?detail_id=".$id_decla."' class='btn btn-primary'>Consulter le détail</a></td>";
-								echo "		</tr>";
+								$nom_multi 	= $t['target_name'];
+								$camp_multi	= $t['target_clan'];
+								?>
+									<tr>
+										<td align='center'><?= $nom_perso?> [<?=$id_perso?>]</td>
+										<td align='center'><?= $nom_multi?> [<?=$id_multi?>]</td>
+										<td align='center'><a href='admin_multi.php?detail_id=<?=$id_decla?>' class='btn btn-primary'>Consulter le détail</a></td>
+									</tr>
+							<?php
 							}
-							
-							echo "	</tbody>";
-							echo "</table>";
 							?>
-						
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>

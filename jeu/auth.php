@@ -21,9 +21,6 @@ if(!empty($_SESSION) AND isset($_SESSION["id_perso"])){
 			case "logout":
 				$authController->logout();
 				break;
-			case "forget_password":
-				$homeController->forgetPass();
-				break;
 			default:
 				$authController->index();
 		}

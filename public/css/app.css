@@ -223,6 +223,18 @@ body{
 	height:100%;
 }
 
+/* Profil */
+.avatar {
+	width:150px;
+	height:150px;
+}
+.avatar-img::before {
+	position:relative;
+	top:12px;
+	font-size:5rem;
+	font-family: "Times New Roman", Times, serif;
+}
+
 /* sac */
 .sac {
 	z-index:-1;

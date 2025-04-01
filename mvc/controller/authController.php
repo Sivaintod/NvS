@@ -26,7 +26,7 @@ class AuthController extends Controller
     public function index()
     {
 		header('location:index.php');
-		// require_once('../mvc/view/home/home.php');
+		die();
     }
 	
 	/**
@@ -493,6 +493,7 @@ class AuthController extends Controller
 					$user->update();
 					
 					header("location:../jeu/jouer.php?login=ok");
+					die();
 					
 				}elseif(password_verify($mdp,$hash_joueur)){
 					$_SESSION["ID_joueur"] = $id_joueur;
@@ -504,6 +505,7 @@ class AuthController extends Controller
 					$user = $user->addUserOkLogin($id_joueur,$ip_joueur,$user_agent,$cookie_val);
 					
 					header("location:../jeu/jouer.php?login=ok");
+					die();
 				}
 				else {
 					
@@ -522,5 +524,92 @@ class AuthController extends Controller
 			header('location:?action=create');
 			die();
 		}
+	}
+	
+	/**
+     * new password
+     *
+     * @return redirect
+     */
+    public function changePassword()
+    {
+		if($_SERVER['REQUEST_METHOD']==='POST'){
+			$user = new User();
+			$user = $user->select('id_joueur, mdp_joueur')
+					->where('id_joueur',$_SESSION['ID_joueur'])
+					->get();
+			$user = $user[0];
+			
+			if($user->id_joueur!=$_POST['profile']){
+				throw new Exception('Page non autorisée',403);
+			}
+			
+			//redirection
+			switch($_POST['from']){
+				case 'user':
+					$redirect = '?action=user&op=show&id='.$user->id_joueur;
+					break;
+				default :
+					$redirect = '/';
+			}
+			// Validation du formulaire
+
+			$errors =[];
+			
+			$errors = formValidator::validate([
+				'actual_pwd' => [['bail','required','current_password:'.$user->mdp_joueur],'Mot de passe actuel'],
+				'new_pwd' => [['bail','required','regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[&@!?*\-+_#%]).{8,}$/'],'Nouveau mot de passe'],
+				'confirm_pwd' => [['bail','required','same:'.$_POST["new_pwd"]],'Confirmation du mot de passe'],
+			]);
+			
+			// Si le formulaire contient des erreurs on renvoie :
+			// les erreurs, les anciennes données
+			// et on redirige vers la page de login
+
+			if (!empty($errors)){
+				$_SESSION['old_input'] = $_POST;
+				$_SESSION['errors'] = $errors;
+				$_SESSION['flash'] = [
+					'class'=>'danger',
+					'message'=>'Une erreur est survenue. Veuillez réessayer',
+					'tab'=>'security'
+					];
+				
+				header('location:'.$redirect);
+				die();
+			}else{
+				// on nettoie les données
+				$user->mdp_joueur = password_hash($_POST['new_pwd'],PASSWORD_DEFAULT);
+					
+				// on stocke
+				$result = $user->update();
+
+				if($result){
+					$_SESSION['flash'] = ['class'=>'success','message'=>'Le mot de passe a été changé','tab'=>'security'];
+				}else{
+					$_SESSION['old_input'] = $_POST;
+					$_SESSION['flash'] = ["class" => "warning","message"=>"Une erreur inconnue est survenue, veuillez recommencer. Si le problème persiste, contactez l'administrateur.",'tab'=>'security'];
+				}
+				
+				header('location:'.$redirect);
+				die();
+			}
+		}else{
+			throw new Exception('Page non trouvée',404);
+		}
+	}
+	
+		/**
+     * logout
+     *
+     * @return redirect
+     */
+    public function logout()
+    {
+		$_SESSION = array(); // On écrase le tableau de session
+		session_destroy(); // On détruit la session
+		
+		header('location:/');
+		die();
 	}
 }
