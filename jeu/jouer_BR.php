@@ -15,44 +15,6 @@ date_default_timezone_set('Europe/Paris');
 
 $id_perso = 0;
 
-// Traitement selection perso
-if (isset($_POST["liste_perso"]) && $_POST["liste_perso"] != "") {
-
-	if(isset($_SESSION["ID_joueur"])){
-
-		$id_joueur 	= $_SESSION["ID_joueur"];
-		$id_perso	= $_POST["liste_perso"];
-
-		// recuperation des infos du perso
-		$sql = "SELECT idJoueur_perso FROM perso WHERE id_perso='$id_perso'";
-		$res = $mysqli->query($sql);
-		$t_perso = $res->fetch_assoc();
-
-		$id_joueur_perso 	= $t_perso["idJoueur_perso"];
-
-		// Le perso appartient-il bien au joueur ?
-		if ($id_joueur_perso == $id_joueur) {
-			$id_perso = $_SESSION['id_perso'] = $_POST["liste_perso"];
-		}
-		else {
-			// Tentative de triche !
-			$text_triche = "Le joueur $id_joueur a essayé de prendre controle du perso $id_perso qui ne lui appartient pas !";
-
-			$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
-			$mysqli->query($sql);
-
-			$_SESSION = array(); // On écrase le tableau de session
-			session_destroy(); // On détruit la session
-
-			//redirection
-			header("location:index.php");
-		}
-
-	} else {
-		header("Location:../index.php");
-	}
-}
-
 if(isset($_SESSION["id_perso"])){
 	$id_perso = $_SESSION['id_perso'];
 }
@@ -120,28 +82,12 @@ if($dispo == '1' || $admin){
 			}
 		}
 
-		// TODO - Vérification 10 derniers logs d'accès, sont-il sur le même delta de temps ?
-
-
-		$sql_joueur = "SELECT idJoueur_perso FROM perso WHERE id_perso='$id_perso'";
-		$res_joueur = $mysqli->query($sql_joueur);
-		$t_joueur = $res_joueur->fetch_assoc();
-
-		$id_joueur_perso = $t_joueur["idJoueur_perso"];
-
-		$sql_dla = "SELECT UNIX_TIMESTAMP(DLA_perso) as DLA, est_gele FROM perso WHERE idJoueur_perso='$id_joueur_perso' AND chef=1";
-		$res_dla = $mysqli->query($sql_dla);
-		$t_dla = $res_dla->fetch_assoc();
-
-		$dla 		= $t_dla["DLA"];
-		$est_gele 	= $t_dla["est_gele"];
-
-		$sql = "SELECT pv_perso FROM perso WHERE id_perso='$id_perso'";
-		$res = $mysqli->query($sql);
-		$tpv = $res->fetch_assoc();
-
-		$testpv = $tpv['pv_perso'];
-
+		$id_joueur_perso = $character->idJoueur_perso;
+		$dla = new DateTimeImmutable($character->DLA_perso);
+		$dla = $dla->getTimestamp();
+		$est_gele = $character->est_gele;
+		$testpv = $character->pv_perso;
+		
 		$config = '1';
 
 		// verification si le perso est encore en vie
@@ -170,32 +116,23 @@ if($dispo == '1' || $admin){
 					$_SESSION["nv_tour"] = 0;
 				}
 
-				// recuperation des anciennes données du perso
-				$sql = "SELECT idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, clan, perso_as_grade.id_grade, nom_grade
-						FROM perso, perso_as_grade, grades
-						WHERE perso_as_grade.id_perso = perso.id_perso
-						AND perso_as_grade.id_grade = grades.id_grade
-						AND perso.id_perso='$id_perso'";
-				$res = $mysqli->query($sql);
-				$t_perso1 = $res->fetch_assoc();
-
-				$id_joueur_perso 	= $t_perso1["idJoueur_perso"];
-				$nom_perso 			= $t_perso1["nom_perso"];
-				$x_persoN 			= $t_perso1["x_perso"];
-				$y_persoN 			= $t_perso1["y_perso"];
-				$pm_perso 			= $t_perso1["pm_perso"];
-				$pmMax_perso		= $t_perso1["pmMax_perso"];
-				$dla_perso			= $t_perso1["DLA_perso"];
-				$image_perso 		= $t_perso1["image_perso"];
-				$bonusPM_perso_p 	= $t_perso1["bonusPM_perso"];
-				$clan_p 			= $t_perso1["clan"];
-				$type_perso			= $t_perso1["type_perso"];
-				$pa_perso			= $t_perso1["pa_perso"];
-				$perception_perso	= $t_perso1["perception_perso"];
-				$charge_perso		= $t_perso1["charge_perso"];
-				$chargeMax_perso	= $t_perso1["chargeMax_perso"];
-				$grade_perso 		= $t_perso1["id_grade"];
-				$nom_grade_perso	= $t_perso1["nom_grade"];
+				$id_joueur_perso 	= $character->idJoueur_perso;
+				$nom_perso 			= $character->nom_perso;
+				$x_persoN 			= $character->x_perso;
+				$y_persoN 			= $character->y_perso;
+				$pm_perso 			= $character->pm_perso;
+				$pmMax_perso		= $character->pmMax_perso;
+				$dla_perso			= $character->DLA_perso;
+				$image_perso 		= $character->image_perso;
+				$bonusPM_perso_p 	= $character->bonusPM_perso;
+				$clan_p 			= $character->clan;
+				$type_perso			= $character->type_perso;
+				$pa_perso			= $character->pa_perso;
+				$perception_perso	= $character->perception_perso;
+				$charge_perso		= $character->charge_perso;
+				$chargeMax_perso	= $character->chargeMax_perso;
+				$grade_perso 		= $character->id_grade;
+				$nom_grade_perso	= $character->nom_grade;
 
 				$sql = "SELECT UNIX_TIMESTAMP(DLA_perso) as DLA_perso FROM perso WHERE idJoueur_perso='$id_joueur_perso' AND chef=1";
 				$res = $mysqli->query($sql);
@@ -205,17 +142,6 @@ if($dispo == '1' || $admin){
 
 				// récupération de la couleur du camp
 				$couleur_clan_p = couleur_clan($clan_p);
-
-				$dossier_img_joueur = get_dossier_image_joueur($mysqli, $id_joueur_perso);
-
-				// affichage rosace et bousculades
-				$sql = "SELECT afficher_rosace, bousculade_deplacement FROM joueur WHERE id_joueur='$id_joueur_perso'";
-				$res = $mysqli->query($sql);
-				$t = $res->fetch_assoc();
-
-				$afficher_rosace 	= $t['afficher_rosace'];
-				$bousculade_dep		= $t['bousculade_deplacement'];
-				$cadrillage			= 1;//$t['cadrillage'];
 
 				$sql = "SELECT MAX(x_carte) as x_max, MAX(y_carte) as y_max FROM carte";
 				$res = $mysqli->query($sql);
@@ -1463,7 +1389,7 @@ if($dispo == '1' || $admin){
 					$sql = "SELECT id_instanceBat, id_batiment, nom_instance, pv_instance, pvMax_instance FROM instance_batiment WHERE x_instance='$x_persoN' AND y_instance='$y_persoN'";
 					$res = $mysqli->query($sql);
 					$t = $res->fetch_assoc();
-
+					
 					$id_bat 	= $t["id_instanceBat"];
 					$bat 		= $t["id_batiment"];
 					$nom_ibat 	= $t["nom_instance"];
@@ -1758,9 +1684,9 @@ if($dispo == '1' || $admin){
 
 					$mouv = $_GET["mouv"];
 
-					$x_persoE = $t_perso1["x_perso"];
-					$y_persoE = $t_perso1["y_perso"];
-					$pm_perso = $t_perso1["pm_perso"];
+					$x_persoE = $character->x_perso;
+					$y_persoE = $character->y_perso;
+					$pm_perso = $character->pm_perso;
 
 					if (!in_bat($mysqli, $id_perso) && !in_train($mysqli, $id_perso)) {
 
@@ -2193,6 +2119,18 @@ if($dispo == '1' || $admin){
 	</head>
 
 	<body>
+		<?php if(!empty($permissionMsg)):?>
+		<div class="row">
+			<div class='col'>
+				<div class='p-4 m-0 alert alert-warning' role="alert">
+					<!--<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>-->
+					<span class='align-middle fw-semibold'><?= $permissionMsg?></span>
+				</div>
+			</div>
+		</div>
+		<?php endif;?>
 				<table width=100% bgcolor='white' border=0>
 				<tr>
 					<td><img src='../images/clock.png' alt='horloge' width='25' height='25'/> Heure serveur : <b><span id=tp1>"<?=$date_serveur->format('H:i:s')?>"</span></b></td>

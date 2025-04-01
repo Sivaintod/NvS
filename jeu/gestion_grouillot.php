@@ -86,7 +86,7 @@ if($dispo == '1' || $admin){
 							<a class="nav-link" href="equipement.php">Equiper son perso</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="compte.php">Gérer son Compte</a>
+							<a class="nav-link" href="./?action=user&op=show&id=<?=$_SESSION["ID_joueur"]?>">Gérer son Compte</a>
 						</li>
 					</ul>
 				</div>
