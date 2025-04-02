@@ -164,7 +164,7 @@ class formValidator
 						case 'email':
 							$value = preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',$_POST[$key]);
 							if($value===0 OR $value===False){
-								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas une adresse mail conforme';
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas une adresse mail valide';
 							}else{
 								$bail = 0;
 							}
@@ -172,7 +172,7 @@ class formValidator
 						case 'regex':
 							$value = preg_match($value,$_POST[$key]);
 							if($value===0 OR $value===False){
-								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas un format conforme';
+								$errors[$key][$condition] = 'le champ "'.$key_name.'" n\'est pas un format valide';
 							}else{
 								$bail = 0;
 							}
@@ -274,6 +274,13 @@ class formValidator
 						case 'same':
 							if($_POST[$key]!==$value){
 								$errors[$key][$condition] = 'le champ "'.$key_name.'" ne correspond pas';
+							}else{
+								$bail = 0;
+							}
+							break;
+						case 'current_password':
+							if(!password_verify($_POST[$key],$value)){
+								$errors[$key][$condition] = 'Mauvais mot de passe';
 							}else{
 								$bail = 0;
 							}

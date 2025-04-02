@@ -31,7 +31,7 @@
             <?php //include('layouts.navigation') ?>
 
             <!-- Page Header -->
-            <header class='container-xxl my-5'>
+            <header class='container-xxl my-4'>
 				<?= $header ?>
             </header>
 

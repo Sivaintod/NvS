@@ -739,16 +739,14 @@ ALTER TABLE `declaration_babysitte`
 --
 
 CREATE TABLE `declaration_multi` (
-	`id_declaration` INT NOT NULL AUTO_INCREMENT ,
-	`id_perso` INT NOT NULL ,
-	`id_multi` INT NOT NULL ,
+	`id_declaration` INT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`user_id` INT NOT NULL ,
+	`target_id` INT NOT NULL ,
 	`situation` TEXT NOT NULL ,
-	`date_declaration` DATETIME DEFAULT NULL ,
-	PRIMARY KEY (`id_declaration`)
+	`date_declaration` DATETIME NOT NULL
 ) ENGINE = MyISAM;
 
 ALTER TABLE `declaration_multi`
-  ADD PRIMARY KEY (`id_declaration`),
   ADD KEY `index_declarMulti` (`id_perso`),
   ADD KEY `index_multiactif` (`id_perso`,`id_multi`);
 
@@ -920,7 +918,21 @@ ALTER TABLE `evenement`
   ALTER TABLE `evenement`
     MODIFY `ID_evenement` int(11) NOT NULL AUTO_INCREMENT;
 
+-- --------------------------------------------------------
 
+--
+-- Structure de la table `game_log`
+--
+
+CREATE TABLE `game_log` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `category` smallint unsigned NOT NULL,
+  `action_type` smallint unsigned NOT NULL,
+  `character_id` int unsigned NOT NULL,
+  `description` text NOT NULL,
+  `refered_page` tinytext NOT NULL,
+  `created_at` datetime NOT NULL
+);
 -- --------------------------------------------------------
 
 --
@@ -1126,29 +1138,31 @@ ALTER TABLE `instance_pnj`
 --
 
 CREATE TABLE `joueur` (
-  `id_joueur` int(11) NOT NULL,
+  `id_joueur` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `nom_joueur` varchar(100) DEFAULT NULL,
-  `email_joueur` varchar(100) NOT NULL DEFAULT '',
+  `email_joueur` varchar(100) NOT NULL,
   `mdp_joueur` varchar(255) NOT NULL,
-  `age_joueur` int(11) DEFAULT NULL,
-  `pays_joueur` varchar(100) DEFAULT NULL,
-  `region_joueur` varchar(100) DEFAULT NULL,
-  `description_joueur` text,
+  `avatar` tinytext NULL,
+  `age_joueur` tinyint NULL,
+  `pays_joueur` varchar(100) NULL,
+  `region_joueur` varchar(100) NULL,
+  `description_joueur` text NULL,
+  `mail_info` tinyint NOT NULL DEFAULT '0',
+  `mail_mp` tinyint NOT NULL DEFAULT '0',
   `dossier_img` varchar(10) DEFAULT 'v1',
   `admin_perso` enum('0','1') NOT NULL DEFAULT '0',
   `animateur` enum('0','1') NOT NULL DEFAULT '0',
   `redacteur` INT NOT NULL DEFAULT '0',
-  `mail_mp` INT NOT NULL DEFAULT '0',
   `valid_case` INT NOT NULL DEFAULT '0',
   `afficher_rosace` INT NOT NULL DEFAULT '1',
   `bousculade_deplacement` INT NOT NULL DEFAULT '1',
+  `demande_perm` tinyint NOT NULL DEFAULT '0',
   `permission` datetime NULL,
   `pendu` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `joueur`
-  ADD PRIMARY KEY (`id_joueur`),
   ADD UNIQUE KEY `index_id_mail` (`id_joueur`,`email_joueur`),
   ADD UNIQUE KEY `id_perso` (`nom_joueur`),
   ADD KEY `index_verif_mailJoueur` (`email_joueur`),
@@ -1157,12 +1171,6 @@ ALTER TABLE `joueur`
   ADD KEY `index_estRedacteur` (`id_joueur`,`redacteur`),
   ADD KEY `index_EstAdmin` (`id_joueur`,`admin_perso`),
   ADD KEY `index_mpd_id` (`id_joueur`,`mdp_joueur`);
-
-  --
-  -- AUTO_INCREMENT pour la table `joueur`
-  --
-  ALTER TABLE `joueur`
-    MODIFY `id_joueur` int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 

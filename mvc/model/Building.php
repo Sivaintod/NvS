@@ -58,6 +58,37 @@ class Building extends Model
 		return $result;
 	}
 	
+	/* fonction pour vérifier si un bâtiment est disponible pour respawn
+	 * @camp (int)
+	 * @$buildingType (array)
+	 * @return Building instance or false
+	*/
+	public function respawnCheck(int $camp,array $buildingType = [9,8]) {
+		// Ordre de respawn : fort > fortin > aléatoire dans la zone
+		$buildings = $this->select('instance_batiment.id_instanceBat, instance_batiment.id_batiment, instance_batiment.x_instance, instance_batiment.y_instance, instance_batiment.contenance_instance, instance_batiment.pv_instance, instance_batiment.pvMax_instance, count(perso_in_batiment.id_perso) as nb_perso_in')
+							->leftJoin('perso_in_batiment','instance_batiment.id_instanceBat','=','perso_in_batiment.id_instanceBat')
+							->leftJoin('batiment','instance_batiment.id_batiment','=','batiment.id_batiment')
+							->where('instance_batiment.camp_instance',$camp)
+							->whereIn('instance_batiment.id_batiment',$buildingType)
+							->groupBy('instance_batiment.id_instanceBat')
+							->orderBy('batiment.respawn_order')
+							->get();
+				
+		$Building_respawn = '';
+
+		// vérification dispo fort puis fortin
+		foreach($buildings as $building){
+			$enemiesArround = $this->enemiesArround($building->x_instance,$building->y_instance,$camp,15);
+			$lifePercent = round($building->pv_instance/$building->pvMax_instance*100,2);
+
+			if($building->contenance_instance > $building->nb_perso_in +1 && $lifePercent>=90 && $enemiesArround<10){
+				return $building;
+			}
+		}
+		
+		return false;
+	}
+	
 	// Obsolète. A supprimer à termes
    public function getByType(int $type,int $camp=null){
 		$db = $this->dbConnectPDO();
