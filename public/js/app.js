@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log( "DOM chargé" );
+    console.log( "NvS - Le Jeu" );
+	
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 	
 	// actualisation du captcha
 	$('#reload_captcha').click(function(){
@@ -18,21 +21,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			var file = event.target.files[0];
 			if (file) {
-				imgPreviewName.textContent = file.name;
+				if(imgPreviewName!==null){
+					imgPreviewName.textContent = file.name;
+				}
 				var reader = new FileReader();
 
 				reader.onload = function(e) {
-					var img150 = document.createElement('img');
-					img150.src = e.target.result;
-					img150.style.maxWidth = '150px';
-					img150.style.maxHeight = '150px';
-					imgPreview150.appendChild(img150);
-					
-					var img40 = document.createElement('img');
-					img40.src = e.target.result;
-					img40.style.maxWidth = '40px';
-					img40.style.maxHeight = '40px';
-					imgPreview40.appendChild(img40);
+					if(imgPreview150!==null){
+						var imgSrc = imgInput.getAttribute('data-img-src');
+						if(imgSrc=="only"){
+							imgPreview150.src = e.target.result;
+						}else{
+							var img150 = document.createElement('img');
+							img150.src = e.target.result;
+							img150.style.maxWidth = '150px';
+							img150.style.maxHeight = '150px';
+							imgPreview150.appendChild(img150);
+						}
+					}
+					if(imgPreview40!==null){
+						var img40 = document.createElement('img');
+						img40.src = e.target.result;
+						img40.style.maxWidth = '40px';
+						img40.style.maxHeight = '40px';
+						imgPreview40.appendChild(img40);
+					}
 				}
 
 				reader.readAsDataURL(file);
@@ -40,8 +53,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 
 		function clearImgPreview() {
-			imgPreview150.innerHTML = '';
-			imgPreview40.innerHTML = '';
+			if(imgPreview150!==null){
+				imgPreview150.innerHTML = '';
+			}
+			if(imgPreview40 !== null){
+				imgPreview40.innerHTML = '';
+			}
 		}
 	};
 	
@@ -76,10 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
 					} else {
 						console.log(data);
 						detailsTitle.innerHTML = data[0]['nom_perso']+' ['+data[0]['id_perso']+']';
-						// console.log(data[1]);
-						
-						// detailsContent.insertRow();
-						// detailsContent.insertRow();
 						
 						data[1].forEach( function (operation) {
 							console.log(operation['operation']);
@@ -183,6 +196,79 @@ document.addEventListener('DOMContentLoaded', function() {
 	  })
 	}
 	
-	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+	// fonction de recherche en auto complétion TEST
+	const searchArea = document.querySelectorAll(".search-area");
+	
+	if(searchArea!==null){
+		searchArea.forEach(area => {
+			button = document.getElementById("search-btn");
+			inputField = document.getElementById("target_id");
+			searchTarget = inputField.getAttribute('data-auto-completion');
+			inputField.addEventListener("keydown", async function (e) {
+				if (e.key === "Enter") {
+					e.preventDefault(); // Empêche l'envoi du formulaire
+					const query = inputField.value.trim();
+					
+					if(document.getElementById("search-invalid-feedback")!==null){
+						feedback = document.getElementById("search-invalid-feedback")
+						feedback.remove();
+					}
+					inputField.classList.remove("is-invalid");
+					fetchSearch(query,inputField,button);
+				}
+			});
+			button.addEventListener("click", async function () {
+				this.preventDefault;
+				const query = inputField.value.trim();
+				
+				inputField.classList.remove("is-invalid");
+				fetchSearch(query,inputField,button);
+			});
+		});
+		
+		async function fetchSearch(query,inputField,button) {
+			const datalist = document.getElementById("ac_suggestions");
+			try{
+				const response = await fetch("?action=search", {
+					method: "POST",
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify({query})
+				});
+				
+				const data = await response.text();
+				// console.log("réponse brute :", data); // contrôle
+				
+				try {
+					const list = JSON.parse(data);
+					// console.log("JSON parsé :", list); //contrôle
+					
+					datalist.innerHTML = "";
+					
+					if (list.status === "success") {
+						list.data.forEach(suggestion => {
+							const option = document.createElement("option");
+							option.value = suggestion.id_perso;
+							option.innerHTML = "["+suggestion.id_perso+"] "+suggestion.nom_perso;
+							datalist.appendChild(option);
+						});
+					}else{
+						const errorDiv = document.createElement("div");
+						errorDiv.setAttribute("class","invalid-feedback");
+						errorDiv.setAttribute("id","search-invalid-feedback");
+						errorDiv.innerHTML = "Aucun personnage trouvé";
+						inputField.classList.add("is-invalid");
+						button.after(errorDiv);
+						// console.error("Erreur lors de la récupération des données : ",list.message); // contrôle
+					}
+				} catch(jsonError){
+					console.error("Erreur JSON.parse : ",jsonError);
+				}
+			} catch (error) {
+				console.error("Erreur lors de la récupération des données : ",error);
+			}
+		}
+	}
+	
+	
+
 });
