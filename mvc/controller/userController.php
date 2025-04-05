@@ -356,7 +356,7 @@ class UserController extends Controller
 						if($result){
 							$_SESSION['flash'] = [
 							'class'=>'success',
-							'message'=>'Le multi-compte avec le joueur ['.$target.'] a bien été pris en compte',
+							'message'=>'Le multi-compte avec le joueur ['.$target_id.'] a bien été pris en compte',
 							'tab'=>$tab
 							];
 						}else{
