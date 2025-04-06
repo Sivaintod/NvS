@@ -260,6 +260,34 @@ ob_start();
 						</p>
 					</div>
 					<div class="card-body">
+						<?php if($multiAccounts): ?>
+						<h4 class='fs-5'>Vos multi-comptes déclarés</h4>
+						<table class="table table-striped table-sm">
+							<thead>
+								<tr>
+									<th scope="col">Joueur concerné</th>
+									<th scope="col">Justification</th>
+									<th scope="col">Date effective</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach($multiAccounts as $array => $account):?>
+								<tr>
+									<td>
+										<?= $account['target_name']?>
+									</td>
+									<td>
+										<?= $account['situation']?>
+									</td>
+									<td>
+										<?= $account['date_declaration']?>
+									</td>
+								</tr>
+								<?php endforeach;?>
+							</tbody>
+						</table>
+						<hr class='my-4 mx-5'>
+						<?php endif;?>
 						<form action="?action=user&op=edit&id=<?= $profile->id_joueur?>" method="post" name="multiAccountForm" id='multiAccountForm'>
 							<fieldset class="row mb-4">
 								<div class="col-sm-10">

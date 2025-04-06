@@ -53,6 +53,9 @@ class UserController extends Controller
 				->get();
 		$profile = $profile[0];
 		
+				
+		$multiAccounts = $profile->getMultiAccount();
+		
 		if($profile->permission){
 			$permissionDate = new DateTime($profile->permission);
 			if($profile->demande_perm){
@@ -351,12 +354,18 @@ class UserController extends Controller
 						$target_user = $target_user->select('id_perso, idJoueur_perso')->where('id_perso',$target_id)->get();
 						$target_user = $target_user[0];
 						
-						$result = $userModel->multiAccount($user->id_joueur,$target_user->idJoueur_perso,$explanation);
+						$result = $userModel->setMultiAccount($user->id_joueur,$target_user->idJoueur_perso,$explanation);
 						
-						if($result){
+						if($result === true){
 							$_SESSION['flash'] = [
 							'class'=>'success',
 							'message'=>'Le multi-compte avec le joueur ['.$target_id.'] a bien été pris en compte',
+							'tab'=>$tab
+							];
+						}elseif($result == 23000){
+							$_SESSION['flash'] = [
+							'class'=>'warning',
+							'message'=>"Ce multi-compte est déjà déclaré",
 							'tab'=>$tab
 							];
 						}else{
