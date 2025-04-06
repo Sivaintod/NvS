@@ -747,8 +747,7 @@ CREATE TABLE `declaration_multi` (
 ) ENGINE = MyISAM;
 
 ALTER TABLE `declaration_multi`
-  ADD KEY `index_declarMulti` (`id_perso`),
-  ADD KEY `index_multiactif` (`id_perso`,`id_multi`);
+  ADD UNIQUE `user_id_target_id` (`user_id`, `target_id`);
 
 -- --------------------------------------------------------
 
