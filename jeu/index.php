@@ -24,7 +24,7 @@ try{
 		$game_available = $administration->getMaintenanceMode();
 		
 		$user = new User();
-		$user = $user->select('id_joueur, admin_perso, animateur, redacteur, permission, pendu')
+		$user = $user->select('id_joueur, admin_perso, demande_perm, permission, pendu')
 				->where('id_joueur',$_SESSION['ID_joueur'])
 				->get();
 		$user = $user[0];

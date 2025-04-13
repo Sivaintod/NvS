@@ -43,6 +43,8 @@ class GameboardController extends Controller
 					$user->permission = $now;
 					unset($user->camp);
 					$user->update();
+					header('location:/');
+					die();
 				}
 			}elseif($user->demande_perm==0){
 				$totalDays = $permissionDate->diff($dateTime);

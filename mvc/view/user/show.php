@@ -189,7 +189,7 @@ ob_start();
 	</div>
 	<div class="tab-pane fade<?php if(isset($_SESSION['flash']['tab']) AND $_SESSION['flash']['tab']=='security'):?> show active<?php endif?>" id="nav-security" role="tabpanel" aria-labelledby="nav-security-tab" tabindex="0">
 		<div class="row">
-			<div class="col">
+			<div class="col mb-3">
 				<div class="card mb-3">
 					<div class="card-header">
 						<h3 class='fs-4'>Changer son mot de passe</h3>
@@ -274,7 +274,7 @@ ob_start();
 								<?php foreach($multiAccounts as $array => $account):?>
 								<tr>
 									<td>
-										<?= $account['target_name']?>
+										[<?= $account['target_id']?>] <?= $account['target_name']?>
 									</td>
 									<td>
 										<?= $account['situation']?>
@@ -330,7 +330,7 @@ ob_start();
 					</div>
 				</div>
 			</div>
-			<div class="col-4">
+			<div class="col col-sm-4">
 				<div class="card mb-3">
 					<div class="card-header">
 						<h3 class='fs-4'>Partir en permission</h3>
