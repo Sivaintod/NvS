@@ -2193,6 +2193,18 @@ if($dispo == '1' || $admin){
 	</head>
 
 	<body>
+		<?php if(!empty($permissionMsg)):?>
+		<div class="row">
+			<div class='col'>
+				<div class='p-4 m-0 alert alert-warning' role="alert">
+					<!--<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>-->
+					<span class='align-middle fw-semibold'><?= $permissionMsg?></span>
+				</div>
+			</div>
+		</div>
+		<?php endif;?>
 				<table width=100% bgcolor='white' border=0>
 				<tr>
 					<td><img src='../images/clock.png' alt='horloge' width='25' height='25'/> Heure serveur : <b><span id=tp1>"<?=$date_serveur->format('H:i:s')?>"</span></b></td>
