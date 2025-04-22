@@ -11,6 +11,30 @@ class Vehicle extends Model
 	// protected $fillable = [];
 	protected $guarded = [];
 	
+	
+	/* fonction pivot pour supprimer un ou plusieurs persos d'un véhicule
+	 * @var charac_ids (array) ids des persos
+	 * @return number of row deleted
+	*/
+	public function removeCharacFromVehicle(array $charac_ids){
+		$binds = [];
+		$values = [];
+		
+		foreach($charac_ids as $id){
+			$binds[] = '?';
+			$values[] = $id;
+		}
+		
+		$binds = implode(', ',$binds);
+		
+		$query = "DELETE FROM perso_in_train WHERE id_perso IN (".$binds.")";
+		
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
+	}
+	
 	/* fonction pivot pour enregistrer la dernière case empruntée par le train. A refactoriser
 	 * @var vehicule_id (int) id du véhicule
 	 * @return number of row created
