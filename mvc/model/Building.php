@@ -58,6 +58,48 @@ class Building extends Model
 		return $result;
 	}
 	
+	/* fonction pivot pour supprimer un ou plusieurs persos d'un bâtiment
+	 * @var charac_ids (array) ids des persos
+	 * @var freeJail (bool) boolean indiquant si le perso peut sortir de prison 
+	 * @return number of row deleted
+	*/
+	public function removeCharacters(array $charac_ids, bool $freeJail=false) {
+		
+		$jails = $this->select('instance_batiment.id_instanceBat')
+						->leftJoin('batiment','instance_batiment.id_batiment','=','batiment.id_batiment')
+						->where('batiment.nom_batiment','Pénitencier')
+						->get();
+		
+		$jailsBinds = [];
+		$binds = [];
+		$values = [];
+		$NotIn = '';
+		
+		if(!$freeJail){
+			$NotIn = ' NOT';
+		}
+		
+		foreach($jails as $jail){
+			$values[] = $jail->id_instanceBat;
+			$jailsBinds[] = '?';
+		}
+		$jailsBinds = implode(', ',$jailsBinds);
+		
+		foreach($charac_ids as $id){
+			$binds[] = '?';
+			$values[] = $id;
+		}
+		
+		$binds = implode(', ',$binds);
+		
+		$query = 'DELETE FROM perso_in_batiment WHERE id_instanceBat'.$NotIn.' IN ('.$jailsBinds.') AND id_perso IN('.$binds.')';
+
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
+	}
+	
 	/* fonction pour vérifier si un bâtiment est disponible pour respawn
 	 * @camp (int)
 	 * @$buildingType (array)

@@ -24,4 +24,26 @@ class Character extends Model
 
 		return $result;
 	}
+	
+	/* fonction pivot pour supprimer un ou plusieurs persos de la carte
+	 * @var charac_ids (array) ids des persos
+	 * @return number of row deleted
+	*/
+	public function removeCharacFromMap(array $charac_ids){
+		$binds = [];
+		$values = [];
+		
+		foreach($charac_ids as $id){
+			$binds[] = '?';
+			$values[] = $id;
+		}
+		
+		$binds = implode(', ',$binds);
+		$query = "UPDATE carte SET occupee_carte='0', idPerso_carte=NULL, image_carte=NULL WHERE idPerso_carte IN (".$binds.")";
+		
+		$request = $this->request($query,$values);
+		$result = $request->rowCount();
+
+		return $result;
+	}
 }

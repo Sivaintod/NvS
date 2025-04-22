@@ -68,7 +68,7 @@ if($dispo == '1' || $admin){
 		$id_perso = $_SESSION['id_perso'];
 		$date = time();
 
-		$page_acces = 'jouer.php';
+		$page_acces = 'index.php';
 		if ($_SERVER['QUERY_STRING'] != '') {
 			$page_acces .= '?'.$_SERVER['QUERY_STRING'];
 		}
@@ -78,7 +78,7 @@ if($dispo == '1' || $admin){
 		$mysqli->query($sql);
 
 		// Alerte si 10 refresh ou plus en 10 sec (déco ?)
-		$sql = "SELECT COUNT(*) as count_log_10sec FROM acces_log WHERE id_perso='$id_perso' AND page = 'jouer.php' AND date_acces > (NOW() - INTERVAL 10 SECOND)";
+		$sql = "SELECT COUNT(*) as count_log_10sec FROM acces_log WHERE id_perso='$id_perso' AND page = 'index.php' AND date_acces > (NOW() - INTERVAL 10 SECOND)";
 		$res = $mysqli->query($sql);
 		$t = $res->fetch_assoc();
 
@@ -99,7 +99,7 @@ if($dispo == '1' || $admin){
 		}
 
 		// Alerte si 30 refresh ou plus en moins d'une minute
-		$sql = "SELECT COUNT(*) as count_log_1min FROM acces_log WHERE id_perso='$id_perso' AND page = 'jouer.php' AND date_acces > (NOW() - INTERVAL 60 SECOND)";
+		$sql = "SELECT COUNT(*) as count_log_1min FROM acces_log WHERE id_perso='$id_perso' AND page = 'index.php' AND date_acces > (NOW() - INTERVAL 60 SECOND)";
 		$res = $mysqli->query($sql);
 		$t = $res->fetch_assoc();
 
@@ -1844,10 +1844,10 @@ if($dispo == '1' || $admin){
 													// mise a jour des évènements
 													$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'$nom_perso','est en forme aujourd\'hui !',NULL,'','',NOW(),'0')";
 													$mysqli->query($sql);
-													header("location:jouer.php?message=gainPM");
+													header("location:index.php?message=gainPM");
 												}
 												else {
-													header("location:jouer.php");
+													header("location:index.php");
 												}
 											}
 										}
@@ -1980,7 +1980,7 @@ if($dispo == '1' || $admin){
 																			$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'<font color=$couleur_clan_p><b>$nom_perso</b></font>','a bousculé ',$id_perso_b,'<font color=$couleur_clan_p_b><b>$nom_perso_b</b></font>','en $x_persoB/$y_persoB',NOW(),'0')";
 																			$mysqli->query($sql);
 
-																			header("location:jouer.php");
+																			header("location:index.php");
 
 																		} else {
 																			$erreur .= "Votre allié ne possède plus suffisamment de PA pour être bousculer (demande 1 PA à votre allié) !";
@@ -2048,7 +2048,7 @@ if($dispo == '1' || $admin){
 																				$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'<font color=$couleur_clan_p><b>$nom_perso</b></font>','a bousculé ',$id_perso_b,'<font color=$couleur_clan_p_b><b>$nom_perso_b</b></font>','en $x_persoB/$y_persoB',NOW(),'0')";
 																				$mysqli->query($sql);
 
-																				//header("location:jouer.php");
+																				//header("location:index.php");
 																			}
 																			else {
 																				// MAJ pa perso
@@ -2110,7 +2110,7 @@ if($dispo == '1' || $admin){
 						}
 						else if(!reste_pm($pm_perso + $malus_pm)){
 
-							header("Location:jouer.php?erreur=pm");
+							header("Location:index.php?erreur=pm");
 						}
 						else {
 							// normalement impossible
@@ -2505,7 +2505,7 @@ if($dispo == '1' || $admin){
 							</center>
 						</td>
 						<td align=center>
-							<form method='post' action='jouer.php'>
+							<form method='post' action='index.php'>
 								<b>Nom : </b><select name='liste_perso' onchange="this.form.submit()">
 								<?php
 								while($t_liste_perso = $res->fetch_assoc()) {
@@ -2637,7 +2637,7 @@ if($dispo == '1' || $admin){
 							<td colspan='7' align='center'>&nbsp;</td>
 						</tr>
 						<tr>
-							<td colspan='7' align='center'>Rafraîchir la page : <a href='jouer.php'><img border=0 src='../images/refreshv2.png' alt='refresh' /></a></td>
+							<td colspan='7' align='center'>Rafraîchir la page : <a href='index.php'><img border=0 src='../images/refreshv2.png' alt='refresh' /></a></td>
 						</tr>
 					</table>
 				</center>
@@ -3539,7 +3539,7 @@ if($dispo == '1' || $admin){
 												<img src='../images/Se_Deplacer.png' />
 												</td>
 											</tr>
-											<form action="jouer.php" method="post">
+											<form action="index.php" method="post">
 											<tr>
 												<td rowspan='3'><img src='../images/tribal1.png' /></td>
 												<?php
@@ -3549,23 +3549,23 @@ if($dispo == '1' || $admin){
 
 												if(in_bat($mysqli, $id_perso)){
 												?>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
 												<?php
 												}
 												else if (isset($id_train) && $id_train > 0) {
 												?>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
 												<?php
 												}
 												else {
 												?>
-													<td><a href="jouer.php?mouv=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="jouer.php?mouv=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="jouer.php?mouv=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
+													<td><a href="index.php?mouv=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
+													<td><a href="index.php?mouv=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
+													<td><a href="index.php?mouv=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
 												<?php
 												}
 												?>
@@ -3575,23 +3575,23 @@ if($dispo == '1' || $admin){
 												<?php
 												if(in_bat($mysqli, $id_perso)){
 												?>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
 													<td><center><b>Sortir</b></center></td>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
 												<?php
 												}
 												else if (isset($id_train) && $id_train > 0) {
 												?>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
 													<td><center><b>Sauter</b></center></td>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
 												<?php
 												}
 												else {
 												?>
-												<td><a href="jouer.php?mouv=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
+												<td><a href="index.php?mouv=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
 												<td>&nbsp; </td>
-												<td><a href="jouer.php?mouv=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
+												<td><a href="index.php?mouv=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
 												<?php
 												}
 												?>
@@ -3600,23 +3600,23 @@ if($dispo == '1' || $admin){
 												<?php
 												if(in_bat($mysqli, $id_perso)){
 												?>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="jouer.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
+													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
 												<?php
 												}
 												else if (isset($id_train) && $id_train > 0) {
 												?>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="jouer.php?train=<?php echo $id_train; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
+													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
 												<?php
 												}
 												else {
 												?>
-													<td><a href="jouer.php?mouv=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="jouer.php?mouv=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="jouer.php?mouv=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
+													<td><a href="index.php?mouv=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
+													<td><a href="index.php?mouv=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
+													<td><a href="index.php?mouv=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
 												<?php
 												}
 												?>
@@ -3909,13 +3909,13 @@ if($dispo == '1' || $admin){
 
 												if (!nation_perso_bat($mysqli, $id_perso, $idI_bat)) {
 													if(batiment_vide($mysqli, $idI_bat) && batiment_pv_capturable($mysqli, $idI_bat)&& $type_bat != 1 && $type_bat != 5 && $type_bat != 7 && $type_bat != 10 && $type_bat != 11 && $type_perso == 3){
-														echo "<div><a href='jouer.php?bat=".$idI_bat."&bat2=".$type_bat."'>Capturer ce bâtiment</a></div>";
+														echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Capturer ce bâtiment</a></div>";
 													}
 												}
 												else {
 													if($type_bat != 1 && $type_bat != 5 && $type_bat != 10){
 														if (($type_bat == 2 && ($type_perso == 3 || $type_perso == 4 || $type_perso == 6)) || $type_bat != 2 ) {
-															echo "<div><a href='jouer.php?bat=".$idI_bat."&bat2=".$type_bat."'>Entrer dans ce bâtiment</a></div>";
+															echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Entrer dans ce bâtiment</a></div>";
 														}
 													}
 												}
@@ -4191,7 +4191,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso+1 && $x == $x_perso+1){
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=3'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4199,10 +4199,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=3'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "	<a href=\"jouer.php?mouv=3\">";
+															echo "	<a href=\"index.php?mouv=3\">";
 															echo "		<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40>";
 															echo "	</a>";
 														}
@@ -4212,7 +4212,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso-1 && $x == $x_perso+1){
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=8'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4220,10 +4220,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=8'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "	<a href=\"jouer.php?mouv=8\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "	<a href=\"index.php?mouv=8\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4231,7 +4231,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso && $x == $x_perso+1){
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=5'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4239,10 +4239,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=5'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=5\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=5\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4250,7 +4250,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso && $x == $x_perso-1) {
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=4'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4258,10 +4258,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=4'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=4\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=4\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4269,7 +4269,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso+1 && $x == $x_perso-1) {
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=1'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4277,10 +4277,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=1'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=1\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=1\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4288,7 +4288,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso-1 && $x == $x_perso-1) {
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=6'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4296,10 +4296,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=6'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=6\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=6\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4307,7 +4307,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso+1 && $x == $x_perso) {
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=2'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4315,10 +4315,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=2'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=2\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=2\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4326,7 +4326,7 @@ if($dispo == '1' || $admin){
 												if($y == $y_perso-1 && $x == $x_perso) {
 													if($nb_o){
 														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='jouer.php?mouv=7'>Se déplacer</a></div><div><a href='jouer.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
 														echo "</td>";
 													}
 													else {
@@ -4334,10 +4334,10 @@ if($dispo == '1' || $admin){
 														if ($valid_case || is_case_rail($fond_im)) {
 															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
 															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='jouer.php?mouv=7'>Se déplacer</a></div>\" >";
+															echo "			data-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div>\" >";
 														}
 														else {
-															echo "<a href=\"jouer.php?mouv=7\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+															echo "<a href=\"index.php?mouv=7\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
 														}
 														echo "</td>";
 													}
@@ -4456,8 +4456,8 @@ if($dispo == '1' || $admin){
 											echo $mess_bat;
 
 											if (is_objet_a_terre($mysqli, $x_perso, $y_perso)) {
-												echo "<center><font color = blue>~~<a href=\"jouer.php?ramasser=ok\">Ramasser les objets à terre (1 PA)</a>~~</font></center>";
-												echo "<center><font color = blue>~~<a href=\"jouer.php?ramasser=voir\">Voir la liste des objets à terre</a>~~</font></center>";
+												echo "<center><font color = blue>~~<a href=\"index.php?ramasser=ok\">Ramasser les objets à terre (1 PA)</a>~~</font></center>";
+												echo "<center><font color = blue>~~<a href=\"index.php?ramasser=voir\">Voir la liste des objets à terre</a>~~</font></center>";
 											}
 
 											// recuperation des données de la carte
