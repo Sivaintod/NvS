@@ -2,6 +2,7 @@
 require_once("../mvc/model/User.php");
 require_once("../mvc/model/Character.php");
 require_once("../mvc/model/Building.php");
+require_once("../mvc/model/Vehicle.php");
 require_once("../mvc/model/GameLog.php");
 require_once("../app/validator/formValidator.php");
 require_once("controller.php");
@@ -30,17 +31,35 @@ class GameboardController extends Controller
 			$permissionDate = new DateTime($user->permission);
 
 			if($user->demande_perm==1){
-				$add2Days = new DateInterval('P2D');
-				$lastDay = (clone $permissionDate)->add($add2Days);
-				$remainingTime = $dateTime->diff($lastDay);
-				
-				$lastDays = $lastDay->format('d-m-Y à H:i:s');
+				$_2Days = new DateInterval('P2D');
+				$permWith2days = (clone $permissionDate)->add($_2Days);
+				$remainingTime = $dateTime->diff($permWith2days);
 
-				if($dateTime<$lastDay){
-					$permissionMsg = 'demande de permission en cours. La permission sera effective le '.$lastDays.'.<br> Il vous reste '.$remainingTime->format('%a jour(s) et %H:%I:%S').' pour annuler ';
+				if($dateTime<$permWith2days){
+					$permissionMsg = 'demande de permission en cours. La permission sera effective le '.$permWith2days->format('d-m-Y à H:i:s').'.<br> Il vous reste '.$remainingTime->format('%a jour(s) et %H:%I:%S').' pour annuler ';
 				}else{
 					$user->demande_perm = 0;
-					$user->permission = $now;
+					$user->permission = $permWith2days->format('Y-m-d H:i:s');
+					
+					$buildingModel = new Building();
+					$characModel = new Character();
+					$vehicleModel = new Vehicle();
+	
+					$characterModel = new Character();
+					$userCharacters = $characterModel->select('perso.id_perso')
+														->where('perso.idJoueur_perso',$_SESSION['ID_joueur'])
+														->get();
+					if($userCharacters){
+						foreach($userCharacters as $character){
+							$characters_id [] = $character->id_perso;
+							$character->x_perso = -1000;
+							$character->y_perso = -1000;
+							$character->update();
+						}
+						$removeCharacFromBuilding = $buildingModel->removeCharacters($characters_id);
+						$removeCharacFromMap = $characModel->removeCharacFromMap($characters_id);
+						$removeCharacFromVehicle = $vehicleModel->removeCharacFromVehicle($characters_id);
+					}
 					unset($user->camp);
 					$user->update();
 					header('location:/');
@@ -85,8 +104,6 @@ class GameboardController extends Controller
 		
 			header("Location:../index.php");
 		}
-		
-		
 		
 		$dossier_img_joueur = $user->dossier_img;
 		$afficher_rosace 	= $user->afficher_rosace;
@@ -156,7 +173,7 @@ class GameboardController extends Controller
 		// gestion des objets au sol
 		// gestion de l'affichage pour les administrateurs, animateurs, rédacteurs, gestionnaires de compagnie...
 		// gestion de l'affichage pour les missions, la messagerie
-		
+
 		require_once('jouer_BR.php');
     }
 }

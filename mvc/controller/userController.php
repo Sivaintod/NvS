@@ -1,6 +1,8 @@
 <?php
 require_once("../mvc/model/User.php");
 require_once("../mvc/model/Building.php");
+require_once("../mvc/model/RespawnZone.php");
+require_once("../mvc/model/Map.php");
 require_once("../app/validator/formValidator.php");
 require_once("controller.php");
 
@@ -153,8 +155,10 @@ class UserController extends Controller
     public function update(int $id)
 	{
 		if($_SERVER['REQUEST_METHOD']==='POST'){
+			$dateTime = new DateTime();
+			
 			$user = new User();
-			$user = $user->select('id_joueur, avatar, mdp_joueur, demande_perm')
+			$user = $user->select('id_joueur, avatar, mdp_joueur, demande_perm, permission')
 					->where('id_joueur',$_SESSION['ID_joueur'])
 					->get();
 			$user = $user[0];
@@ -271,7 +275,6 @@ class UserController extends Controller
 							$user->permission = null;
 							$user->demande_perm = 0;
 						}elseif($_POST['cancelPermBtn']==null AND $_POST['validPermBtn']=='yes'){
-							$dateTime = new DateTime();
 							$now = (clone $dateTime)->format('Y-m-d H:i:s');
 							$user->permission = $now;
 							$user->demande_perm = 1;
@@ -288,15 +291,113 @@ class UserController extends Controller
 					case 'returnInGameForm':
 						if($_POST['returnInGameBtn']=='yes'){
 							$user->demande_perm = -1;
+							$permissionDate = new DateTime($user->permission);
+							$totalDays = $permissionDate->diff($dateTime);
+							
+							$characterModel = new Character();
+							$userCharacters = $characterModel->select('perso.id_perso, perso.image_perso, perso.clan as camp')
+																->where('perso.idJoueur_perso',$user->id_joueur)
+																->get();
+							
+							$camp_id = $userCharacters[0]->camp;
+							
+							/* on vérifie le respawn */
+							$respawnZone = new RespawnZone();
+							$respawnZone = $respawnZone->where('id_camp',$camp_id)->get();
+							$respawnZone = $respawnZone[0];
+
+							$buildingsType = [8,9];
+							
+							if($totalDays->format('%a')>15){
+								$buildingsType = [9];
+							}
+
+							$building = new Building();
+							$buildings = $building->select('instance_batiment.id_instanceBat, instance_batiment.id_batiment, instance_batiment.x_instance, instance_batiment.y_instance, instance_batiment.contenance_instance, instance_batiment.pv_instance, instance_batiment.pvMax_instance, count(perso_in_batiment.id_perso) as nb_perso_in')
+										->leftJoin('perso_in_batiment','instance_batiment.id_instanceBat','=','perso_in_batiment.id_instanceBat')
+										->leftJoin('batiment','instance_batiment.id_batiment','=','batiment.id_batiment')
+										->where('instance_batiment.camp_instance',$camp_id)
+										->whereIn('instance_batiment.id_batiment',$buildingsType)
+										->groupBy('instance_batiment.id_instanceBat')
+										->orderBy('batiment.respawn_order DESC')
+										->get();					
+														
+							// vérification des zones de respawn (ordre de respawn : fortin > fort > aléatoire dans la zone)
+							$Building_respawn = '';
+							$x_respawn = '';
+							$y_respawn = '';
+							
+							// vérification dispo fortin puis fort
+							foreach($buildings as $building){
+								$enemiesArround = new Building();
+								$enemiesArround = $enemiesArround->enemiesArround($building->x_instance,$building->y_instance,$camp_id,15);
+								$lifePercent = round($building->pv_instance/$building->pvMax_instance*100,2);
+
+								if($building->contenance_instance > $building->nb_perso_in +1 && $lifePercent>=90 && $enemiesArround<10){
+									$Building_respawn = $building->id_instanceBat;
+									$x_respawn = $building->x_instance;
+									$y_respawn = $building->y_instance;
+									break;
+								}
+							}
+							
+							// si pas de bâtiment dispo, respawn aléatoire sur la zone de respawn définie pour le camp
+							if(!isset($Building_respawn) OR $Building_respawn<=0){
+								$map = new Map();
+								$freeSpaces = $map->freeSpaceInZone($respawnZone->x_min_zone,$respawnZone->x_max_zone,$respawnZone->y_min_zone,$respawnZone->y_max_zone);
+								
+								if(!isset($freeSpaces) OR empty($freeSpaces)){
+									$_SESSION['flash'] = ['class'=>'danger','message'=>'Une erreur est survenue, veuillez recommencer. Si le problème persiste, contactez un administrateur. (code Erreur : ZRC)'];
+							
+									header('location:'.$redirect);
+									die();
+								}
+								foreach($freeSpaces as $key=>$space){
+									$freeSpaces[$key]['position'] = $key; 
+								}
+							}
+							
+							// On change la position des persos
+							foreach($userCharacters as $character){
+								unset($character->camp);
+								if(!isset($Building_respawn) OR $Building_respawn<=0){
+									$freetiles = $freeSpaces[array_rand($freeSpaces)];
+									$character->x_perso = $freetiles['x_carte'];
+									$character->y_perso = $freetiles['y_carte'];
+									
+									$key_position = $freetiles['position'];
+									
+									unset($freeSpaces[$key_position]);
+								}else{
+									$character->x_perso = $x_respawn;
+									$character->y_perso = $y_respawn;
+								}
+								
+								$characters_ids[] = $character->id_perso;
+								$character->update();
+							}
+
+							// on place les persos dans le bâtiment ou à défaut sur l'emplacement de respawn designé
+							if(isset($Building_respawn) AND $Building_respawn>0){
+								$respawnBuilding = new Building();
+								$insertCharacters = $respawnBuilding->insertCharacters($characters_ids,$Building_respawn);
+							}else{
+								$addInMap = new Map();
+								foreach($userCharacters as $character){
+									$addInMap = $addInMap->addCharacter($character->id_perso,$character->image_perso,$character->x_perso,$character->y_perso);
+								}
+							}
+							$user->update();
+							
 						}else{
 							$_SESSION['flash'] = [
 								"class" => "warning",
 								"message"=>"Une erreur inconnue est survenue, veuillez recommencer. Si le problème persiste, contactez l'administrateur.",
 								'tab'=>$tab
 								];
-							header('location:'.$redirect);
-							die();
 						}
+						header('location:'.$redirect);
+						die();
 						break;
 					case 'detailForm':
 						$user->email_joueur = $_POST['user_email'];

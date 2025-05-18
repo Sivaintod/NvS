@@ -87,11 +87,9 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 	$TwoDaysBefore = $PermDateTime->sub($_2Days);
 	
 	$userModel = new User();
-	$permUsers = $userModel->select("joueur.id_joueur, joueur.demande_perm, joueur.permission, GROUP_CONCAT(perso.id_perso) as persos")
-							->leftJoin('perso','perso.idJoueur_perso','=','joueur.id_joueur')
+	$permUsers = $userModel->select("joueur.id_joueur, joueur.demande_perm, joueur.permission")
 							->where('demande_perm',1)
 							->where('permission','<=',$TwoDaysBefore->format('Y-m-d H:i:s'))
-							->groupBy('joueur.id_joueur')
 							->get();
 	
 	$buildingModel = new Building();
@@ -104,14 +102,22 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 		$user->demande_perm = 0;
 		$user->permission = $permissionDate->add($_2Days)->format('Y-m-d H:i:s');
 		
-		if($user->persos){
-			$user->persos = explode(',',$user->persos);
-			$removeCharacFromBuilding = $buildingModel->removeCharacters($user->persos);
-			$removeCharacFromMap = $characModel->removeCharacFromMap($user->persos);
-			$removeCharacFromVehicle = $vehicleModel->removeCharacFromVehicle($user->persos);
-		}
+		$characterModel = new Character();
+		$userCharacters = $characterModel->select('perso.id_perso')
+											->where('perso.idJoueur_perso',$user->id_joueur)
+											->get();
 		
-		unset($user->persos);
+		if($userCharacters){
+			foreach($userCharacters as $character){
+				$characters_id [] = $character->id_perso;
+				$character->x_perso = -1000;
+				$character->y_perso = -1000;
+				$character->update();
+			}
+			$removeCharacFromBuilding = $buildingModel->removeCharacters($characters_id);
+			$removeCharacFromMap = $characModel->removeCharacFromMap($characters_id);
+			$removeCharacFromVehicle = $vehicleModel->removeCharacFromVehicle($characters_id);
+		}
 		$user->update();
 	}
 
