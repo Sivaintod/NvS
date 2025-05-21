@@ -92,7 +92,7 @@ class Building extends Model
 		
 		$binds = implode(', ',$binds);
 		
-		$query = 'DELETE FROM perso_in_batiment WHERE id_instanceBat'.$NotIn.' IN ('.$jailsBinds.') AND id_perso IN('.$binds.')';
+		$query = 'DELETE FROM perso_in_batiment WHERE id_instanceBat'.$NotIn.' IN ('.$jailsBinds.') AND id_perso IN ('.$binds.')';
 
 		$request = $this->request($query,$values);
 		$result = $request->rowCount();
