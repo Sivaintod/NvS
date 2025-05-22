@@ -75,15 +75,16 @@ class Building extends Model
 		$values = [];
 		$NotIn = '';
 		
-		if(!$freeJail){
-			$NotIn = ' NOT';
-		}
-		
 		foreach($jails as $jail){
 			$values[] = $jail->id_instanceBat;
 			$jailsBinds[] = '?';
 		}
 		$jailsBinds = implode(', ',$jailsBinds);
+		
+				
+		if(!$freeJail AND !empty($jailsBinds)){
+			$NotInJail = ' AND id_instanceBat NOT IN ('.$jailsBinds.')';
+		}
 		
 		foreach($charac_ids as $id){
 			$binds[] = '?';
@@ -92,8 +93,8 @@ class Building extends Model
 		
 		$binds = implode(', ',$binds);
 		
-		$query = 'DELETE FROM perso_in_batiment WHERE id_instanceBat'.$NotIn.' IN ('.$jailsBinds.') AND id_perso IN ('.$binds.')';
-
+		$query = 'DELETE FROM perso_in_batiment WHERE id_perso IN ('.$binds.')'.$NotInJail.'';
+		
 		$request = $this->request($query,$values);
 		$result = $request->rowCount();
 
