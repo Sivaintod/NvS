@@ -294,9 +294,11 @@ class UserController extends Controller
 							$permissionDate = new DateTime($user->permission);
 							$totalDays = $permissionDate->diff($dateTime);
 							
+							// récupération de tous les persos qui ne sont pas renvoyés
 							$characterModel = new Character();
 							$userCharacters = $characterModel->select('perso.id_perso, perso.image_perso, perso.clan as camp')
 																->where('perso.idJoueur_perso',$user->id_joueur)
+																->where('perso.est_renvoye',0)
 																->get();
 							
 							$camp_id = $userCharacters[0]->camp;
@@ -357,7 +359,7 @@ class UserController extends Controller
 								}
 							}
 							
-							// On change la position des persos
+							// On change la position des persos qui ne sont pas renvoyés
 							foreach($userCharacters as $character){
 								unset($character->camp);
 								if(!isset($Building_respawn) OR $Building_respawn<=0){
@@ -384,7 +386,7 @@ class UserController extends Controller
 							}else{
 								$addInMap = new Map();
 								foreach($userCharacters as $character){
-									$addInMap = $addInMap->addCharacter($character->id_perso,$character->image_perso,$character->x_perso,$character->y_perso);
+									$addInMap->addCharacter($character->id_perso,$character->image_perso,$character->x_perso,$character->y_perso);
 								}
 							}
 							$user->update();
