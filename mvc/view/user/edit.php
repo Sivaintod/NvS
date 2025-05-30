@@ -88,9 +88,11 @@ ob_start();
 									<div class="col-sm-7">
 										<input type="text" class="form-control-plaintext fw-semibold fs-5" id="user_name" value='<?= $profile->nom_perso ?>' readonly>
 									</div>
+									<!--
 									<div class="col-sm-3">
 										<button class='btn btn-secondary btn-sm mt-1 w-full' type='button' disabled>Changer de nom</button>
 									</div>
+									-->
 								</div>
 								<div class="row mb-3">
 									<label for="user_camp" class="col-sm-2 col-form-label">
@@ -99,9 +101,11 @@ ob_start();
 									<div class="col-sm-7">
 										<input type="text" class="form-control-plaintext" id="user_camp" value='<?= $profile->camp ?>' readonly>
 									</div>
+									<!--
 									<div class="col-sm-3">
 										<button class='btn btn-secondary btn-sm mt-1 w-full' type='button' disabled>Changer de camp</button>
 									</div>
+									-->
 								</div>
 								<div class="row mb-3">
 									<label for="user_email" class="col-sm-2 col-form-label">E-mail*</label>
