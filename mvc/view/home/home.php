@@ -18,6 +18,17 @@ ob_start();
 	</div>
 </div>
 <?php endif; ?>
+<?php if($information_msg['valeur_config']==1): ?>
+<div class="row justify-content-center mb-0">
+	<div class='alert alert-info fw-bold col'>
+		<div class='w-75 m-auto pb-2 text-center maintenance-msg'>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-lg">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+			</svg> <?= $information_msg['msg'] ?>
+		</div>
+	</div>
+</div>
+<?php endif; ?>
 <div class="row justify-content-center">
 	<div class='col-11 col-sm-3 p-0'>
 		<div class='justify-content-center bg-light bg-opacity-75 p-4'>
@@ -39,25 +50,11 @@ ob_start();
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade show active" id="login-tab-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-					<?php
-						if (isset($_GET['nouveau_tour']) && $_GET['nouveau_tour'] == 'ok')://
-					?>
-					<div class='p-3'>
-						<p class='alert alert-danger fw-bold' role="alert">
-							<svg xmlns="http://www.w3.org/2000/svg" class="" width='26' height='26' fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-							Nouveau tour
-						</p>
-					</div>
-					<?php
-						endif;
-					?>
 					<div class='pt-4'>
-						<?php if(isset($_SESSION['flash'])&& !empty($_SESSION['flash'])): ?>
+						<?php if(isset($_SESSION['flash'])&& $_SESSION['flash']['slug']=='new_turn'): ?>
 						<div class="row">
 							<div class='col'>
-								<div class='p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
+								<div class='fs-4 p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
 									<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 									  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 									</svg>

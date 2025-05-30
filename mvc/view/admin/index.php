@@ -81,6 +81,29 @@ ob_start();
 					<li class="list-group-item"><a class='btn btn-warning' href='admin_zones_pnj.php' >Zones respawn PNJ</a></li>
 					<li class="list-group-item"><a class='btn btn-warning' href='admin_changement_carte.php' >Changement de carte</a></li>
 				</ul>
+				<hr>
+				<h5 class="card-title mt-4">Message d'information</h5>
+				<span class='text-muted'>
+					Affiché sur la page d'accueil et sur la page de jeu,<br>
+					Sans blocage des accès au jeu.
+				</span>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						<form action='../jeu/admin_nvs.php' method="post">
+							<div class="mb-3">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" role="switch" id="info_msg_active" name='info_msg_active' <?php if($information_msg['valeur_config']==1):?>checked<?php endif;?>>
+									<label class="form-check-label" for="info_msg_active">Message actif</label>
+								</div>
+								<label for="info_msg" class="form-label">Message</label>
+								<textarea class="form-control" id="info_msg" name='info_msg' rows="5" aria-describedby="infoMsgHelp"><?= $information_msg['msg']?></textarea>
+								<div id="infoMsgHelp" class="form-text">conseil : ne pas écrire un message trop long</div>
+							</div>
+							<button class='btn btn-secondary'>Mettre à jour</button>
+						</form>
+					</li>
+				</ul>
+				<hr>
 				<h5 class="card-title mt-4">maintenance</h5>
 				<ul class="list-group list-group-flush">
 					<?php if ($maintenance_mode['valeur_config'] == '1') {

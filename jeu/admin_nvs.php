@@ -18,6 +18,7 @@ if(isset($_SESSION["id_perso"])){
 		
 		$administration = new Administration();
 		$maintenance_mode = $administration->getMaintenanceMode();
+		$information_msg = $administration->getInfoMsg();
 		
 		if (isset($_GET['mode_jeu']) && $_GET['mode_jeu']=='close') {
 			$sql = "UPDATE config_jeu SET valeur_config='0' WHERE code_config='disponible'";
@@ -40,7 +41,26 @@ if(isset($_SESSION["id_perso"])){
 			$result = $administration->updateMaintenanceMsg($msg);
 			
 			if($result){
-				$_SESSION['flash'] = ['class'=>'success','message'=>'Message mis à jour'];
+				$_SESSION['flash'] = ['class'=>'success','message'=>'Message de maintenance mis à jour'];
+			}else{
+				$_SESSION['flash'] = ['class'=>'danger','message'=>"Une erreur est survenue. Si le problème persiste, contacter l'administrateur"];
+			}
+			
+			header('location:../jeu/admin_nvs.php');
+			die();
+		}
+		if(isset($_POST['info_msg'])){
+			$msg = htmlspecialchars($_POST['info_msg']);
+			
+			$active = 0;
+			if(isset($_POST['info_msg_active'])){
+				$active=1;
+			}
+
+			$result = $administration->updateInfoMsg($msg,$active);
+			
+			if($result){
+				$_SESSION['flash'] = ['class'=>'success','message'=>'Message d\'information mis à jour'];
 			}else{
 				$_SESSION['flash'] = ['class'=>'danger','message'=>"Une erreur est survenue. Si le problème persiste, contacter l'administrateur"];
 			}

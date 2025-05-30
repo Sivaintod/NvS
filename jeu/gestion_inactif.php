@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once("../fonctions.php");
+require_once("../mvc/model/User.php");
+require_once("../mvc/model/Character.php");
+require_once("../mvc/model/Building.php");
+require_once("../mvc/model/Vehicle.php");
 require_once("f_carte.php");
 require_once("f_combat.php");
 
@@ -26,6 +30,9 @@ $t = $res->fetch_assoc();
 $clef_secrete = $t['valeur_config'];
 
 if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
+	
+	$dateTime = new DateTime();
+	$now = (clone $dateTime)->format('Y-m-d H:i:s');
 
 	//************************************************
 	// Traitement des persos a libérer du pénitencier
@@ -72,68 +79,46 @@ if (isset($_GET['clef']) && $_GET['clef'] == $clef_secrete) {
 
 
 	//***************************************
-	// Traitement des persos a mettre en gel
+	// Traitement des joueurs à mettre en permission
 	//***************************************
-	$sql_gel = "SELECT id_perso, nom_perso, clan FROM perso WHERE a_gele='1' AND date_gele <= DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)";
-	$res_gel = $mysqli->query($sql_gel);
 
-	while ($t_gel = $res_gel->fetch_assoc()){
+	$PermDateTime = clone $dateTime;
+	$_2Days = new DateInterval('P2D');
+	$TwoDaysBefore = $PermDateTime->sub($_2Days);
+	
+	$userModel = new User();
+	$permUsers = $userModel->select("joueur.id_joueur, joueur.demande_perm, joueur.permission")
+							->where('demande_perm',1)
+							->where('permission','<=',$TwoDaysBefore->format('Y-m-d H:i:s'))
+							->get();
+	
+	$buildingModel = new Building();
+	$characModel = new Character();
+	$vehicleModel = new Vehicle();
+	
+	foreach($permUsers as $user){
 		
-		$id_perso 	= $t_gel["id_perso"];
-		$nom_perso	= $t_gel["nom_perso"];
-		$clan_perso	= $t_gel["clan"];
+		$permissionDate = new DateTime($user->permission);
+		$user->demande_perm = 0;
+		$user->permission = $permissionDate->add($_2Days)->format('Y-m-d H:i:s');
 		
-		$in_penitencier = false;
+		$characterModel = new Character();
+		$userCharacters = $characterModel->select('perso.id_perso')
+											->where('perso.idJoueur_perso',$user->id_joueur)
+											->get();
 		
-		$id_inst_bat = in_bat($mysqli, $id_perso);
-		
-		if ($id_inst_bat) {
-			
-			$sql = "SELECT id_batiment FROM instance_batiment WHERE id_instanceBat = '$id_inst_bat'";
-			$res = $mysqli->query($sql);
-			$t = $res->fetch_assoc();
-			
-			$id_bat = $t['id_batiment'];
-			
-			if ($id_bat == 10) {
-				$in_penitencier = true;
+		if($userCharacters){
+			foreach($userCharacters as $character){
+				$characters_id [] = $character->id_perso;
+				$character->x_perso = -1000;
+				$character->y_perso = -1000;
+				$character->update();
 			}
+			$removeCharacFromBuilding = $buildingModel->removeCharacters($characters_id);
+			$removeCharacFromMap = $characModel->removeCharacFromMap($characters_id);
+			$removeCharacFromVehicle = $vehicleModel->removeCharacFromVehicle($characters_id);
 		}
-		
-		if (!$in_penitencier) {
-			
-			echo "gel du perso $id_perso <br />";
-			
-			// maj du statut du perso
-			$sql = "UPDATE perso SET est_gele='1', a_gele='0', date_gele=NOW() WHERE id_perso='$id_perso'";
-			$mysqli->query($sql);
-			
-			// maj de la carte => disparition du perso
-			if (in_bat($mysqli, $id_perso)) {		
-				$sql = "DELETE FROM perso_in_batiment WHERE id_perso='$id_perso'";
-				$mysqli->query($sql);
-			}
-			else if (in_train($mysqli, $id_perso)) {
-				$sql = "DELETE FROM perso_in_train WHERE id_perso='$id_perso'";
-				$mysqli->query($sql);
-			}
-			else {
-				$sql = "UPDATE carte SET occupee_carte='0', idPerso_carte=NULL, image_carte=NULL WHERE idPerso_carte='$id_perso'";
-				$mysqli->query($sql);
-			}
-			
-			// Récupération de la couleur associée au clan du perso
-			$couleur_clan_perso = couleur_clan($clan_perso);
-			
-			// Ajout événement
-			$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'<font color=$couleur_clan_perso><b>$nom_perso</b></font>',' est parti en permission', NULL, NULL,'',NOW(),'0')";
-			$mysqli->query($sql);
-		}
-		else {
-			// Perso dans pénitencier => ne peut pas être placé en gel
-			$sql = "UPDATE perso SET a_gele='0', date_gele=NULL WHERE id_perso='$id_perso'";
-			$mysqli->query($sql);
-		}
+		$user->update();
 	}
 
 	//***********************************************

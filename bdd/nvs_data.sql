@@ -355,7 +355,8 @@ INSERT INTO `competence_as_action` (`id_competence`, `id_action`) VALUES
 --
 
 INSERT INTO `config_jeu` (`code_config`, `valeur_config`) VALUES
-('disponible', '0');
+('disponible', '0'),
+('info_msg', '0');
 
 
 INSERT INTO `decorations` (`id_decoration`, `description_decoration`, `camp_decoration`, `image_decoration`) VALUES
