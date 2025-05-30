@@ -20,6 +20,7 @@ class HomeController extends Controller
     {
 		$administration = new Administration();
 		$maintenance_mode = $administration->getMaintenanceMode();
+		$information_msg = $administration->getInfoMsg();
 		
 		$news = new News();
 		$news = $news->get();

@@ -18,6 +18,17 @@ ob_start();
 	</div>
 </div>
 <?php endif; ?>
+<?php if($information_msg['valeur_config']==1): ?>
+<div class="row justify-content-center mb-0">
+	<div class='alert alert-info fw-bold col'>
+		<div class='w-75 m-auto pb-2 text-center maintenance-msg'>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-lg">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+			</svg> <?= $information_msg['msg'] ?>
+		</div>
+	</div>
+</div>
+<?php endif; ?>
 <div class="row justify-content-center">
 	<div class='col-11 col-sm-3 p-0'>
 		<div class='justify-content-center bg-light bg-opacity-75 p-4'>
