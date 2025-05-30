@@ -76,7 +76,7 @@ ob_start();
 			</p>
 			<nav>
 				<a class='btn btn-secondary me-3' href='index.php?action=logout'>Se déconnecter</a>
-				<button class='btn btn-outline-secondary'>Un soucis ? Nous écrire</button>
+				<a class='btn btn-outline-secondary' href='https://discord.gg/EMqRMzHKjZ'>Un soucis ? Contactez-nous</a>
 			</nav>
 		</div>
 	</div>

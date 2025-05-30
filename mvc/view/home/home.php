@@ -39,25 +39,11 @@ ob_start();
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade show active" id="login-tab-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-					<?php
-						if (isset($_GET['nouveau_tour']) && $_GET['nouveau_tour'] == 'ok')://
-					?>
-					<div class='p-3'>
-						<p class='alert alert-danger fw-bold' role="alert">
-							<svg xmlns="http://www.w3.org/2000/svg" class="" width='26' height='26' fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-							Nouveau tour
-						</p>
-					</div>
-					<?php
-						endif;
-					?>
 					<div class='pt-4'>
-						<?php if(isset($_SESSION['flash'])&& !empty($_SESSION['flash'])): ?>
+						<?php if(isset($_SESSION['flash'])&& $_SESSION['flash']['slug']=='new_turn'): ?>
 						<div class="row">
 							<div class='col'>
-								<div class='p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
+								<div class='fs-4 p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
 									<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 									  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 									</svg>

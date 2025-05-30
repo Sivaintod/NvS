@@ -122,6 +122,10 @@ try{
 				case "credits":
 					$homeController->credits();
 					break;
+				case "nouveau_tour":
+					$_SESSION['flash'] = ["slug"=>"new_turn","class" => "info","message"=>"Nouveau tour"];
+					$homeController->index();
+					break;
 				default:
 					$homeController->index();
 			}

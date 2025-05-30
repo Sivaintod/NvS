@@ -82,7 +82,8 @@ if(isset($_SESSION["ID_joueur"])){
 					$_SESSION = array();
 					session_destroy();
 					
-					header("Location:./index.php?nouveau_tour=ok");
+					header("Location:jeu/index.php?action=nouveau_tour");
+					die();
 					
 				} else {
 					
@@ -253,8 +254,8 @@ if(isset($_SESSION["ID_joueur"])){
 						// deconnexion
 						$_SESSION = array();
 						session_destroy();
-						
-						header("Location:./index.php?nouveau_tour=ok");
+						header("Location:jeu/index.php?action=nouveau_tour");
+						die();
 					}
 				}
 				else {
