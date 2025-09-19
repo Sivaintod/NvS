@@ -51,7 +51,7 @@ ob_start();
 			<div class="tab-content">
 				<div class="tab-pane fade show active" id="login-tab-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
 					<div class='pt-4'>
-						<?php if(isset($_SESSION['flash'])&& $_SESSION['flash']['slug']=='new_turn'): ?>
+						<?php if(isset($_SESSION['flash']['slug'])&& $_SESSION['flash']['slug']=='new_turn'): ?>
 						<div class="row">
 							<div class='col'>
 								<div class='fs-4 p-3 alert alert-<?= $_SESSION['flash']['class'] ?>' role="alert">
