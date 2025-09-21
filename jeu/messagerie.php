@@ -132,8 +132,8 @@ if(isset($_SESSION["id_perso"])){
 				$res_camp = $mysqli->query($sql_camp);
 				$t_camp = $res_camp->fetch_assoc();
 				
-				$camp_perso = $t_camp['clan'];
-				$mat_perso	= $t_camp['id_perso'];
+				$camp_perso = $t_camp['clan']??0;
+				$mat_perso	= $t_camp['id_perso']??'inconnu';
 				
 				if ($camp_perso != null) {
 					if ($camp_perso == 1) {

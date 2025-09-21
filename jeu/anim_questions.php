@@ -77,7 +77,7 @@ if($dispo == '1' || $admin){
 				$mysqli->query($unlock);
 				
 				// assignation du message au perso
-				$sql = "INSERT INTO message_perso VALUES ('$id_message', '$id_perso_rep', '1', '0', '0', '0')";
+				$sql = "INSERT INTO message_perso (id_message, id_perso, id_dossier, lu_message, annonce, supprime_message) VALUES ($id_message, $id_perso_rep, '1', '0', '0', '0')";
 				$mysqli->query($sql);
 				
 				$sql = "UPDATE anim_question SET status='1' WHERE id='$id_question_rep'";
@@ -86,7 +86,7 @@ if($dispo == '1' || $admin){
 				$sql = "INSERT INTO anim_question(date_question, id_perso, titre, question, id_camp, status, id_parent) VALUES (NOW(), '$id', '$objet', '$message', '$camp', '9', '$id_question_rep')";
 				$mysqli->query($sql);
 				
-				$mess .= "Réponse envoyée avec succés";
+				$mess .= "Réponse envoyée avec succès";
 			}
 ?>
 		
