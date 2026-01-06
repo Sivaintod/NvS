@@ -121,7 +121,7 @@ ob_start();
 											<?= $company->countMembers?>
 										</td>
 										<td>
-											<a class='btn btn-info mb-2' href='compagnie.php?id_compagnie=<?= $company->id_compagnie?>&voir_compagnie=ok'>Plus d'info</a><br>
+											<a class='btn btn-info mb-2' href='compagnie.php?action=show&id=<?= $company->id_compagnie?>'>Plus d'info</a><br>
 											<!-- Bouton "suspendre" utile ou non ? -->
 											<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteComp<?= $company->id_compagnie?>">
 												Dissoudre 
