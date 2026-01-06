@@ -2183,7 +2183,7 @@ if($dispo == '1' || $admin){
 
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=0.3, shrink-to-fit=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -2540,108 +2540,65 @@ if($dispo == '1' || $admin){
 					</tr>
 				</table>
 				<!--Fin du tableau d'information-->
+				<?php
+					$sql_mes = "SELECT count(id_message) as nb_mes from message_perso where id_perso='$id_perso' and lu_message='0' AND supprime_message='0'";
+					$res_mes = $mysqli->query($sql_mes);
+					$t_mes = $res_mes->fetch_assoc();
 
-				<center>
-					<table border=0 align="center" width=100%>
-						<tr>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="profil.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_profil; ?>" alt="profil"></a></td>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="evenement.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_evenement; ?>" alt="evenement"></a></td>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="sac.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_sac; ?>" alt="sac"></a></td>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="carte/carte.php"><img width=88 height=92 border=0 src="../images/carte2.png" alt="mini map"></a></td>
-							<?php
-							if ($type_perso != 6) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="messagerie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_messagerie; ?>" alt="messagerie"></a></td>
-							<?php
-							}
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="?action=ranking"><img width=88 height=92 border=0 src="../images/classement2.png" alt="classement"></a></td>
-							<?php
-							if ($type_perso != 6) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>>
-								<a href="compagnie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_compagnie; ?>" alt="compagnie"></a>
-							</td>
-							<?php
-							}
-							if ($nb_em) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="command.php"><img width=117 height=89 border=0 src="../images/<?php echo $image_em; ?>" alt="etat major"></a></td>
-							<?php
-							}
-							?>
-						</tr>
-						<tr>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="profil.php"><img width=83 height=16 border=0 src="../images/profil_titrev2.png"></a> <?php if($bonus_perso < 0){ echo "<span class='badge badge-pill badge-danger' title='malus de défense dû aux attaques'>$bonus_perso</span>";} ?></td>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="evenement.php"><img width=83 height=16 border=0 src="../images/evenement_titrev2.png"></a></td>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="sac.php"><img width=83 height=16 border=0 src="../images/sac_titrev2.png"></a></td>
-							<?php
-							$sql_mes = "SELECT count(id_message) as nb_mes from message_perso where id_perso='$id_perso' and lu_message='0' AND supprime_message='0'";
-							$res_mes = $mysqli->query($sql_mes);
-							$t_mes = $res_mes->fetch_assoc();
-
-							$nb_nouveaux_mes = $t_mes["nb_mes"];
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="carte/carte.php"><img width=83 height=16 border=0 src="../images/carte_titrev2.png"></a></td>
-							<?php
-							if ($type_perso != 6) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>>
-								<a href="messagerie.php"><img width=83 height=16 border=0 src="../images/messagerie_titrev2.png"></a>
-								<?php
-								if($nb_nouveaux_mes) {
-									echo "<span class='badge badge-pill badge-danger'>$nb_nouveaux_mes</span>";
-								}
-								?>
-							</td>
-							<?php
-							}
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>><a href="classement.php"><img width=83 height=16 border=0 src="../images/classement_titrev2.png"></a></td>
-							<?php
-							if ($type_perso != 6) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>>
-								<a href="compagnie.php"><img width=83 height=16 border=0 src="../images/compagnie_titrev2.png"></a>
-								<?php
-								if ($nb_demandes_adhesion_compagnie) {
-									echo "<span class='badge badge-pill badge-success'>$nb_demandes_adhesion_compagnie</span>";
-								}
-
-								if ($nb_demandes_depart_compagnie) {
-									echo "<span class='badge badge-pill badge-danger'>$nb_demandes_depart_compagnie</span>";
-								}
-
-								if ($nb_demandes_emprunt_compagnie) {
-									echo "<span class='badge badge-pill badge-warning'>$nb_demandes_emprunt_compagnie</span>";
-								}
-								?>
-							</td>
-							<?php
-							}
-							if ($nb_em) {
-							?>
-							<td align="center" width=<?php echo $pourc_icone; ?>>
-								<a href="command.php"><img width=83 height=16 border=0 src="../images/em_titrev2.png" alt="etat major"></a>
-								<?php
-								if ($nb_compagnie_attente_em) {
-									echo "<br/><font color=red><b>$nb_compagnie_attente_em</b> compagnie(s) en attente de validation</font>";
-								}
-								?>
-							</td>
-							<?php
-							}
-							?>
-						</tr>
-						<tr>
-							<td colspan='7' align='center'>&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan='7' align='center'>Rafraîchir la page : <a href='index.php'><img border=0 src='../images/refreshv2.png' alt='refresh' /></a></td>
-						</tr>
-					</table>
-				</center>
-
+					$nb_nouveaux_mes = $t_mes["nb_mes"];
+				?>
+				<div class='nav justify-content-center my-3'>
+					<a class='text-center nav-item mx-4' href="?action=character"><img width=88 height=92 border=0 src="../images/<?php echo $image_profil; ?>" alt="profil">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Mon bataillon<?php if($bonus_perso < 0){ echo "<span class='ml-2 badge badge-pill badge-danger' title='malus de défense dû aux attaques'>$bonus_perso</span>";} ?></span></div>
+					</a>
+					<a class='text-center nav-item mx-4' href="evenement.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_evenement; ?>" alt="evenement">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Évènements</span></div>
+					</a>
+					<a class='text-center nav-item mx-4' href="sac.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_sac; ?>" alt="sac">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Sac</span></div>
+					</a>
+					<a class='text-center nav-item mx-4' href="carte/carte.php"><img width=88 height=92 border=0 src="../images/carte2.png" alt="mini map">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Carte</span></div>
+					</a>
+					<?php
+					if ($type_perso != 6) {	?>
+					<a class='text-center nav-item mx-4' href="messagerie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_messagerie; ?>" alt="messagerie">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='ml-2 badge badge-pill badge-danger'>$nb_nouveaux_mes</span>"; }?></span></div>
+					</a>
+					<?php }	?>
+					<a class='text-center nav-item mx-4' href="?action=ranking"><img width=88 height=92 border=0 src="../images/classement2.png" alt="classement">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Classements</span></div>
+					</a>
+					<?php
+					if ($type_perso != 6):
+					?>
+					<a class='text-center nav-item mx-4' href="compagnie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_compagnie; ?>" alt="compagnie">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>Compagnie<?php
+					if ($nb_demandes_adhesion_compagnie) {
+						echo "<span class='ml-2 badge badge-pill badge-success'>$nb_demandes_adhesion_compagnie</span>";
+					}
+					if ($nb_demandes_depart_compagnie) {
+						echo "<span class='ml-2 badge badge-pill badge-danger'>$nb_demandes_depart_compagnie</span>";
+					}
+					if ($nb_demandes_emprunt_compagnie) {
+						echo "<span class='ml-2 badge badge-pill badge-warning'>$nb_demandes_emprunt_compagnie</span>";
+					}
+					?></span></div>
+					</a>
+					<?php endif;?>
+					<?php if($nb_em): ?>
+					<a class='text-center nav-item mx-4' href="command.php"><img width=117 height=89 border=0 src="../images/<?php echo $image_em; ?>" alt="etat major">
+						<div class='mt-2'><span class='px-2 py-1 cat-title'>État Major</span><?php
+						if ($nb_compagnie_attente_em) {
+							echo "<br/><font color=red><b>$nb_compagnie_attente_em</b> compagnie(s) en attente de validation</font>";
+						}?>
+						</div>
+					</a>
+					<?php endif; ?>
+				</div>
+				<div class="text-center">
+					<a href='index.php'>Rafraîchir la page : <img border=0 src='../images/refreshv2.png' alt='refresh' /></a>
+				</div>
 				<?php
 				echo "<center><font color='red'>".$erreur."</font></center>";
 				if (isset($mess) && trim($mess) != "") {

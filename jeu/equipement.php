@@ -68,42 +68,13 @@ if($dispo == '1' || $admin){
 	</head>
 	
 	<body>
-		<div class="container-fluid">
-			<nav class="navbar navbar-expand-lg navbar-light">
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto nav-pills">
-						<li class="nav-item">
-							<a class="nav-link" href="profil.php">Profil</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="ameliorer.php">Améliorer son perso</a>
-						</li>
-						<?php
-						if($chef) {
-							echo "<li class='nav-item'><a class='nav-link' href=\"recrutement.php\">Recruter des grouillots</a></li>";
-							echo "<li class='nav-item'><a class='nav-link' href=\"gestion_grouillot.php\">Gérer ses grouillots</a></li>";
-						}
-						?>
-						<li class="nav-item">
-							<a class="nav-link active" href="#">Equiper son perso</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="./?action=user&op=show&id=<?=$_SESSION["ID_joueur"]?>">Gérer son Compte</a>
-						</li>
-					</ul>
-				</div>
+		<div class="container-fluid mt-5">
+			<h1 class="text-center mb-4">Equipement</h1>
+			
+			<nav class='nav mb-4 justify-content-center'>
+				<a class='btn btn-outline-secondary' href='index.php?action=character'>Retour aux persos</a>
+				<a class='btn btn-outline-secondary ml-4' href='/'>Retour au jeu</a>
 			</nav>
-			
-			<hr>
-		
-			<br /><br /><center><h1>Equipement</h1></center><br />
-			
-			<div align=center><a href="jouer.php"> <input type="button" value="Retour au jeu"> </a></div>
-			
-			<br />
 
 			<?php
 			$mess = "";

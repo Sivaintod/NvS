@@ -96,11 +96,6 @@ class Building extends Model
 		
 		$query = 'DELETE FROM perso_in_batiment WHERE id_perso IN ('.$binds.')'.$NotInJail.'';
 		
-		// var_dump($jails);
-		// echo '<br>';
-		// var_dump($query,$binds,$values);
-		// die();
-		
 		$request = $this->request($query,$values);
 		$result = $request->rowCount();
 

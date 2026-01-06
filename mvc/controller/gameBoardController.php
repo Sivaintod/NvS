@@ -79,11 +79,12 @@ class GameboardController extends Controller
 		}
 		
 		$character = new Character();
-		$character = $character->select('perso.id_perso, idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, est_gele, clan, perso_as_grade.id_grade, grades.nom_grade')
-						->leftJoin('perso_as_grade','perso_as_grade.id_perso','=','perso.id_perso')
-						->leftJoin('grades','perso_as_grade.id_grade','=','grades.id_grade')
-						->where('perso.id_perso',$_SESSION["id_perso"])
-						->get();
+		$character = $character->select('perso.id_perso, idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, est_gele, clan, est_renvoye,
+									perso_as_grade.id_grade, grades.nom_grade')
+								->leftJoin('perso_as_grade','perso_as_grade.id_perso','=','perso.id_perso')
+								->leftJoin('grades','perso_as_grade.id_grade','=','grades.id_grade')
+								->where('perso.id_perso',$_SESSION["id_perso"])
+								->get();
 		$character = $character[0];
 
 		// contrôle si le perso appartient bien au joueur
@@ -103,6 +104,13 @@ class GameboardController extends Controller
 			session_destroy(); // On détruit la session
 		
 			header("Location:../index.php");
+		}
+		
+		// on vérifie que le perso n'est pas désactivé
+		if($character->est_renvoye==1){
+			
+			$_SESSION['id_perso'] = $_SESSION["leader_id"];
+			header("Location:?");
 		}
 		
 		$dossier_img_joueur = $user->dossier_img;

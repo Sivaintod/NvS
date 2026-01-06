@@ -9,12 +9,9 @@ class formValidator
 	* Nettoie les données utilisateur
 	* @return bool
 	*/
-	public function sanitize($data) {
-		$data = trim($data);
-		$data = stripslashes($data);
-		$data = htmlspecialchars($data);
-		
-		return $data;
+	public function sanitize(string $data): string
+	{
+		return htmlspecialchars(stripslashes(trim($data)));
 	}
 	
 	/**

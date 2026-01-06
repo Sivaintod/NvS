@@ -96,6 +96,22 @@ class Company extends Model
 	}
 	
 	/**
+   * fonction pivot pour savoir si un perso appartient à une compagnie et s'il en est le chef
+   * @var charac_id (int) id du perso
+   * @return array
+   */
+	public function inCompany(int $id) {
+		
+		$query = "SELECT id, perso_in_compagnie.id_perso, perso_in_compagnie.id_compagnie, perso_in_compagnie.poste_compagnie, poste.slug FROM perso_in_compagnie LEFT JOIN poste ON poste.id_poste=perso_in_compagnie.poste_compagnie WHERE perso_in_compagnie.id_perso=?";
+		$values = [$id];
+
+		$request = $this->request($query,$values);
+		$result = $request->fetch(PDO::FETCH_ASSOC);
+
+		return $result;
+	}
+	
+	/**
      * Pivot table "perso_in_compagnie" to assign characters to integrate a company
      * @param $type array
      * @return bool

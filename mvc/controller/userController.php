@@ -15,8 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {	
-		echo "Page d'administration des joueurs<br>";
-		Echo "En construction";
+		throw new Exception('Page non trouvée',404);
     }
 	
 	/**

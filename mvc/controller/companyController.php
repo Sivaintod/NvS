@@ -127,13 +127,13 @@ class CompanyController extends Controller
 		// traiter l'annulation de demande d'intégration
 		// traiter la demande de quitter la compagnie
 		
-		$user = new Character();
-		$user = $user->select('perso.id_perso, perso_in_compagnie.id_compagnie, perso_in_compagnie.attenteValidation_compagnie, poste.role_level')
+		$sessionCharacter = new Character();
+		$sessionCharacter = $sessionCharacter->select('perso.id_perso, perso_in_compagnie.id_compagnie, perso_in_compagnie.attenteValidation_compagnie, poste.role_level')
 								->leftJoin('perso_in_compagnie','perso_in_compagnie.id_perso','=','perso.id_perso')
 								->leftJoin('poste','perso_in_compagnie.poste_compagnie','=','poste.id_poste')
 								->where('perso.id_perso',$_SESSION["id_perso"])
 								->get();
-		$user = $user[0];
+		$sessionCharacter = $sessionCharacter[0];
 		
 		$character = new Character();
 		$character = $character->select('perso.id_perso, perso_in_compagnie.id_compagnie, perso_in_compagnie.attenteValidation_compagnie, poste.role_level')
@@ -144,7 +144,7 @@ class CompanyController extends Controller
 		$character = $character[0];
 		
 		// Si ce n'est pas le perso qui demande ou que ce n'est pas un membre autorisé on annule l'action
-		if($character->id_perso<>$_SESSION["id_perso"] AND !in_array($user->role_level,[1,2,4])){
+		if($character->id_perso<>$_SESSION["id_perso"] AND !in_array($sessionCharacter->role_level,[1,2,4])){
 			$_SESSION['flash'] = ['class'=>'danger','message'=>"Vous n'avez pas l'autorisation de faire cette action"];
 			header('location:?');
 			die();

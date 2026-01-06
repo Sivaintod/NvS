@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `anti_zerk_banque_compagnie` (
 --
 
 CREATE TABLE `arme` (
-  `id_arme` int(11) NOT NULL,
+  `id_arme` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `nom_arme` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `porteeMin_arme` int(11) NOT NULL DEFAULT '0',
   `porteeMax_arme` tinyint(4) NOT NULL DEFAULT '0',
@@ -204,7 +204,7 @@ CREATE TABLE `arme` (
   `qualite_arme` tinyint(4) NOT NULL DEFAULT '6',
   `main` tinyint(4) NOT NULL DEFAULT '1',
   `image_arme` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id_arme`),
+
   KEY `index_qualiteArme` (`porteeMin_arme`,`porteeMax_arme`,`qualite_arme`),
   KEY `index_porteemax1` (`porteeMax_arme`,`qualite_arme`),
   KEY `index_minMax_or` (`porteeMin_arme`,`porteeMax_arme`,`coutOr_arme`),
@@ -225,6 +225,7 @@ ALTER TABLE `arme`
 --
 
 CREATE TABLE `arme_as_type_unite` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_arme` int(11) NOT NULL,
   `id_type_unite` int(11) NOT NULL,
   KEY `index_nom_unite` (`id_arme`,`id_type_unite`)
@@ -1564,7 +1565,10 @@ CREATE TABLE `perso` (
   `convalescence` INT NOT NULL DEFAULT '0',
   `genie` INT NOT NULL DEFAULT '0',
   `gain_xp_tour` INT NOT NULL DEFAULT '0',
-  `est_renvoye` tinyint(1) NOT NULL DEFAULT '0'
+  `est_renvoye` tinyint(1) NOT NULL DEFAULT '0',
+  `date_renvoi` datetime DEFAULT NULL,
+  `normalized_name` varchar(255) NULL
+  
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
@@ -1799,12 +1803,14 @@ ALTER TABLE `perso_as_objet`
 --
 
 CREATE TABLE `perso_as_respawn` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `id_perso` int(11) NOT NULL,
   `id_bat` int(11) NOT NULL,
   `id_instance_bat` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `perso_as_respawn`
+  ADD UNIQUE `id_perso_id_bat` (`id_perso`, `id_bat`);
   ADD KEY `index_bat_ratrap` (`id_instance_bat`,`id_perso`,`id_bat`) USING BTREE,
   ADD KEY `index_supp_respawn` (`id_perso`),
   ADD KEY `index_instanceBat` (`id_instance_bat`),

@@ -9,7 +9,7 @@ ob_start();
 <div class="row justify-content-center">
 	<div class="col mx-2 rounded bg-light py-3 bg-opacity-75">
 		<div class='mb-3'>
-			<a class='btn btn-outline-secondary' href='jouer.php'>Retour au jeu</a>
+			<a class='btn btn-outline-secondary' href='/'>Retour au jeu</a>
 		</div>
 		<img class='float-start me-3' src='../images/<?php echo $image_em; ?>' width="80" height="60" alt="">
 		<h2 class='mb-4 pt-2'>Etat Major</h2>

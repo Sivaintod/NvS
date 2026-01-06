@@ -89,6 +89,8 @@ class HomeController extends Controller
 		$lastKills = $lastKills->select('dernier_tombe.date_capture, dernier_tombe.id_perso_capture, dernier_tombe.id_perso_captureur, killed.nom_perso as killed_name, killer.nom_perso as killer_name')
 							->leftJoin('perso killed','killed.id_perso','=','dernier_tombe.id_perso_capture')
 							->leftJoin('perso killer','killer.id_perso','=','dernier_tombe.id_perso_captureur')
+							->where('killed.est_pnj',0)
+							->where('killer.est_pnj',0)
 							->orderBy('dernier_tombe.date_capture DESC')
 							->limit(5)
 							->get();

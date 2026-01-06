@@ -124,6 +124,11 @@ body{
 	height:1.75rem;
 }
 
+.size-8 {
+	width:2rem;
+	height:2rem;
+}
+
 /* couleur des camps */
 .text-north{
 	color:rgb(0,90,230);
@@ -235,6 +240,18 @@ body{
 	font-family: "Times New Roman", Times, serif;
 }
 
+.avatar .unit-name {
+	position:relative;
+	bottom:5px;
+}
+
+/* equipement */
+.no-symbol {
+	position:absolute;
+	top:15px;
+	left:15px;
+}
+
 /* sac */
 .sac {
 	z-index:-1;
@@ -284,6 +301,95 @@ body{
 	width:130px;
 	height:130px;
 }
+
+/* persos */
+.card-camp .card-img-top{
+	height:150px;
+}
+
+.card-camp-north{
+	background:center url("../img/backgrounds/american-flag-1861-cube.png");
+	background-size: cover;
+}
+
+.card-camp-south{
+	background:center url("../img/backgrounds/confedered-flag-1861-cube.png");
+	background-size: cover;
+}
+
+.bg-camp-north{
+	background:center linear-gradient(to top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.7)), url("../img/backgrounds/american-flag-1861-cube.png");
+	background-size: cover;
+}
+
+.bg-camp-south{
+	background:center linear-gradient(to top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.7)), url("../img/backgrounds/confedered-flag-1861-cube.png");
+	background-size: cover;
+}
+
+
+.card-camp:hover .card-img-top  {
+	background-color:rgba(255,255,255,0.3) !important;
+}
+.card-camp:hover .card-body  {
+	background-color:rgba(255,255,255,0.5) !important;
+}
+
+.camp-img {
+	width:130px;
+	height:130px;
+}
+
+.card-edit-btn {
+	position:absolute;
+	top:0;
+	width:100%;
+}
+
+/* -- bandeau d'info -- */
+.card-ribbon {
+	position: absolute;
+	width:7rem;
+	height:7rem;
+	overflow: hidden;
+}
+
+.card-ribbon span {
+	position: absolute;
+	display: block;
+	width: 11rem;
+	padding: 15px 0;
+	text-shadow: 0 1px 1px rgba(0,0,0,.5);
+	border-bottom:1px solid rgba(1,1,1,0.4);
+	/* text-transform: uppercase; */
+	text-align: center;
+}
+
+.card-ribbon-top-left {
+	/* top: 0.5rem; */
+	/* left: 0.5rem; */
+}
+
+.card-ribbon-top-left span {
+	top: 0.5rem;
+	left:-3.15rem;
+	transform: rotate(-45deg);
+}
+
+.card-camp:hover .card-edit-btn{
+	color:rgba(255,255,255,1) !important;
+}
+
+.card-btn-desactivate:hover{
+	font-weight:600;
+	background-color:rgba(220,53,69,1) !important;
+}
+
+.card-btn-activate:hover{
+	font-weight:600;
+	background-color:rgba(25,132,84,1) !important;
+}
+
 /* icons custom */
 
 .icon-lg {
@@ -300,4 +406,9 @@ body{
 	height:3.5rem;
 	width:3.5rem;
 	transform:rotate(45deg);
+}
+
+/* list group */
+ol.list-group > li:nth-of-type(odd) {
+    background-color: rgb(242,242,242) ;
 }

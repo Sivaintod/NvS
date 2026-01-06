@@ -10,7 +10,7 @@ ob_start();
 	<div class="col mx-2 rounded bg-light py-3 bg-opacity-75">
 		<nav class='mb-3'>
 			<a class='btn btn-outline-primary' href='compagnie.php'>Page compagnie</a>
-			<a class='btn btn-outline-secondary' href='jouer.php'>Retour au jeu</a>
+			<a class='btn btn-outline-secondary' href='/'>Retour au jeu</a>
 		</nav>
 		<h2 class='mb-3'>Les compagnies du camp <?= $character->camp_name ?></h2>
 		<div class='bg-light p-4 rounded'>
