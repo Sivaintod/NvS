@@ -66,7 +66,7 @@ class AuthController extends Controller
 			
 		}
 		
-		require_once('../mvc/view/register.php');
+		return require_once('../mvc/view/register.php');
     }
 	
 	/**
@@ -229,6 +229,7 @@ class AuthController extends Controller
 				
 				// instanciation du chef
 				$leader->nom_perso = $sanitizer->sanitize($_POST['nom_perso']);
+				$leader->normalized_name = $sanitizer->sanitize($_POST['nom_perso']);
 				$leader->bataillon = $sanitizer->sanitize($_POST['nom_bataillon']);
 				$leader->type_perso = $unitLeader->id_unite;
 				$leader->x_perso = $x_respawn_leader;
@@ -252,6 +253,7 @@ class AuthController extends Controller
 				
 				// instanciation du 1er grouillot
 				$infantry->nom_perso = $leader->nom_perso.' Junior';
+				$infantry->normalized_name = $leader->nom_perso.' Junior';
 				$infantry->bataillon = $sanitizer->sanitize($_POST['nom_bataillon']);
 				$infantry->type_perso = $unitInfantry->id_unite;
 				$infantry->x_perso = $x_respawn_infantry;
@@ -483,6 +485,8 @@ class AuthController extends Controller
 					$_SESSION["admin"] = $user->admin_perso;
 					$_SESSION["permission"] = $user->permission;
 					$_SESSION["id_perso"] = $user->id_perso;
+					$_SESSION["leader_id"] = $user->id_perso;
+					
 					unset($user->id_perso);
 					
 					$userOkLogin = new User();
@@ -500,6 +504,7 @@ class AuthController extends Controller
 					$_SESSION["admin"] = $user->admin_perso;
 					$_SESSION["permission"] = $user->permission;
 					$_SESSION["id_perso"] = $user->id_perso;
+					$_SESSION["leader_id"] = $user->id_perso;
 					
 					$user = new User();
 					$user = $user->addUserOkLogin($id_joueur,$ip_joueur,$user_agent,$cookie_val);

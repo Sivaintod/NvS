@@ -13,7 +13,7 @@ ob_start();
 				<nav class='mb-3'>
 					<a class='btn btn-outline-primary' href='?all'>Toutes les compagnies</a>
 					<?php if(!empty($character->id_compagnie) AND $character->id_compagnie!=$company->id_compagnie):?><a class='btn btn-outline-primary' href='?action=show&id=<?=$character->id_compagnie?>'>Ma compagnie</a><?php endif;?>
-					<a class='btn btn-outline-secondary' href='jouer.php'>Retour au jeu</a>
+					<a class='btn btn-outline-secondary' href='/'>Retour au jeu</a>
 				</nav>
 			</div>
 		</div>

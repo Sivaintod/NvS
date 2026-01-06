@@ -170,6 +170,21 @@ a:visited
   z-index : 1; 
 }
 
+.cat-title{
+	border : 3px groove rgba(159,117,42,1);
+	border-radius: 10px;
+	background: #382910;
+	background: linear-gradient(180deg,rgba(56, 41, 16, 1) 0%, rgba(95, 0, 0, 1) 30%, rgba(95, 0, 0, 1) 70%, rgba(56, 41, 16, 1) 100%);
+	color:#fff;
+	text-transform: uppercase;
+	font-weight: 700;
+	font-size:0.7rem;
+}
+
+.cat-title {
+	text-decoration: none;
+}
+
 /* affichage pastille en attente de refacto */
 
 .spot-obj{

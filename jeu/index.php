@@ -2,6 +2,7 @@
 session_start();
 require_once('../mvc/controller/homeController.php');
 require_once('../mvc/controller/userController.php');
+require_once('../mvc/controller/characterController.php');
 require_once('../mvc/controller/searchController.php');
 require_once('../mvc/controller/authController.php');
 require_once('../mvc/controller/gameBoardController.php');
@@ -13,6 +14,7 @@ date_default_timezone_set('Europe/Paris');
 // déclaration des contrôleurs :
 $homeController = new homeController();
 $userController = new userController();
+$characterController = new characterController();
 $searchController = new searchController();
 $authController = new authController();
 $gameBoardController = new gameBoardController();
@@ -72,6 +74,31 @@ try{
 							$gameBoardController->index();
 						}
 					}
+					break;
+				case "character":
+					if(isset($_GET['id']) AND !empty($_GET['id'])){
+						switch ($operation) {
+							case "show":
+								$characterController->show($_GET['id']);
+								break;
+							case "edit":
+								if($_SERVER['REQUEST_METHOD']==='POST'){
+									$characterController->update($_GET['id']);
+								}else{
+									$characterController->edit($_GET['id']);
+								}
+								break;
+							case "delete":
+								$characterController->destroy($_GET['id']);
+								break;
+							default:
+								$characterController->show($_GET['id']);
+						}
+						break;
+					}else{
+						$characterController->index();
+					}
+					break;
 				/* gestion du mot de passe */
 				case "password":
 					switch ($operation) {
@@ -139,6 +166,10 @@ try{
 		case 403:
 			http_response_code(403);
 			return require_once('../mvc/view/errors/403.php');
+			break;
+		case 404:
+			http_response_code(404);
+			return require_once('../mvc/view/errors/404.php');
 			break;
 		case 405:
 			http_response_code(405);

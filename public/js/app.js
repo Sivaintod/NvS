@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  })
 	}
 	
-	// fonction de recherche en auto complétion TEST
+	// fonction de recherche en auto complétion (TEST)
 	const searchArea = document.querySelectorAll(".search-area");
 	
 	if(searchArea!==null){

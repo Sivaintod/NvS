@@ -10,7 +10,7 @@ ob_start();
 	<div class='col mx-auto'>
 		<img src="../images/<?php echo $image_sac; ?>" class='mx-auto d-block'>
 		<p class='mt-2 text-center'>
-			<a href="jouer.php" class='btn btn-light border'>Retour au jeu</a>
+			<a href="/" class='btn btn-light border'>Retour au jeu</a>
 		</p>
 	</div>
 	<div class="col-10 mb-4 mb-sm-0">

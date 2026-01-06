@@ -9,7 +9,9 @@ abstract class Model extends Db
 	protected $fillable = []; // seuls les champs de ce tableau seront autorisés dans une hydratation
 	protected $guarded; //  tous les champs de ce tableau seront enlevés d'une hydratation
 	
-	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','orWhereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db'];
+	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','orWhereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db','attributes','original'];
+	protected array $attributes = [];
+    protected array $original = [];
 	private $selectedCols = '';
 	private $whereConditions = [];
 	private $orWhereConditions = [];

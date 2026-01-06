@@ -9,16 +9,17 @@ class Grade extends Model
 	protected $guarded = [];
 	
 	// ancien code à contrôler (impact) et supprimer
-	private $id_grade;
-	private $nom_grade;
-	private $pc_grade;
-	private $point_armee_grade;
 	
-	public function __set($name, $value) {}
+	// private $id_grade;
+	// private $nom_grade;
+	// private $pc_grade;
+	// private $point_armee_grade;
 	
-	public function __get($name){
-		return $this->$name;
-	}
+	// public function __set($name, $value) {}
+	
+	// public function __get($name){
+		// return $this->$name;
+	// }
 	
 	public function getGrade($id,$attributs = []){
 		$db = $this->dbConnectPDO();
