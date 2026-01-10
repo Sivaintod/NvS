@@ -23,7 +23,7 @@ class HomeController extends Controller
 		$information_msg = $administration->getInfoMsg();
 		
 		$news = new News();
-		$news = $news->get();
+		$news = $news->orderBy('date DESC')->get();
 		
 		$userModel = new User();
 		$usersNbr = $userModel->select('count(id_joueur) as number')->get();
