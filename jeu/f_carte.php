@@ -1020,27 +1020,27 @@ function afficher_lien_prox_bat($mysqli, $x_persoE, $y_persoE, $id_perso, $type_
 				// + Le lien est utile que pour les unités autre que chien et soigneur
 				// + si batiment tour de guet, seul les infanterie peuvent capturer
 				if(batiment_vide($mysqli, $id_bat) && batiment_pv_capturable($mysqli, $id_bat) && $bat != 1 && $bat != 5 && $bat != 7 && $bat != 11 && $type_perso != '6' && $type_perso != '4' && $type_perso == 3){
-					$new_mess_bat .= "<center><font color = blue>~~<a href=\"jouer.php?bat=$id_bat&bat2=$bat\" > capturer le batiment $nom_bat $nom_ibat [$id_bat]</a>~~</font></center>";
+					$new_mess_bat .= "<a href=\"?bat=$id_bat&bat2=$bat\" >~~ capturer le bâtiment $nom_bat $nom_ibat [$id_bat] ~~</a><br>";
 				}
 			}
 			else {
 				if($bat != 1 && $bat != 5 && $bat != 10){
 					// Si batiment tour de guet, seul les infanteries, soigneurs et chiens peuvent rentrer
 					if (($bat == 2 && ($type_perso == 3 || $type_perso == 4 || $type_perso == 6)) || $bat != 2 ) {
-						$new_mess_bat .= "<center><font color = blue>~~<a href=\"jouer.php?bat=$id_bat&bat2=$bat\" > entrer dans le batiment $nom_bat $nom_ibat [$id_bat]</a>~~</font></center>";
+						$new_mess_bat .= "<a href=\"?bat=$id_bat&bat2=$bat\" >~~ entrer dans le batiment $nom_bat $nom_ibat [$id_bat] ~~</a><br>";
 					}
 				}
 				
 				// Les chiens ne peuvent pas réparer les batiments
 				if ($pv_instance < $pvMax_instance && $type_perso != '6') {
-					$new_mess_bat .= "<center><font color = blue>~~<a href=\"action.php?bat=$id_bat&reparer=ok\" > reparer $nom_bat $nom_ibat [$id_bat] (5 PA)</a>~~</font></center>";
+					$new_mess_bat .= "<a href=\"action.php?bat=$id_bat&reparer=ok\" >~~ réparer $nom_bat $nom_ibat [$id_bat] (5 PA) ~~</a><br>";
 				}
 			}
 			
 			// Pont (neutres)
 			// Les chiens ne peuvent pas réparer ni saboter les ponts
 			if ($bat == 5 && $type_perso != '6') {
-				$new_mess_bat .= "<center><font color = blue>~~<a href=\"action.php?bat=$id_bat&saboter=ok\" > saboter $nom_bat $nom_ibat [$id_bat] (10 PA)</a>~~</font></center>";
+				$new_mess_bat .= "<a href=\"action.php?bat=$id_bat&saboter=ok\" >~~ saboter $nom_bat $nom_ibat [$id_bat] (10 PA) ~~</a><br>";
 			}
 		}
 	}

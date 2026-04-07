@@ -50,7 +50,7 @@ ob_start();
 <div class="tab-content" id="nav-compContent">
 	<div class="tab-pane fade <?php if(!isset($_SESSION['flash']['tab'])):?> show active<?php endif?>" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
 		<div class="row">
-			<div class="col col-md-3 mb-3">
+			<div class="col-12 col-sm-6 col-lg-3 mb-3">
 				<div class="card">
 					<div class="card-header">
 						<h3 class='fs-4'>Profil</h3>

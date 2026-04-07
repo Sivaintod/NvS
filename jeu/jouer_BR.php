@@ -171,31 +171,25 @@ if($dispo == '1' || $admin){
 				}
 
 				// recuperation des anciennes données du perso
-				$sql = "SELECT idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, clan, perso_as_grade.id_grade, nom_grade
-						FROM perso, perso_as_grade, grades
-						WHERE perso_as_grade.id_perso = perso.id_perso
-						AND perso_as_grade.id_grade = grades.id_grade
-						AND perso.id_perso='$id_perso'";
-				$res = $mysqli->query($sql);
-				$t_perso1 = $res->fetch_assoc();
 
-				$id_joueur_perso 	= $t_perso1["idJoueur_perso"];
-				$nom_perso 			= $t_perso1["nom_perso"];
-				$x_persoN 			= $t_perso1["x_perso"];
-				$y_persoN 			= $t_perso1["y_perso"];
-				$pm_perso 			= $t_perso1["pm_perso"];
-				$pmMax_perso		= $t_perso1["pmMax_perso"];
-				$dla_perso			= $t_perso1["DLA_perso"];
-				$image_perso 		= $t_perso1["image_perso"];
-				$bonusPM_perso_p 	= $t_perso1["bonusPM_perso"];
-				$clan_p 			= $t_perso1["clan"];
-				$type_perso			= $t_perso1["type_perso"];
-				$pa_perso			= $t_perso1["pa_perso"];
-				$perception_perso	= $t_perso1["perception_perso"];
-				$charge_perso		= $t_perso1["charge_perso"];
-				$chargeMax_perso	= $t_perso1["chargeMax_perso"];
-				$grade_perso 		= $t_perso1["id_grade"];
-				$nom_grade_perso	= $t_perso1["nom_grade"];
+				$id_joueur_perso 	= $selected_Character->idJoueur_perso;
+				$nom_perso 			= $selected_Character->nom_perso;
+				$x_persoN 			= $selected_Character->x_perso;
+				$y_persoN 			= $selected_Character->y_perso;
+				$pm_perso 			= $selected_Character->pm_perso;
+				$pmMax_perso		= $selected_Character->pmMax_perso;
+				$dla_perso			= $selected_Character->DLA_perso;
+				$image_perso 		= $selected_Character->image_perso;
+				$bonusPM_perso_p 	= $selected_Character->bonusPM_perso;
+				$clan_p 			= $selected_Character->clan;
+				$type_perso			= $selected_Character->type_perso;
+				$combat_type		= $selected_Character->type_combat;
+				$pa_perso			= $selected_Character->pa_perso;
+				$perception_perso	= $selected_Character->perception_perso;
+				$charge_perso		= $selected_Character->charge_perso;
+				$chargeMax_perso	= $selected_Character->chargeMax_perso;
+				$grade_perso 		= $selected_Character->id_grade;
+				$nom_grade_perso	= $selected_Character->nom_grade;
 
 				$sql = "SELECT UNIX_TIMESTAMP(DLA_perso) as DLA_perso FROM perso WHERE idJoueur_perso='$id_joueur_perso' AND chef=1";
 				$res = $mysqli->query($sql);
@@ -228,7 +222,7 @@ if($dispo == '1' || $admin){
 
 				if(isset($_GET['erreur'])){
 					if ($_GET['erreur'] == 'competence') {
-						$erreur .= 'competence indiponible pour le moment';
+						$erreur .= 'compétence indiponible pour le moment';
 					}
 
 					if ($_GET['erreur'] == 'prox_bat') {
@@ -240,7 +234,7 @@ if($dispo == '1' || $admin){
 					}
 
 					if ($_GET['erreur'] == 'pm') {
-						$erreur .= "Vous n'avez plus de pm !";
+						$erreur .= "Vous n'avez plus de PM !";
 					}
 				}
 
@@ -671,7 +665,7 @@ if($dispo == '1' || $admin){
 													//maj_visu($mysqli, $clan_p, $carte, $x_persoN, $y_persoN, $perception_final, $id_perso);
 												}
 												else {
-													$erreur .= "Il faut posséder au moins ".$cout_pm." pm pour sortir de ce bâtiment dans cette direction";
+													$erreur .= "Il faut posséder au moins ".$cout_pm." PM pour sortir de ce bâtiment dans cette direction";
 												}
 											}
 											else {
@@ -683,7 +677,7 @@ if($dispo == '1' || $admin){
 										}
 									}
 									else {
-										$erreur .= "Direction de sorti du bâtiment incorrecte";
+										$erreur .= "Direction de sortie du bâtiment incorrecte";
 									}
 								}
 								else {
@@ -691,11 +685,11 @@ if($dispo == '1' || $admin){
 								}
 							}
 							else {
-								$erreur .= "Il faut posséder au moins 1pm pour sortir du bâtiment";
+								$erreur .= "Il faut posséder au moins 1 PM pour sortir du bâtiment";
 							}
 						}
 						else {
-							$erreur .= "Vous n'êtes pas dans ce batiment donc vous ne pouvez pas essayer d'en sortir";
+							$erreur .= "Vous n'êtes pas dans ce bâtiment. Vous ne pouvez pas en sortir";
 						}
 					}
 					else {
@@ -820,7 +814,7 @@ if($dispo == '1' || $admin){
 																		$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
 																		$mysqli->query($sql);
 
-																		$erreur .= "Les hopitaux ne peuvent pas être capturés !";
+																		$erreur .= "Les hôpitaux ne peuvent pas être capturés !";
 																	}
 																}
 																else {
@@ -856,7 +850,7 @@ if($dispo == '1' || $admin){
 															$enterInBat = new Building();
 															$enterInBat = $enterInBat->insertCharacters([$id_perso],$id_inst_bat);
 
-															echo"<font color = blue>vous êtes entré(e) dans le bâtiment $id_inst_bat</font><br>";
+															$mess = "vous êtes entré(e) dans le bâtiment $id_inst_bat";
 
 															// mise a jour table evenement
 															$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ('$id_perso','<font color=$couleur_clan_p><b>$nom_perso</b></font>','est entré dans le batiment $nom_bat $id_inst_bat',NULL,'','en $x_bat/$y_bat',NOW(),'0')";
@@ -892,11 +886,11 @@ if($dispo == '1' || $admin){
 														$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
 														$mysqli->query($sql);
 
-														$erreur .= "Seul les infanteries, soigneurs et chiens peuvent monter dans la tour de guet";
+														$erreur .= "Seuls les infanteries, soigneurs et chiens peuvent monter dans la tour de guet";
 													}
 												}
 												else {
-													$erreur .= "Il faut posséder au moins 1PM pour entrer dans le bâtiment";
+													$erreur .= "Il faut posséder au moins 1 PM pour entrer dans le bâtiment";
 												}
 											}
 										}
@@ -913,7 +907,7 @@ if($dispo == '1' || $admin){
 								}
 							}
 							else {
-								$erreur .= "Vous devez sortir du bâtiment dans lequel vous vous trouvez afin de rentrer dans un nouveau bâtiment";
+								$erreur .= "Vous êtes déjà dans un bâtiment";
 							}
 						}
 						// traitement des autres cas
@@ -1148,7 +1142,7 @@ if($dispo == '1' || $admin){
 																		$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
 																		$mysqli->query($sql);
 
-																		$erreur .= "Les hopitaux et les gares ne peuvent pas être capturés !";
+																		$erreur .= "Les hôpitaux et les gares ne peuvent pas être capturés !";
 																	}
 																}
 																else {
@@ -1166,7 +1160,7 @@ if($dispo == '1' || $admin){
 															else {
 																$entre_bat_ok = 0;
 
-																$erreur .= "Le bâtiment n'est pas encore capturable, il faut descendre ses PV";
+																$erreur .= "Le bâtiment n'est pas encore capturable, il faut réduire ses PV";
 															}
 														}
 
@@ -1186,7 +1180,7 @@ if($dispo == '1' || $admin){
 															// $sql = "INSERT INTO `perso_in_batiment` VALUES ('$id_perso','$id_inst_bat')";
 															// $mysqli->query($sql);
 
-															echo"<font color = blue>vous êtes entré(e) dans le bâtiment $nom_bat</font>";
+															$mess = "vous êtes entré(e) dans le bâtiment $nom_bat";
 
 															// mise a jour table evenement
 															$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ('$id_perso','<font color=$couleur_clan_p><b>$nom_perso</b></font>','est entré dans le batiment $nom_bat $id_inst_bat',NULL,'','en $x_bat/$y_bat',NOW(),'0')";
@@ -1253,7 +1247,7 @@ if($dispo == '1' || $admin){
 													}
 												}
 												else {
-													$erreur .= "Il faut posséder au moins 1PM pour entrer dans le bâtiment";
+													$erreur .= "Il faut posséder au moins 1 PM pour entrer dans le bâtiment";
 												}
 											}
 											else {
@@ -1277,11 +1271,11 @@ if($dispo == '1' || $admin){
 										$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
 										$mysqli->query($sql);
 
-										$erreur .= "Le batiment n'existe pas";
+										$erreur .= "Le bâtiment n'existe pas";
 									}
 								}
 								else {
-									$erreur .= "Vous devez sortir du bâtiment dans lequel vous vous trouvez afin de rentrer dans un nouveau bâtiment";
+									$erreur .= "Vous êtes déjà dans un bâtiment";
 								}
 							}
 						}
@@ -1414,7 +1408,7 @@ if($dispo == '1' || $admin){
 											$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
 											$mysqli->query($sql);
 
-											$erreur .= "Votre tentative d'évasion s'est soldée par un echec, les gardes vous ont rattrapés et remis au cachot !";
+											$erreur .= "Votre tentative d'évasion s'est soldée par un échec, les gardes vous ont rattrapés et remis au cachot !";
 										}
 									}
 									else {
@@ -1479,10 +1473,10 @@ if($dispo == '1' || $admin){
 
 					// Les chiens ne peuvent pas réparer les bâtiments
 					if ($pv_bat < $pvMax_bat && $type_perso != '6') {
-						$mess_bat .= "<center><font color = blue>~~<a href=\"action.php?bat=$id_bat&reparer=ok\" > reparer $nom_bat $nom_ibat [$id_bat] (5 PA)</a>~~</font></center>";
+						$mess_bat .= "<a href=\"action.php?bat=$id_bat&reparer=ok\" >~~ réparer $nom_bat $nom_ibat [$id_bat] (5 PA) ~~</a><br>";
 					}
 
-					$mess_bat .= "<center><font color = blue>~~<a href=\"batiment.php?bat=$id_bat\" target='_blank'> accéder à la page du bâtiment $nom_bat $nom_ibat</a>~~</font></center>";
+					$mess_bat .= "<a href=\"batiment.php?bat=$id_bat\" target='_blank'>~~ accéder à la page du bâtiment $nom_bat $nom_ibat ~~</a><br>";
 
 					$bonus_perc = 0;
 
@@ -1536,7 +1530,7 @@ if($dispo == '1' || $admin){
 
 				// On se trouve dans un train
 				if (in_train($mysqli, $id_perso)) {
-					$mess_bat .= "<center><font color = blue><b>Vous êtes dans un train</b></font></center>";
+					$mess_bat .= "Vous êtes dans un train";
 
 					if (isset($_GET['train']) && isset($_GET['direction'])) {
 
@@ -1746,7 +1740,7 @@ if($dispo == '1' || $admin){
 						$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ('$id_perso','<font color=$couleur_clan_p><b>$nom_perso</b></font>','a ramassé des objets par terre ',NULL,'','en $x_persoN/$y_persoN : $liste_ramasse',NOW(),'0')";
 						$mysqli->query($sql);
 
-						echo "<center><font colot='blue'>Vous avez ramassé les objets suivants : ". $liste_ramasse ."</font></center><br>";
+						$mess = "Vous avez ramassé les objets suivants : ". $liste_ramasse;
 					}
 					else {
 						$erreur .= "Vous n'avez pas assez de PA pour rammasser les objets à terre.";
@@ -1758,9 +1752,9 @@ if($dispo == '1' || $admin){
 
 					$mouv = $_GET["mouv"];
 
-					$x_persoE = $t_perso1["x_perso"];
-					$y_persoE = $t_perso1["y_perso"];
-					$pm_perso = $t_perso1["pm_perso"];
+					$x_persoE = $selected_Character->x_perso;
+					$y_persoE = $selected_Character->y_perso;
+					$pm_perso = $selected_Character->pm_perso;
 
 					if (!in_bat($mysqli, $id_perso) && !in_train($mysqli, $id_perso)) {
 
@@ -1805,7 +1799,7 @@ if($dispo == '1' || $admin){
 												$sql = "UPDATE perso SET pm_perso=pm_perso-1 WHERE id_perso='$id_perso'";
 												$mysqli->query($sql);
 
-												$erreur .= "<b>Vous avez trébuché, vous perdez 1PM !</b>";
+												$erreur .= "Vous avez trébuché, vous perdez 1 PM !";
 												// mise a jour des évènements
 												$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'$nom_perso','a trébuché',NULL,'','en $x_persoN/$y_persoN',NOW(),'0')";
 												$mysqli->query($sql);
@@ -1853,7 +1847,7 @@ if($dispo == '1' || $admin){
 										}
 										else{
 
-											$erreur .= "Vous n'avez pas assez de pm !";
+											$erreur .= "Vous n'avez pas assez de PM !";
 
 											// verification si il y a un batiment a proximite du perso
 											$mess_bat .= afficher_lien_prox_bat($mysqli, $x_persoE, $y_persoE, $id_perso, $type_perso);
@@ -1983,7 +1977,7 @@ if($dispo == '1' || $admin){
 																			header("location:index.php");
 
 																		} else {
-																			$erreur .= "Votre allié ne possède plus suffisamment de PA pour être bousculer (demande 1 PA à votre allié) !";
+																			$erreur .= "Votre allié ne possède pas les PA suffisants pour être bousculé (1 PA)!";
 																		}
 																	} else {
 																		// Camps différents
@@ -2059,7 +2053,7 @@ if($dispo == '1' || $admin){
 																				$sql = "INSERT INTO `evenement` (IDActeur_evenement, nomActeur_evenement, phrase_evenement, IDCible_evenement, nomCible_evenement, effet_evenement, date_evenement, special) VALUES ($id_perso,'<font color=$couleur_clan_p><b>$nom_perso</b></font>','a raté sa bousculade sur ',$id_perso_b,'<font color=$couleur_clan_p_b><b>$nom_perso_b</b></font>','',NOW(),'0')";
 																				$mysqli->query($sql);
 
-																				$erreur .= "Vous avez raté votre bousculade et perdez 3PA";
+																				$erreur .= "Vous avez raté votre bousculade et perdez 3 PA";
 																			}
 																		}
 																		else {
@@ -2073,7 +2067,7 @@ if($dispo == '1' || $admin){
 																$erreur .= "La case cible de la bousculade est déjà occupée !";
 															}
 														} else {
-															$erreur .= "Impossible de bousculer un perso hors map !";
+															$erreur .= "Impossible de bousculer un perso hors carte !";
 														}
 													}
 													else {
@@ -2094,7 +2088,7 @@ if($dispo == '1' || $admin){
 								}
 								else if (is_eau_p($fond)) {
 
-									$erreur .= "Vous ne pouvez pas vous deplacer en eau profonde !";
+									$erreur .= "Vous ne pouvez pas vous déplacer en eau profonde !";
 
 									// verification si il y a un batiment a proximite du perso
 									$mess_bat .= afficher_lien_prox_bat($mysqli, $x_persoE, $y_persoE, $id_perso, $type_perso);
@@ -2102,7 +2096,7 @@ if($dispo == '1' || $admin){
 							}
 							else if (!in_map($x_persoN, $y_persoN, $X_MAX, $Y_MAX)){
 
-								$erreur .= "Vous ne pouvez pas vous déplacer sur cette case, elle est hors limites !";
+								$erreur .= "Déplacement impossible. Case hors limites !";
 
 								// verification si il y a un batiment a proximite du perso
 								$mess_bat .= afficher_lien_prox_bat($mysqli, $x_persoE, $y_persoE, $id_perso, $type_perso);
@@ -2131,7 +2125,7 @@ if($dispo == '1' || $admin){
 				
 				$date_serveur = new DateTime('now', new DateTimeZone('Europe/Paris'));
 
-				$date_dla = date('d-m-Y H:i:s', $n_dla);
+				$date_dla = date('d-m-Y H:i', $n_dla);
 				
 				if (anim_perso($mysqli, $id_perso)) {
 					// Récupération des demandes sur la gestion des compagnies
@@ -2175,93 +2169,8 @@ if($dispo == '1' || $admin){
 						AND camp_mission='$clan_p'";
 				$res_ma = $mysqli->query($sql_ma);
 				$nb_missions_actives = $res_ma->num_rows;
-				?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-	<head>
-		<title>Nord VS Sud</title>
-
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
-		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-		<link href="../style2.css" rel="stylesheet" type="text/css">
-
-	</head>
-
-	<body>
-		<?php if(!empty($permissionMsg)):?>
-		<div class="row">
-			<div class='col'>
-				<div class='p-4 m-0 alert alert-warning' role="alert">
-					<!--<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-					  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-					</svg>-->
-					<span class='align-middle fw-semibold'><?= $permissionMsg?></span>
-				</div>
-			</div>
-		</div>
-		<?php endif;?>
-				<table width=100% bgcolor='white' border=0>
-				<tr>
-					<td><img src='../images/clock.png' alt='horloge' width='25' height='25'/> Heure serveur : <b><span id=tp1>"<?=$date_serveur->format('H:i:s')?>"</span></b></td>
-					<td rowspan=2><img src='../images/accueil/banniere.jpg' alt='banniere Nord VS Sud' width=150 height=63 /></td>
-					<td align=right> <a class='btn btn-danger' href="../logout.php"><b>Déconnexion</b></a></td>
-				</tr>
-				<tr>
-				<td>Prochain tour :  "<?=$date_dla?>"</td>
-				<td align=right>
-				<a class='btn btn-info' href="https://www.encyclopedienvs.nord-vs-sud.fr/index.php/Accueil"><b>Règles</b></a>
-				<a class='btn btn-info' href="?action=faq"><b>FAQ</b></a>
-				<a class='btn btn-info' href='https://discord.gg/EMqRMzHKjZ' target='_blank'><b>Discord du jeu</b></a>
-				<a class='btn btn-secondary' href="#" disabled>Forum</a>
-				<?php
-				if ($type_perso != 6) {
-				?>
-				<a class='btn btn-primary' href="question_anim.php"><b>Questions Anim</b></a>
-				<a class='btn btn-primary' href="capture.php"><b>Déclarer une capture</b></a>
-				<?php
-				}
-				?>
-				<a class='btn btn-warning' href="missions.php"><b>Missions
-				<?php
-				if ($nb_missions_actives > 0) 				
-				{
-				?>
-				<span class='badge badge-success'><?= $nb_missions_actives ?></span>
-				<?php
-				}
-				?>
-				</b></a>
-				<?php
-				// Redacteur
-				if(redac_perso($mysqli, $id_perso)) {
-				?>
-				<a class='btn btn-warning' href='redacteur.php'>Redaction</a>
-				<?php
-				}
-
-				// Animation
-				if(anim_perso($mysqli, $id_perso)) {
-					echo " <a class='btn btn-warning' href='animation.php'>Animation <span class='badge badge-danger' title='".$nb_demande_a_traiter." demandes en attente'>";
-					if ($nb_demande_a_traiter > 0) {
-						echo $nb_demande_a_traiter;
-					}
-					echo "</span></a>";
-				}
-
-				// Admin
-				if($admin) {
-					echo " <a class='btn btn-warning' href='admin_nvs.php'>Admin</a>";
-				}
-
-				echo "	</td>";
-				echo "</tr>";
-				echo "</table>";
-
+				
+				// récupération du personnage
 				$sql_info = "SELECT * FROM perso WHERE ID_perso ='$id_perso'";
 				$res_info = $mysqli->query($sql_info);
 				$t_perso2 = $res_info->fetch_assoc();
@@ -2300,9 +2209,12 @@ if($dispo == '1' || $admin){
 
 				$bonusRecup_perso += $bonus_recup_bat;
 				$bonusRecup_perso += $bonus_recup_terrain;
-
-
-
+				
+				// Bonus de récup 
+				$paMax_final_perso = $paMax_perso + $bonusPA_perso;
+				
+				
+				// si le perso est dans un bâtiment
 				if (in_bat($mysqli, $id_perso)) {
 
 					$id_instance_bat_perso = in_bat($mysqli, $id_perso);
@@ -2318,6 +2230,7 @@ if($dispo == '1' || $admin){
 					$taille_bat_perso		= $t_b['taille_batiment'];
 					$nom_instance_bat_perso	= $t_b['nom_instance'];
 				}
+				
 				// Si perso chien
 				if ($type_perso == 6) {
 					if(is_chien_eloigne_chef($mysqli, $id_joueur_perso, $x_perso, $y_perso )){
@@ -2343,23 +2256,23 @@ if($dispo == '1' || $admin){
 					$clan = 'rond_b.png';
 					$couleur_clan_perso = 'blue';
 
-					$image_profil 		= "profil_nord4.png";
-					$image_sac 			= "sac_nord2.png";
-					$image_compagnie 	= "compagnie_nord2.png";
-					$image_evenement 	= "evenement_nord.png";
-					$image_messagerie 	= "messagerie_nord.png";
-					$image_em 			= "em_nord2.png";
+					$image_profil 		= "battalion_n.png";
+					$image_sac 			= "bag_n.png";
+					$image_compagnie 	= "company_n_icon.png";
+					$image_evenement 	= "events_n.png";
+					$image_messagerie 	= "msg_n.png";
+					$image_em 			= "em_nord.png";
 
 				}else if($clan_perso == 2){
 					$clan = 'rond_r.png';
 					$couleur_clan_perso = 'red';
 
-					$image_profil 		= "profil_sud4.png";
-					$image_sac 			= "sac_sud2.png";
-					$image_compagnie 	= "compagnie_sud2.png";
-					$image_evenement 	= "evenement_sud.png";
-					$image_messagerie 	= "messagerie_sud.png";
-					$image_em 			= "em_sud2.png";
+					$image_profil 		= "battalion_s.png";
+					$image_sac 			= "bag_s.png";
+					$image_compagnie 	= "company_s_icon.png";
+					$image_evenement 	= "events_s.png";
+					$image_messagerie 	= "msg_s.png";
+					$image_em 			= "em_sud.png";
 
 				}else if($clan_perso == 0){
 					$clan = 'rond_r.png';
@@ -2372,7 +2285,7 @@ if($dispo == '1' || $admin){
 					$image_messagerie 	= "messagerie_sud.png";
 					$image_em 			= "em_sud2.png";
 				}
-
+				
 				maj_visu($mysqli, $clan_p, $carte, $x_perso, $y_perso, $perc, $id_perso, $type_perso, $id_joueur_perso);
 
 				// récupération du grade du perso
@@ -2477,158 +2390,39 @@ if($dispo == '1' || $admin){
 					$res = $mysqli->query($sql);
 					$nb_compagnie_attente_em = $res->num_rows;
 
-				} else if ($type_perso == 6) {
-					$pourc_icone = "20%";
-				} else {
-					$pourc_icone = "14%";
 				}
 
 				// Récupération de tous les persos du joueur
 				$sql = "SELECT id_perso, nom_perso, chef FROM perso WHERE idJoueur_perso='$id_joueur_perso' AND est_renvoye=0 ORDER BY id_perso";
-				$res = $mysqli->query($sql);
-
+				$battalion = $mysqli->query($sql)->fetch_all(MYSQLI_ASSOC);
+				
 				// init vide
 				$nom_perso_chef = "";
+				
+				$sql_mes = "SELECT count(id_message) as nb_mes from message_perso where id_perso='$id_perso' and lu_message='0' AND supprime_message='0'";
+				$res_mes = $mysqli->query($sql_mes);
+				$t_mes = $res_mes->fetch_assoc();
 
-				?>
-				<!-- Début du tableau d'information-->
-				<table border=1 align="center" width=90%>
-					<tr>
-						<td width=120>
-							<center>
-								<div width=40 height=40 style="position: relative;">
-									<div style="position: absolute;bottom: 0;text-align: center; width: 100%;font-weight: bold;">
-										<?php echo $id_perso; ?>
-									</div>
-									<img src="../images_perso/<?php echo "$image_perso";?>" width=40 height=40>
-								</div>
-							</center>
-						</td>
-						<td align=center>
-							<form method='post' action='index.php'>
-								<b>Nom : </b><select name='liste_perso' onchange="this.form.submit()">
-								<?php
-								while($t_liste_perso = $res->fetch_assoc()) {
-
-									$id_perso_liste 	= $t_liste_perso["id_perso"];
-									$nom_perso_liste 	= $t_liste_perso["nom_perso"];
-									$chef_perso			= $t_liste_perso["chef"];
-
-									if ($chef_perso) {
-										$nom_perso_chef = $nom_perso_liste;
-									}
-
-									echo "<option value='$id_perso_liste'";
-									if ($id_perso == $id_perso_liste) {
-										echo " selected";
-									}
-									echo ">$nom_perso_liste [$id_perso_liste]</option>";
-								}
-								?>
-								</select>
-								<input type='submit' name='select_perso' value='ok' />
-							</form>
-						</td>
-						<td align=center><b>Grade : <a href="grades.php"></b><?php echo $nom_grade_perso; ?>
-							<img alt="<?php echo $nom_grade_perso; ?>" title="<?php echo $nom_grade_perso; ?>" src="../images/grades/<?php echo $id_grade_perso . ".gif";?>" width=40 height=40></a>
-						</td>
-					</tr>
-					<tr>
-						<td align=center><b>Chef : </b><?php echo $nom_perso_chef; ?></td>
-						<td align=center><b>Bataillon : </b><?php echo "<a href=\"bataillon.php?id_bataillon=$id_joueur_perso\">" . $bataillon_perso . "</a>"; ?></td>
-						<td align=center><b>Compagnie : </b><?php echo "<a href=\"compagnie.php\">" . stripslashes($nom_compagnie_perso) . "</a>"; ?></td>
-					</tr>
-				</table>
-				<!--Fin du tableau d'information-->
-				<?php
-					$sql_mes = "SELECT count(id_message) as nb_mes from message_perso where id_perso='$id_perso' and lu_message='0' AND supprime_message='0'";
-					$res_mes = $mysqli->query($sql_mes);
-					$t_mes = $res_mes->fetch_assoc();
-
-					$nb_nouveaux_mes = $t_mes["nb_mes"];
-				?>
-				<div class='nav justify-content-center my-3'>
-					<a class='text-center nav-item mx-4' href="?action=character"><img width=88 height=92 border=0 src="../images/<?php echo $image_profil; ?>" alt="profil">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Mon bataillon<?php if($bonus_perso < 0){ echo "<span class='ml-2 badge badge-pill badge-danger' title='malus de défense dû aux attaques'>$bonus_perso</span>";} ?></span></div>
-					</a>
-					<a class='text-center nav-item mx-4' href="evenement.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_evenement; ?>" alt="evenement">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Évènements</span></div>
-					</a>
-					<a class='text-center nav-item mx-4' href="sac.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_sac; ?>" alt="sac">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Sac</span></div>
-					</a>
-					<a class='text-center nav-item mx-4' href="carte/carte.php"><img width=88 height=92 border=0 src="../images/carte2.png" alt="mini map">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Carte</span></div>
-					</a>
-					<?php
-					if ($type_perso != 6) {	?>
-					<a class='text-center nav-item mx-4' href="messagerie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_messagerie; ?>" alt="messagerie">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='ml-2 badge badge-pill badge-danger'>$nb_nouveaux_mes</span>"; }?></span></div>
-					</a>
-					<?php }	?>
-					<a class='text-center nav-item mx-4' href="?action=ranking"><img width=88 height=92 border=0 src="../images/classement2.png" alt="classement">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Classements</span></div>
-					</a>
-					<?php
-					if ($type_perso != 6):
-					?>
-					<a class='text-center nav-item mx-4' href="compagnie.php"><img width=88 height=92 border=0 src="../images/<?php echo $image_compagnie; ?>" alt="compagnie">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>Compagnie<?php
-					if ($nb_demandes_adhesion_compagnie) {
-						echo "<span class='ml-2 badge badge-pill badge-success'>$nb_demandes_adhesion_compagnie</span>";
-					}
-					if ($nb_demandes_depart_compagnie) {
-						echo "<span class='ml-2 badge badge-pill badge-danger'>$nb_demandes_depart_compagnie</span>";
-					}
-					if ($nb_demandes_emprunt_compagnie) {
-						echo "<span class='ml-2 badge badge-pill badge-warning'>$nb_demandes_emprunt_compagnie</span>";
-					}
-					?></span></div>
-					</a>
-					<?php endif;?>
-					<?php if($nb_em): ?>
-					<a class='text-center nav-item mx-4' href="command.php"><img width=117 height=89 border=0 src="../images/<?php echo $image_em; ?>" alt="etat major">
-						<div class='mt-2'><span class='px-2 py-1 cat-title'>État Major</span><?php
-						if ($nb_compagnie_attente_em) {
-							echo "<br/><font color=red><b>$nb_compagnie_attente_em</b> compagnie(s) en attente de validation</font>";
-						}?>
-						</div>
-					</a>
-					<?php endif; ?>
-				</div>
-				<div class="text-center">
-					<a href='index.php'>Rafraîchir la page : <img border=0 src='../images/refreshv2.png' alt='refresh' /></a>
-				</div>
-				<?php
-				echo "<center><font color='red'>".$erreur."</font></center>";
-				if (isset($mess) && trim($mess) != "") {
-					echo "<center><font color='green'><b>".$mess."</b></font></center>";
-				}
-				echo "</div><br>";
-
+				$nb_nouveaux_mes = $t_mes["nb_mes"];
+				
 				// Traitement voir objets à terre
 				if(isset($_GET['ramasser']) && $_GET['ramasser'] == "voir"){
-
-					$affichage_objets = true;
-
-					if (isset($_GET['x']) && isset($_GET['y']) && trim($_GET['x']) != "" && trim($_GET['y']) != "") {
-
-						$x = $_GET['x'];
-						$y = $_GET['y'];
-
-						$verifx = preg_match("#^[0-9]*[0-9]$#i","$x");
-						$verify = preg_match("#^[0-9]*[0-9]$#i","$y");
-
+					if (!empty($_GET['x']) && !empty($_GET['y'])) {
+						
+						$x = (int) $_GET['x'];
+						$y = (int) $_GET['y'];
+						
 						// verif si le perso est bien à côté
 						$verif_prox = prox_coffre($mysqli, $x, $y, $x_perso, $y_perso);
 
-						if ($verifx && $verify && $verif_prox) {
+						if ($verif_prox) {						
 
 							$sql = "SELECT type_objet, id_objet, nb_objet FROM objet_in_carte WHERE x_carte='$x' AND y_carte='$y'";
-							$res = $mysqli->query($sql);
+							$itemsOnMap = $mysqli->query($sql);
+							$itemsOnMap->fetch_assoc();
 						}
 						else {
-							$affichage_objets = false;
+							$erreur = "vous êtes trop loin ou il n'y a pas d'objet ici";
 
 							// Tentative de triche !
 							$text_triche = "Le perso $id_perso a essayé de jouer avec les paramètres pour voir les objets à ramasser !";
@@ -2637,77 +2431,22 @@ if($dispo == '1' || $admin){
 							$mysqli->query($sql);
 						}
 					}
-					else {
-						$sql = "SELECT type_objet, id_objet, nb_objet FROM objet_in_carte WHERE x_carte='$x_perso' AND y_carte='$y_perso'";
-						$res = $mysqli->query($sql);
-					}
-
-					if ($affichage_objets) {
-
-						echo "<center>";
-						echo "<b>Liste des objets à terre</b>";
-						echo "	<table border='1' width='50%'>";
-						echo "		<tr>";
-						echo "			<th style='text-align:center'>Nom objet</th><th style='text-align:center'>Quantité</th>";
-						echo "		</tr>";
-
-						while ($t = $res->fetch_assoc()) {
-
-							$type_objet = $t['type_objet'];
-							$id_objet 	= $t['id_objet'];
-							$nb_objet	= $t['nb_objet'];
-
-							// Récupération du nom de l'objet
-							// Thunes
-							if ($type_objet == '1') {
-								$nom_objet = "Thune";
-								if ($nb_objet > 1) {
-									$nom_objet = $nom_objet."s";
-								}
-							}
-
-							// Objets
-							if ($type_objet == '2') {
-								$sql_obj = "SELECT nom_objet FROM objet WHERE id_objet='$id_objet'";
-								$res_obj = $mysqli->query($sql_obj);
-								$t_obj = $res_obj->fetch_assoc();
-
-								$nom_objet = $t_obj['nom_objet'];
-							}
-
-							// Armes
-							if ($type_objet == '3') {
-								$sql_obj = "SELECT nom_arme FROM arme WHERE id_arme='$id_objet'";
-								$res_obj = $mysqli->query($sql_obj);
-								$t_obj = $res_obj->fetch_assoc();
-
-								$nom_objet = $t_obj['nom_arme'];
-							}
-
-							echo "		<tr>";
-							echo "			<td align='center'>" . $nom_objet . "</td><td align='center'>" . $nb_objet . "</td>";
-							echo "		</tr>";
-						}
-
-						echo "	</table>";
-						echo "</center>";
-					}
 				}
-
+				
 				// Récupération de l'arme de CaC équipé sur le perso
-				$sql = "SELECT arme.id_arme, nom_arme, porteeMin_arme, porteeMax_arme, coutPa_arme, degatMin_arme, valeur_des_arme, precision_arme, degatZone_arme
+				$sql = "SELECT arme.id_arme, nom_arme, porteeMin_arme, porteeMax_arme, coutPa_arme, degatMin_arme, valeur_des_arme, precision_arme, degatZone_arme, building_damage
 						FROM arme, perso_as_arme
 						WHERE arme.id_arme = perso_as_arme.id_arme
 						AND porteeMax_arme = 1
 						AND perso_as_arme.est_portee = '1'
 						AND id_perso = '$id_perso' ORDER BY arme.id_arme DESC";
-				$res = $mysqli->query($sql);
-				$nb_cac = $res->num_rows;
+				$CcWeapon = $mysqli->query($sql);
+				$nb_arme_cac = $CcWeapon->num_rows;
 
-				if ($nb_cac > 1) {
+				if ($nb_arme_cac > 1) {
 					$i = 1;
 
-					while ($t_cac = $res->fetch_assoc()) {
+					while ($t_cac = $CcWeapon->fetch_assoc()) {
 
 						if ($i == 1) {
 							$id_arme_cac			= $t_cac["id_arme"];
@@ -2719,6 +2458,7 @@ if($dispo == '1' || $admin){
 							$valeur_des_arme_cac 	= $t_cac["valeur_des_arme"];
 							$precision_arme_cac 	= $t_cac["precision_arme"];
 							$degatZone_arme_cac 	= $t_cac["degatZone_arme"];
+							$building_damage_cac 	= $t_cac["building_damage"];
 
 							$degats_arme_cac = $degatMin_arme_cac."D".$valeur_des_arme_cac;
 						}
@@ -2732,6 +2472,7 @@ if($dispo == '1' || $admin){
 							$valeur_des_arme_cac2 	= $t_cac["valeur_des_arme"];
 							$precision_arme_cac2 	= $t_cac["precision_arme"];
 							$degatZone_arme_cac2 	= $t_cac["degatZone_arme"];
+							$building_damage_cac2 	= $t_cac["building_damage"];
 
 							$degats_arme_cac2 = $degatMin_arme_cac2."D".$valeur_des_arme_cac2;
 						}
@@ -2740,7 +2481,7 @@ if($dispo == '1' || $admin){
 					}
 				}
 				else {
-					$t_cac = $res->fetch_assoc();
+					$t_cac = $CcWeapon->fetch_assoc();
 
 					if ($t_cac != NULL) {
 						$id_arme_cac			= $t_cac["id_arme"];
@@ -2752,6 +2493,7 @@ if($dispo == '1' || $admin){
 						$valeur_des_arme_cac 	= $t_cac["valeur_des_arme"];
 						$precision_arme_cac 	= $t_cac["precision_arme"];
 						$degatZone_arme_cac 	= $t_cac["degatZone_arme"];
+						$building_damage_cac 	= $t_cac["building_damage"];
 					} else {
 						$id_arme_cac			= 1000;
 						$nom_arme_cac 			= "Poings";
@@ -2766,7 +2508,7 @@ if($dispo == '1' || $admin){
 
 					$degats_arme_cac = $degatMin_arme_cac."D".$valeur_des_arme_cac;
 				}
-
+				
 				// Récupération de la liste des persos à portée d'attaque arme CaC
 				$perc_att = $perc;
 				if ($perc_att <= 0) {
@@ -2775,7 +2517,7 @@ if($dispo == '1' || $admin){
 				$res_portee_cac = resource_liste_cibles_a_portee_attaque($mysqli, 'carte', $id_perso, $porteeMin_arme_cac, $porteeMax_arme_cac, $perc_att, 'cac');
 
 				// Récupération de l'arme à distance sur le perso
-				$sql = "SELECT arme.id_arme, nom_arme, porteeMin_arme, porteeMax_arme, coutPa_arme, degatMin_arme, valeur_des_arme, precision_arme, degatZone_arme
+				$sql = "SELECT arme.id_arme, nom_arme, porteeMin_arme, porteeMax_arme, coutPa_arme, degatMin_arme, valeur_des_arme, precision_arme, degatZone_arme, building_damage
 						FROM arme, perso_as_arme
 						WHERE arme.id_arme = perso_as_arme.id_arme
 						AND porteeMax_arme > 1
@@ -2794,6 +2536,7 @@ if($dispo == '1' || $admin){
 					$valeur_des_arme_dist 	= $t_dist["valeur_des_arme"];
 					$precision_arme_dist 	= $t_dist["precision_arme"];
 					$degatZone_arme_dist 	= $t_dist["degatZone_arme"];
+					$building_damage_dist	= $t_dist["building_damage"];
 				} else {
 					$id_arme_dist			= 2000;
 					$nom_arme_dist 			= "Cailloux";
@@ -2810,1546 +2553,1408 @@ if($dispo == '1' || $admin){
 
 				// Récupération de la liste des persos à portée d'attaque arme dist
 				$res_portee_dist = resource_liste_cibles_a_portee_attaque($mysqli, 'carte', $id_perso, $porteeMin_arme_dist, $porteeMax_arme_dist, $perc_att, 'dist');
-
-				// background='../images/background_html.jpg'
-				?>
-				<table border=0 align="center" cellspacing="0" cellpadding="10" >
-					<tr>
-						<td valign="top">
-
-							<table style="border:0px; background-color: cornflowerblue; min-width: 375px;" width="100%">
-								<tr>
-									<td align='right'><b>PV</b></td>
-									<td align='center'><?php $pourc = affiche_jauge($pv_perso, $pvMax_perso); echo "".round($pourc)."% ou $pv_perso/$pvMax_perso"; ?></td>
-								</tr>
-							</table>
-
-							<table style="border:0px; background-color: cornflowerblue; min-width: 375px;" width="100%">
-								<tr style="width: 100%;">
-									<td style="width: 40%;">
-										<table border="2" bordercolor="white" style="width: 100%;"> <!-- border-collapse:collapse -->
-											<tr>
-												<td><b>XP</b></td>
-												<td><?php echo $xp_perso; ?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td><b>XPI</b></td>
-												<td><?php echo $pi_perso; ?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td><b>PC</b></td>
-												<td><?php echo $pc_perso; ?>&nbsp;</td>
-											</tr>
-										</table>
-									</td>
-
-									<td style="width: 30%;">
-										<table border="2" bordercolor="white" style="width: 100%;">
-											<tr>
-												<td><b>Perception</b></td>
-												<td align='center'>
-												<?php
-
-												$texte_tooltip = "Base : ".$perception_perso."";
-												if($bonusPerception_perso != 0) {
-													if ($bonusPerception_perso < 0) {
-														$texte_tooltip .= " <b>(";
-													} else {
-														$texte_tooltip .= " <b>(+";
-													}
-													$texte_tooltip .= $bonusPerception_perso . ")</b>";
-												}
-
-												$perception_final_perso = $perception_perso + $bonusPerception_perso;
-
-												echo '<a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip.'">'.$perception_final_perso.'</a>';
-
-												?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td><b>PA</b></td>
-												<td align='center' nowrap="nowrap">
-												<?php
-
-												$texte_tooltip = "Base max : ".$paMax_perso."";
-												if ($bonusPA_perso != 0) {
-													if ($bonusPA_perso < 0) {
-														$texte_tooltip .= " <b>(";
-													} else {
-														$texte_tooltip .= " <b>(+";
-													}
-													$texte_tooltip .= $bonusPA_perso . ")</b>";
-												}
-
-												$paMax_final_perso = $paMax_perso + $bonusPA_perso;
-
-												echo $pa_perso . ' / <a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip.'">'. $paMax_final_perso.'</a>';
-
-												?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td><b>PM</b></td>
-												<td align='center' nowrap="nowrap"><?php
-
-												$texte_tooltip_pm = "Base : ".$pm_perso_tmp;
-
-												if ($malus_pm_charge != 0) {
-													$texte_tooltip_pm .= " <b>(";
-													$texte_tooltip_pm .= "charge : ";
-													$texte_tooltip_pm .= $malus_pm_charge;
-													$texte_tooltip_pm .= ")</b>";
-												}
-
-												$texte_tooltip_pmMax = "Base max : ".$pmMax_perso_tmp."";
-
-												if ($bonusPM_perso != 0) {
-													$texte_tooltip_pmMax .= " <b>(";
-
-													if ($bonusPM_perso != 0) {
-
-														$texte_tooltip_pmMax .= "objets : ";
-
-														if ($bonusPM_perso < 0) {
-															$texte_tooltip_pmMax .= $bonusPM_perso;
-														}
-														else {
-															$texte_tooltip_pmMax .= "+".$bonusPM_perso;
-														}
-													}
-
-													$texte_tooltip_pmMax .= ")</b>";
-												}
-												echo '<a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip_pm.'">' . $pm_perso  . '</a> / <a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip_pmMax.'">' . $pmMax_perso . '</a>';
-												?>&nbsp;</td>
-											</tr>
-										</table>
-									</td>
-
-									<td style="width: 30%;">
-										<table border="2" bordercolor="white" style="width: 100%;">
-											<tr>
-												<td><b>Protection</b></td>
-												<td align='center'><?php echo $protec_perso; ?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td><b>Récuperation</b></td>
-												<td align='center' nowrap="nowrap">
-												<?php
-												$texte_tooltip = "Base : ".$recup_perso."";
-
-												if($bonusRecup_perso != 0) {
-													if ($bonusRecup_perso < 0) {
-														$texte_tooltip .= " <b>(";
-													} else {
-														$texte_tooltip .= " <b>(+";
-													}
-													$texte_tooltip .= $bonusRecup_perso . ")</b>";
-												}
-
-												$recup_final = $recup_perso + $bonusRecup_perso;
-
-												echo '<a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip.'">'.$recup_final.'</a>';
-
-												?>&nbsp;</td>
-											</tr>
-											<tr>
-												<td nowrap="nowrap"><b>Défense</b></td>
-												<td align='center' nowrap="nowrap"><?php
-
-												$texte_tooltip = "Base : ".$bonus_perso."";
-
-												$bonus_defense = getBonusDefenseObjet($mysqli, $id_perso);
-
-												$bonus_defense_bat = get_bonus_defense_instance_bat($mysqli, $id_perso);
-
-												// recuperation des données de la carte
-												$sql = "SELECT fond_carte FROM $carte
-														WHERE x_carte = $x_perso
-														AND y_carte = $y_perso";
-												$res = $mysqli->query($sql);
-												$tab = $res->fetch_assoc();
-
-												$fond_carte_perso = $tab['fond_carte'];
-
-												$bonus_defense_terrain_cac = get_bonus_defense_terrain($fond_carte_perso, 1);
-												$bonus_defense_terrain_dist = get_bonus_defense_terrain($fond_carte_perso, 2);
-
-												$bonus_final_cac = $bonus_perso + $bonus_defense + $bonus_defense_terrain_cac + $bonus_defense_bat;
-												$bonus_final_dist = $bonus_perso + $bonus_defense + $bonus_defense_terrain_dist + $bonus_defense_bat;
-
-												echo '<a tabindex="0" href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="'.$texte_tooltip.'">';
-												if ($bonus_final_cac == $bonus_final_dist) {
-													echo $bonus_final_cac;
-												}
-												else {
-													echo 'Cac : '.$bonus_final_cac.' - Dist : '.$bonus_final_dist.'</a>';
-												}
-												?>&nbsp;</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-
-							<br />
-							<table border="2" style="background-color: palevioletred;" width="100%">
-								<tr>
-									<td colspan='3' bgcolor="lightgrey" align='center'><b>Caractéristiques de combat</b></td>
-								</tr>
-								<tr>
-									<td width='20%'></td>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td width='40%' align='center'><b>Rapproché</b></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td width='40%' align='center' nowrap="nowrap"><b>A distance</b></td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td width='40%' align='center'><b>Rapproché</b></td>
-									<?php
-									}
-									?>
-								</tr>
-								<tr>
-									<td><b>Armes</b></td>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $nom_arme_cac; ?></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $nom_arme_dist; ?></td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $nom_arme_cac2; ?></td>
-									<?php
-									}
-									?>
-								</tr>
-								<tr>
-									<td nowrap="nowrap"><b>Coût en PA</b></td>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td align='center'><?php echo $coutPa_arme_cac; ?></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td align='center'><?php echo $coutPa_arme_dist; if (possede_lunette_visee($mysqli, $id_perso)) { echo " (+2)"; } ?></td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $coutPa_arme_cac2; ?></td>
-									<?php
-									}
-									?>
-								</tr>
-								<tr>
-									<?php
-									if ($type_perso != 4) {
-									?>
-									<td><b>Dégâts</b></td>
-									<?php
-									} else {
-									?>
-									<td><b>Soins</b></td>
-									<?php
-									}
-									?>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td align='center'><?php echo $degats_arme_cac; ?></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td align='center'><?php echo $degats_arme_dist; ?></td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $degats_arme_cac2; ?></td>
-									<?php
-									}
-									?>
-								</tr>
-								<tr>
-									<td><b>Portée</b></td>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td align='center'><?php echo $porteeMax_arme_cac; ?></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td align='center'><?php if(!in_bat($mysqli, $id_perso)) echo $porteeMax_arme_dist + get_bonus_portee($fond); else echo $porteeMax_arme_dist?></td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $porteeMax_arme_cac2; ?></td>
-									<?php
-									}
-									?>
-								</tr>
-								<tr>
-									<td><b>Précision</b></td>
-									<?php
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td align='center'><?php echo $precision_arme_cac . "%"; ?></td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td align='center'>
-										<?php
-										echo $precision_arme_dist . "%";
-
-										$bonus_precision_objet = getBonusPrecisionDistObjet($mysqli, $id_perso);
-
-										if ($bonus_precision_objet != 0) {
-											echo " (+".$bonus_precision_objet."%)";
-										}
-
-										?>
-									</td>
-									<?php
-									}
-									else if ($type_perso == 4) {
-									?>
-									<td align='center' nowrap="nowrap"><?php echo $precision_arme_cac2 . "%"; ?></td>
-									<?php
-									}
-									?>
-								</tr>
-								<?php
-								if (($type_perso == 5 || $type_perso == 8) && $degatZone_arme_dist) {
-								?>
-								<tr>
-									<td><b>Spécial</b></td>
-									<td colspan='2'>
-										<center>Dégâts de zone
-										<?php
-										if ($id_arme_dist == 13) {
-											echo "<br>Bonus de dégâts sur bâtiments";
-										}
-										?>
-										</center>
-									</td>
-								</tr>
-								<?php
-								}
-								?>
-								<tr>
-									<form method="post" action="agir.php" target='_main'>
-									<?php
-									if ($type_perso != 4) {
-									?>
-									<td><input type="submit" value="Attaquer"></td>
-									<?php
-									} else {
-									?>
-									<td><input type="submit" value="Soigner"></td>
-									<?php
-									}
-									if ($type_perso != 5 && $type_perso != 8) {
-									?>
-									<td>
-										<select name='id_attaque_cac' style="width: -moz-available;">
-											<option value="personne">Personne</option>
-											<?php
-											// Soigneur
-											if ($type_perso == 4) {
-
-												while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
-
-													$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
-
-													if ($id_cible_cac < 50000) {
-
-														// Un autre perso
-														$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
-														$res = $mysqli->query($sql);
-														$tab = $res->fetch_assoc();
-
-														$nom_cible_cac 		= $tab["nom_perso"];
-														$pv_cible_cac		= $tab["pv_perso"];
-														$pv_max_cible_cac	= $tab["pvMax_perso"];
-														$bonus_cible_cac	= $tab["bonus_perso"];
-														$camp_cible_cac		= $tab["clan"];
-
-														$couleur_clan_cible = couleur_clan($camp_cible_cac);
-
-														if ($id_arme_cac == 10) {
-															// seringue
-															// On affiche que les persos blessés
-															if ($pv_cible_cac < $pv_max_cible_cac) {
-																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-															}
-														} else if ($id_arme_cac == 11) {
-															// bandage
-															// On affiche que les persos avec malus
-															if ($bonus_cible_cac < 0) {
-																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-															}
-														}
-													} else if ($id_cible_cac >= 200000) {
-
-														// Un PNJ
-														$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
-														$res = $mysqli->query($sql);
-														$tab = $res->fetch_assoc();
-
-														$nom_cible_cac 		= $tab["nom_pnj"];
-														$pv_cible_cac		= $tab["pv_i"];
-														$pv_max_cible_cac	= $tab["pvMax_pnj"];
-
-														if ($pv_cible_cac < $pv_max_cible_cac) {
-															echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-														}
-													} else {
-														// Un Batiment => on ne veut pas l'afficher !
-													}
-												}
-											}
-											else {
-												// Impossible d'attaquer au CaC quand on est dans un train
-												if (!in_train($mysqli, $id_perso)) {
-
-													while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
-
-														$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
-
-														if ($id_cible_cac < 50000) {
-
-															// Un autre perso
-															$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac 	= $tab["nom_perso"];
-															$camp_cible_cac	= $tab["clan"];
-
-															$couleur_clan_cible = couleur_clan($camp_cible_cac);
-
-														} else if ($id_cible_cac >= 200000) {
-
-															// Un PNJ
-															$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac = $tab["nom_pnj"];
-
-															$couleur_clan_cible = "grey";
-
-														} else {
-
-															// Un Batiment
-															$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac = $tab["nom_batiment"];
-															if ($tab["nom_instance"] != "") {
-																$nom_cible_cac .= " ".$tab["nom_instance"];
-															}
-
-															$camp_cible_cac	= $tab["camp_instance"];
-
-															$couleur_clan_cible = couleur_clan($camp_cible_cac);
-															$pv_instance	= $tab["pv_instance"];
-															if ($pv_instance <= 0)
-																continue;
-														}
-
-														echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-													}
-												}
-											}
-											?>
-										</select>
-									</td>
-									<?php
-									}
-
-									if ($type_perso != 6 && $type_perso != 4) {
-									?>
-									<td>
-										<select name='id_attaque_dist' style="width: -moz-available;">
-											<option value="personne">Personne</option>
-											<?php
-											if (!isset($id_bat_perso) || (isset($id_bat_perso) && $id_bat_perso != 10)) {
-												while($t_cible_portee_dist = $res_portee_dist->fetch_assoc()) {
-
-													$id_cible_dist = $t_cible_portee_dist["idPerso_carte"];
-													$id_instance_in_bat = in_bat($mysqli,$id_perso);
-
-													if ($id_cible_dist != $id_instance_in_bat) {
-
-														if ($id_cible_dist < 50000) {
-
-															// Un autre perso
-															$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_dist'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_dist = $tab["nom_perso"];
-															$camp_cible_cac	= $tab["clan"];
-
-															$couleur_clan_cible = couleur_clan($camp_cible_cac);
-
-														} else if ($id_cible_dist >= 200000) {
-
-															// Un PNJ
-															$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_dist'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_dist = $tab["nom_pnj"];
-
-															$couleur_clan_cible = "grey";
-
-														} else {
-
-															// Un Batiment
-															$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_dist'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_dist = $tab["nom_batiment"];
-															if ($tab["nom_instance"] != "") {
-																$nom_cible_dist .= " ".$tab["nom_instance"];
-															}
-
-															$camp_cible_dist	= $tab["camp_instance"];
-
-															$couleur_clan_cible = couleur_clan($camp_cible_dist);
-															$pv_instance	= $tab["pv_instance"];
-															if ($pv_instance <= 0)
-																continue;
-														}
-
-														echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_dist.",".$id_arme_dist."'>".$nom_cible_dist." (mat. ".$id_cible_dist.")</option>";
-													}
-												}
-											}
-											?>
-										</select>
-									</td>
-									<?php
-									}
-									else if ($nb_cac > 1 && $type_perso == '4') {
-										$res_portee_cac2 = resource_liste_cibles_a_portee_attaque($mysqli, 'carte', $id_perso, $porteeMin_arme_cac, $porteeMax_arme_cac, $perc_att, 'cac');
-									?>
-									<td>
-										<select name='id_attaque_cac2' style="width: -moz-available;">
-											<option value="personne">Personne</option>
-											<?php
-											// Soigneur
-											if ($type_perso == 4) {
-
-												while($t_cible_portee_cac = $res_portee_cac2->fetch_assoc()) {
-
-													$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
-
-													if ($id_cible_cac < 50000) {
-
-														// Un autre perso
-														$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
-														$res = $mysqli->query($sql);
-														$tab = $res->fetch_assoc();
-
-														$nom_cible_cac 		= $tab["nom_perso"];
-														$pv_cible_cac		= $tab["pv_perso"];
-														$pv_max_cible_cac	= $tab["pvMax_perso"];
-														$bonus_cible_cac	= $tab["bonus_perso"];
-														$camp_cible_cac		= $tab["clan"];
-
-														$couleur_clan_cible = couleur_clan($camp_cible_cac);
-
-														if ($id_arme_cac2 == 10) {
-															// seringue
-															// On affiche que les persos blessés
-															if ($pv_cible_cac < $pv_max_cible_cac) {
-																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-															}
-														} else if ($id_arme_cac2 == 11) {
-															// bandage
-															// On affiche que les persos avec malus
-															if ($bonus_cible_cac < 0) {
-																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-															}
-														}
-													} else if ($id_cible_cac >= 200000) {
-
-														// Un PNJ
-														$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
-														$res = $mysqli->query($sql);
-														$tab = $res->fetch_assoc();
-
-														$nom_cible_cac 		= $tab["nom_pnj"];
-														$pv_cible_cac		= $tab["pv_i"];
-														$pv_max_cible_cac	= $tab["pvMax_pnj"];
-
-														if ($pv_cible_cac < $pv_max_cible_cac) {
-															echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-														}
-													} else {
-														// Un Batiment => on ne veut pas l'afficher !
-													}
-												}
-											}
-											else {
-												// Impossible d'attaquer au CaC quand on est dans un train
-												if (!in_train($mysqli, $id_perso)) {
-
-													while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
-
-														$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
-
-														if ($id_cible_cac < 50000) {
-
-															// Un autre perso
-															$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac 	= $tab["nom_perso"];
-															$camp_cible_cac	= $tab["clan"];
-
-															$couleur_clan_cible = couleur_clan($camp_cible_cac);
-
-														} else if ($id_cible_cac >= 200000) {
-
-															// Un PNJ
-															$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac = $tab["nom_pnj"];
-
-															$couleur_clan_cible = "grey";
-
-														} else {
-
-															// Un Batiment
-															$sql = "SELECT nom_batiment FROM batiment, instance_batiment, pv_instance WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_cac'";
-															$res = $mysqli->query($sql);
-															$tab = $res->fetch_assoc();
-
-															$nom_cible_cac = $tab["nom_batiment"];
-
-															$couleur_clan_cible = "black";
-															$pv_instance	= $tab["pv_instance"];
-															if ($pv_instance <= 0)
-																continue;
-														}
-
-														echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
-													}
-												}
-											}
-											?>
-										</select>
-									</td>
-									<?php
-									}
-									?>
-									</form>
-								</tr>
-							</table>
-
-							<br />
-
-							<?php
-							if ($afficher_rosace) {
-							?>
-							<table border='2' width="100%">
-								<tr>
-									<td background='../images/background.jpg'>
-										<!--Création du tableau du choix du deplacement-->
-										<table border=0 align='center'>
-											<tr>
-												<td colspan='5' align='center'>
-												<img src='../images/Se_Deplacer.png' />
-												</td>
-											</tr>
-											<form action="index.php" method="post">
-											<tr>
-												<td rowspan='3'><img src='../images/tribal1.png' /></td>
-												<?php
-												if (in_train($mysqli, $id_perso)) {
-													$id_train = in_train($mysqli, $id_perso);
-												}
-
-												if(in_bat($mysqli, $id_perso)){
-												?>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
-												<?php
-												}
-												else if (isset($id_train) && $id_train > 0) {
-												?>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
-												<?php
-												}
-												else {
-												?>
-													<td><a href="index.php?mouv=1"><img border=0 src="../fond_carte/fleche1.png"></a></td>
-													<td><a href="index.php?mouv=2"><img border=0 src="../fond_carte/fleche2.png"></a></td>
-													<td><a href="index.php?mouv=3"><img border=0 src="../fond_carte/fleche3.png"></a></td>
-												<?php
-												}
-												?>
-												<td rowspan='3'><img src='../images/tribal2.png' /></td>
-											</tr>
-											<tr>
-												<?php
-												if(in_bat($mysqli, $id_perso)){
-												?>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
-													<td><center><b>Sortir</b></center></td>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
-												<?php
-												}
-												else if (isset($id_train) && $id_train > 0) {
-												?>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
-													<td><center><b>Sauter</b></center></td>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
-												<?php
-												}
-												else {
-												?>
-												<td><a href="index.php?mouv=4"><img border=0 src="../fond_carte/fleche4.png"></a></td>
-												<td>&nbsp; </td>
-												<td><a href="index.php?mouv=5"><img border=0 src="../fond_carte/fleche5.png"></a></td>
-												<?php
-												}
-												?>
-											</tr>
-											<tr>
-												<?php
-												if(in_bat($mysqli, $id_perso)){
-												?>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="index.php?bat=<?php echo $id_bat; ?>&bat2=<?php echo $bat; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
-												<?php
-												}
-												else if (isset($id_train) && $id_train > 0) {
-												?>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="index.php?train=<?php echo $id_train; ?>&out=ok&direction=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
-												<?php
-												}
-												else {
-												?>
-													<td><a href="index.php?mouv=6"><img border=0 src="../fond_carte/fleche6.png"></a></td>
-													<td><a href="index.php?mouv=7"><img border=0 src="../fond_carte/fleche7.png"></a></td>
-													<td><a href="index.php?mouv=8"><img border=0 src="../fond_carte/fleche8.png"></a></td>
-												<?php
-												}
-												?>
-											</tr>
-											</form>
-										</table>
-										<!--Fin du tableau du choix du deplacement-->
-									</td>
-								</tr>
-							</table>
-							<?php
-							}
-							?>
-						</td>
-
-						<td valign="top">
-							<table style="border:1px solid black; border-collapse: collapse;">
-								<tr>
-									<td>
-
-				<?php
+				
 				//<!--Génération de la carte-->
 				$perc_carte = $perc;
 				if ($perc_carte < 0) {
 					$perc_carte = 0;
 				}
-
-				// recuperation des données de la carte
-				$sql = "SELECT x_carte, y_carte, fond_carte, occupee_carte, image_carte, idPerso_carte FROM $carte
-						WHERE x_carte >= $x_perso - $perc_carte
-						AND x_carte <= $x_perso + $perc_carte
-						AND y_carte <= $y_perso + $perc_carte
-						AND y_carte >= $y_perso - $perc_carte
-						ORDER BY y_carte DESC, x_carte";
-				$res = $mysqli->query($sql);
-				$tab = $res->fetch_assoc();
-
-				// calcul taille table
-				$taille_table = ($perception_perso + $bonusPerception_perso) * 2 + 2;
-				$taille_table = $taille_table * 40;
-
-				echo "<table border='".$cadrillage."' width='".$taille_table."' height='".$taille_table."' align='center' cellspacing='0' cellpadding='0' style='text-align: center;' >";
-
-				//affichage des abscisses
-				echo "	<tr>
-							<td width='40' heigth='40' background=\"../images/background.jpg\" align='center'>y \ x</td>";
-
-				for ($i = $x_perso - $perc_carte; $i <= $x_perso + $perc_carte; $i++) {
-					if ($i == $x_perso)
-						echo "<th style='min-width:40px;' height='40' background=\"../images/background3.jpg\">$i</th>";
-					else
-						echo "<th style='min-width:40px;' height='40' background=\"../images/background.jpg\">$i</th>";
-				}
-
-				echo "	</tr>";
-
-				for ($y = $y_perso + $perc_carte; $y >= $y_perso - $perc_carte; $y--) {
-
-					echo "<tr align=\"center\" >";
-
-					if ($y == $y_perso) {
-						echo "<th style='min-width:40px;' height='40' background=\"../images/background3.jpg\">$y</th>";
-					}
-					else {
-						echo "<th style='min-width:40px;' height='40' background=\"../images/background.jpg\">$y</th>";
-					}
-
-					for ($x = $x_perso - $perc_carte; $x <= $x_perso + $perc_carte; $x++) {
-
-						//les coordonnées sont dans les limites
-						if ($x >= X_MIN && $y >= Y_MIN && $x <= $X_MAX && $y <= $Y_MAX) {
-
-							//--------------------------
-							//coordonnées du perso
-							if ($x == $x_perso && $y == $y_perso){
-
-								// verification s'il y a un objet sur cette case
-								$sql_o = "SELECT id_objet FROM objet_in_carte WHERE x_carte='$x' AND y_carte='$y'";
-								$res_o = $mysqli->query($sql_o);
-								$nb_o = $res_o->num_rows;
-
-								if($clan_perso == '1'){
-									$image_profil 	= "Nord.gif";
-								}
-								if($clan_perso == '2'){
-									$image_profil 	= "Sud.gif";
-								}
-
-								$fond_im = $tab["fond_carte"];
-								$nom_terrain = get_nom_terrain($fond_im);
-
-								echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-								echo "	<div width=40 height=40 style=\"position: relative;\">";
-								echo "		<div tabindex='0' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\"
-													data-toggle='popover'
-													data-trigger='focus'
-													data-html='true'
-													data-placement='bottom' ";
-
-								// TITLE POPOVER
-								echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_perso."' title='".$nom_grade_perso."' src='../images/grades/" . $id_grade_perso . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_perso."' target='_blank'>".$nom_perso." [".$id_perso."]</a></div> ";
-
-								afficher_infos_compagnie($nom_compagnie_perso, $image_compagnie_perso);
-
-								if (!in_bat($mysqli,$id_perso)) {
-
-									if (!in_train($mysqli,$id_perso)) {
-										afficher_infos_non_bat_non_train($fond_im, $nom_terrain, $nb_o);
-									}
-									else {
-										afficher_infos_in_train($mysqli, $id_perso);
-									}
-								}
-								else {
-									afficher_infos_in_bat($mysqli, $id_perso);
-								}
-								echo "<div><u>Message du jour</u> :<br />".$message_perso."</div>";
-
-								echo "\" ";
-
-								// DATA CONTENT POPOVER
-								echo "			data-content=\"";
-
-								afficher_liens_objet($nb_o, $x, $y);
-								afficher_liens_rail_genie($genie_compagnie_perso, $fond_im);
-
-								if (in_bat($mysqli,$id_perso)) {
-
-									afficher_liens_in_bat($mysqli, $id_perso);
-
-								}
-								else if (prox_bat($mysqli, $x_perso, $y_perso, $id_perso)) {
-
-									afficher_liens_prox_bat($mysqli, $id_perso, $x_perso, $y_perso, $type_perso);
-
-								}
-								echo "\" >" ;
-
-								// Affichage pastille de marquage 
-								$marquages = marquage_joueur($mysqli, $id_perso);
-								
-								if($marquages){
-									foreach($marquages as $marquage){
-										affichage_pastille_marquage($marquage['pastille']);
-										echo '<br>';
-									}
-								}
-
-								echo  $id_perso . "</div>";
-
-								echo "		<img tabindex='0' class=\"\" border=0 src=\"../images_perso/$dossier_img_joueur/$image_perso\" width=40 height=40
-													data-toggle='popover'
-													data-trigger='focus'
-													data-html='true'
-													data-placement='bottom' ";
-								// TITLE POPOVER
-								echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_perso."' title='".$nom_grade_perso."' src='../images/grades/" . $id_grade_perso . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_perso."' target='_blank'>".$nom_perso." [".$id_perso."]</a></div>";
-
-								afficher_infos_compagnie($nom_compagnie_perso, $image_compagnie_perso);
-
-								if (!in_bat($mysqli,$id_perso)) {
-
-									if (!in_train($mysqli,$id_perso)) {
-										afficher_infos_non_bat_non_train($fond_im, $nom_terrain, $nb_o);
-									}
-									else {
-										afficher_infos_in_train($mysqli, $id_perso);
-									}
-								}
-								else {
-									afficher_infos_in_bat($mysqli, $id_perso);
-								}
-								echo "<div><u>Message du jour</u> :<br />".$message_perso."</div>";
-
-								echo "\" ";
-								// DATA CONTENT POPOVER
-								echo "			data-content=\"";
-
-								afficher_liens_objet($nb_o, $x, $y);
-								afficher_liens_rail_genie($genie_compagnie_perso, $fond_im);
-
-								if (in_bat($mysqli,$id_perso)) {
-
-									afficher_liens_in_bat($mysqli, $id_perso);
-
-								}
-								else if (prox_bat($mysqli, $x_perso, $y_perso, $id_perso)) {
-
-									afficher_liens_prox_bat($mysqli, $id_perso, $x_perso, $y_perso, $type_perso);
-
-								}
-								echo "\" ";
-								echo " />";
-								echo "	</div>";
-								echo "</td>";
-							}
-							else {
-								if ($tab["occupee_carte"]){
-
-									//------------------------------------
-									// Traitement PNJ
-									if($tab['idPerso_carte'] >= 200000){
-
-										$idI_pnj = $tab['idPerso_carte'];
-										$fond_im = $tab["fond_carte"];
-
-										$nom_terrain = get_nom_terrain($fond_im);
-
-										// recuperation du type de pnj
-										$sql_im = "SELECT instance_pnj.id_pnj, nom_pnj FROM instance_pnj, pnj WHERE instance_pnj.id_pnj = pnj.id_pnj AND idInstance_pnj='$idI_pnj'";
-										$res_im = $mysqli->query($sql_im);
-										$t_im = $res_im->fetch_assoc();
-
-										$id_pnj_im 	= $t_im["id_pnj"];
-										$nom_pnj_im	= $t_im["nom_pnj"];
-
-										$im_pnj="pnj".$id_pnj_im."t.png";
-
-										$dossier_pnj = "images/pnj";
-
-										echo "	<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-										echo "		<img tabindex='0' border=0 src=\"../".$dossier_pnj."/".$im_pnj."\" width=40 height=40
-															data-toggle='popover'
-															data-trigger='focus'
-															data-html='true'
-															data-placement='bottom'
-															title=\"<div><a href='evenement.php?infoid=".$idI_pnj."' target='_blank'>".$nom_pnj_im." [".$idI_pnj."]</a></div><div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>\" >";
-										echo "	</td>";
-									}
-									else {
-										//-------------------------
-										//  traitement Batiment
-										if($tab['idPerso_carte'] >= 50000 && $tab['idPerso_carte'] < 200000){
-
-											$idI_bat = $tab['idPerso_carte'];
-
-											// recuperation du type de bat et du camp
-											$sql_im = "SELECT instance_batiment.id_batiment, camp_instance, nom_instance, nom_batiment
-														FROM instance_batiment, batiment
-														WHERE instance_batiment.id_batiment = batiment.id_batiment
-														AND id_instanceBat='$idI_bat'";
-											$res_im = $mysqli->query($sql_im);
-											$t_im = $res_im->fetch_assoc();
-
-											$type_bat 	= $t_im["id_batiment"];
-											$camp_bat 	= $t_im["camp_instance"];
-											$nom_i_bat	= $t_im["nom_instance"];
-											$nom_bat	= $t_im["nom_batiment"];
-
-											switch($camp_bat){
-												case '1':
-													$camp_bat2 		= 'bleu';
-													$image_profil 	= "Nord.gif";
-													$img_folder		= 'nord';
-													break;
-												case '2':
-													$camp_bat2 		= 'rouge';
-													$image_profil 	= "Sud.gif";
-													$img_folder		= 'sud';
-													break;
-												default:
-													$camp_bat2 		= 'neutre';
-													$image_profil 	= "neutre.gif";
-													$img_folder		= 'neutre';
-											}
-
-											$blason="mini_blason_".$camp_bat2.".gif";
-
-											echo "<td width=40 height=40 background=\"../fond_carte/".$tab["fond_carte"]."\">";
-											echo "	<img tabindex='0' border=0 src=\"../public/img/buildings/".$img_folder."/".$tab["image_carte"]."\" width=40 height=40
-														data-toggle='popover'
-														data-trigger='focus'
-														data-html='true'
-														data-placement='bottom' ";
-											echo "		title=\"<div><img src='../images/".$image_profil."' width='20' height='20'> <a href='evenement.php?infoid=".$idI_bat."' target='_blank'>".$nom_bat." ".$nom_i_bat." [".$idI_bat."]</a></div>\"";
-											echo "		data-content=\"";
-											if (in_bat($mysqli,$id_perso)) {
-
-												$id_instance_in_bat = in_bat($mysqli,$id_perso);
-
-												if ($idI_bat == $id_instance_in_bat) {
-
-													echo "<div><a href='batiment.php?bat=".$id_instance_in_bat."' target='_blank'>Accéder à la page du bâtiment</a></div> ";
-													echo "<div><a href='action.php?bat=".$idI_bat."&reparer=ok'>Réparer ce bâtiment (5PA)</a></div> ";
-												}
-											}
-											else if(prox_instance_bat($mysqli, $x_perso, $y_perso, $idI_bat) && $type_bat != 12) {
-
-												echo "<div><a href='action.php?bat=".$idI_bat."&reparer=ok'>Réparer ce bâtiment (5PA)</a></div> ";
-
-												if (!nation_perso_bat($mysqli, $id_perso, $idI_bat)) {
-													if(batiment_vide($mysqli, $idI_bat) && batiment_pv_capturable($mysqli, $idI_bat)&& $type_bat != 1 && $type_bat != 5 && $type_bat != 7 && $type_bat != 10 && $type_bat != 11 && $type_perso == 3){
-														echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Capturer ce bâtiment</a></div>";
-													}
-												}
-												else {
-													if($type_bat != 1 && $type_bat != 5 && $type_bat != 10){
-														if (($type_bat == 2 && ($type_perso == 3 || $type_perso == 4 || $type_perso == 6)) || $type_bat != 2 ) {
-															echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Entrer dans ce bâtiment</a></div>";
-														}
-													}
-												}
-											}
-											echo "\">";
-											echo "</td>";
-										}
-										else {
-
-											if($tab['image_carte'] == "murt.png"){
-												//positionement du mur
-												echo "<td width=40 height=40 background=\"../fond_carte/".$tab["fond_carte"]."\"> <img border=0 src=\"../images_perso/".$tab["image_carte"]."\" width=40 height=40 onMouseOver=\"AffBulle('<img src=../images/murs/mur.jpeg>')\" onMouseOut=\"HideBulle()\" title=\"mur\"></td>";
-											}
-											else {
-
-												$id_perso_im 	= $tab['idPerso_carte'];
-												$fond_im 		= $tab["fond_carte"];
-
-												$nom_terrain 	= get_nom_terrain($fond_im);
-												$cout_pm 		= cout_pm($fond_im, $type_perso);
-
-												//recuperation du type de perso (image)
-												$sql_perso_im = "SELECT * FROM perso WHERE id_perso='$id_perso_im'";
-												$res_perso_im = $mysqli->query($sql_perso_im);
-												$t_perso_im = $res_perso_im->fetch_assoc();
-
-												$im_perso 	= $t_perso_im["image_perso"];
-												$nom_ennemi = $t_perso_im['nom_perso'];
-												$id_ennemi 	= $t_perso_im['id_perso'];
-												$clan_e 	= $t_perso_im['clan'];
-												$message_e	= $t_perso_im['message_perso'];
-
-												if($clan_e == 1){
-													$clan_ennemi 	= 'rond_b.png';
-													$couleur_clan_e = 'blue';
-													$image_profil 	= "Nord.gif";
-												}
-												if($clan_e == 2){
-													$clan_ennemi 	= 'rond_r.png';
-													$couleur_clan_e = 'red';
-													$image_profil 	= "Sud.gif";
-												}
-
-												// récupération du grade du perso
-												$sql_grade = "SELECT perso_as_grade.id_grade, nom_grade FROM perso_as_grade, grades WHERE perso_as_grade.id_grade = grades.id_grade AND id_perso='$id_ennemi'";
-												$res_grade = $mysqli->query($sql_grade);
-												$t_grade = $res_grade->fetch_assoc();
-
-												$id_grade_ennemi 	= $t_grade["id_grade"];
-												$nom_grade_ennemi 	= $t_grade["nom_grade"];
-
-												// cas particuliers grouillot
-												if ($id_grade_ennemi == 101) {
-													$id_grade_ennemi = "1.1";
-												}
-												if ($id_grade_ennemi == 102) {
-													$id_grade_ennemi = "1.2";
-												}
-
-												// recuperation de l'id de la compagnie
-												$sql_groupe = "SELECT id_compagnie from perso_in_compagnie where id_perso='$id_perso_im' AND (attenteValidation_compagnie='0' OR attenteValidation_compagnie='2')";
-												$res_groupe = $mysqli->query($sql_groupe);
-												$t_groupe = $res_groupe->fetch_assoc();
-												$nb = $res_groupe->num_rows;
-
-												$id_groupe = $nb ? $t_groupe['id_compagnie'] : 0;
-
-												$nom_compagnie = '';
-
-												if($id_groupe){
-
-													// recuperation des infos sur la compagnie (dont le nom)
-													$sql_groupe2 = "SELECT * FROM compagnies WHERE id_compagnie='$id_groupe'";
-													$res_groupe2 = $mysqli->query($sql_groupe2);
-													$t_groupe2 = $res_groupe2->fetch_assoc();
-
-													$nom_compagnie 		= addslashes($t_groupe2['nom_compagnie']);
-													$id_compagnie 		= $t_groupe2['id_compagnie'];
-													$image_compagnie	= $t_groupe2['image_compagnie'];
-
-												}
-
-												if(isset($nom_compagnie) && trim($nom_compagnie) != ''){
-
-													echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-													echo "	<div width=40 height=40 style=\"position: relative;\">";
-
-													//--- Div matricule perso
-													echo "		<div tabindex='0' data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\" ";
-													// Title popover
-													echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><a href='compagnie.php?id_compagnie=".$id_compagnie."&voir_compagnie=ok' target='_blank'>";
-													if (trim($image_compagnie) != "" && $image_compagnie != "0") {
-														echo "<img src='".$image_compagnie."' width='20' height='20'>";
-													}
-													echo " ".stripslashes($nom_compagnie)."</a></div>";
-													if ($nom_terrain == "Pont") {
-
-														$sql_p = "SELECT id_instanceBat FROM instance_batiment WHERE x_instance='$x' AND y_instance='$y'";
-														$res_p = $mysqli->query($sql_p);
-														$t_p = $res_p->fetch_assoc();
-
-														$idIBat = $t_p['id_instanceBat'];
-
-														echo "<div><a href='evenement.php?infoid=".$idIBat."'><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." [".$idIBat."]</a></div>";
-													}
-													else {
-														echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
-													}
-													echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
-													// data content popover
-													echo "			data-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
-
-													afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
-
-													echo "			\" >" . $id_ennemi . "</div>";
-
-													//--- Image perso
-													echo "		<img tabindex='0' border=0 src=\"../images_perso/$dossier_img_joueur/".$tab["image_carte"]."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-													// Title popover
-													echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><a href='compagnie.php?id_compagnie=".$id_compagnie."&voir_compagnie=ok' target='_blank'>";
-													if (trim($image_compagnie) != "" && $image_compagnie != "0") {
-														echo "<img src='".$image_compagnie."' width='20' height='20'>";
-													}
-													echo " ".stripslashes($nom_compagnie)."</a></div>";
-													if ($nom_terrain == "Pont") {
-
-														$sql_p = "SELECT id_instanceBat FROM instance_batiment WHERE x_instance='$x' AND y_instance='$y'";
-														$res_p = $mysqli->query($sql_p);
-														$t_p = $res_p->fetch_assoc();
-
-														$idIBat = $t_p['id_instanceBat'];
-
-														echo "<div><a href='evenement.php?infoid=".$idIBat."'><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." [".$idIBat."]</a></div>";
-													}
-													else {
-														echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
-													}
-													echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
-													// Data content popover
-													echo "			data-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
-
-													afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
-
-													echo "			\" />";
-													echo "	</div>";
-													echo "</td>";
-												}
-												else {
-													echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-
-													//--- Div matricule perso
-													echo "	<div width=40 height=40 style=\"position: relative;\">";
-													echo "		<div tabindex='0' data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\" ";
-													// Title Popover
-													echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div>";
-													echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
-													echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
-
-													echo "			data-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
-
-													afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
-
-													echo "			\" ";
-													echo "		>";
-													// Affichage pastille de marquage 
-													$marquages = marquage_joueur($mysqli, $id_ennemi);
-													
-													if($marquages){
-														foreach($marquages as $marquage){
-															affichage_pastille_marquage($marquage['pastille']);
-															echo '<br>';
-														}
-													}
-													echo  $id_ennemi . "</div>";
-
-													//--- Image perso
-													echo "		<img tabindex='0' border=0 src=\"../images_perso/$dossier_img_joueur/".$tab["image_carte"]."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-													// Title popover
-													echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
-													echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
-													echo "			data-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
-
-													afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
-
-													echo "			\" />";
-													echo "	</div>";
-
-													echo "</td>";
-												}
-											}
-										}
-									}
-								}
-								else {
-
-									//------------------------------------------------------------
-									//  traitement Batiment qui occupe pas une case comme le pont
-									if($tab['idPerso_carte'] >= 50000 && $tab['idPerso_carte'] < 200000){
-
-										$idI_bat = $tab['idPerso_carte'];
-
-										// recuperation du type de bat et du camp
-										$sql_im = "SELECT instance_batiment.id_batiment, camp_instance, nom_instance, nom_batiment
-													FROM instance_batiment, batiment
-													WHERE instance_batiment.id_batiment = batiment.id_batiment
-													AND id_instanceBat='$idI_bat'";
-										$res_im = $mysqli->query($sql_im);
-										$t_im = $res_im->fetch_assoc();
-
-										$type_bat 	= $t_im["id_batiment"];
-										$camp_bat 	= $t_im["camp_instance"];
-										$nom_i_bat	= $t_im["nom_instance"];
-										$nom_bat	= $t_im["nom_batiment"];
-
-										$fond_carte = $tab["fond_carte"];
-
-										$cout_pm = cout_pm($fond_carte, $type_perso);
-
-										afficher_popover_pont($x, $x_perso, $y, $y_perso, $fond_carte, $idI_bat, $nom_bat, $cout_pm, $type_perso);
-									}
-									else {
-
-										$fond_im 			= $tab["fond_carte"];
-
-										$nom_terrain 		= get_nom_terrain($fond_im);
-										$cout_pm_terrain 	= cout_pm($fond_im, $type_perso);
-
-										// verification s'il y a un objet sur cette case
-										$sql_o = "SELECT type_objet, id_objet FROM objet_in_carte WHERE x_carte='$x' AND y_carte='$y' ORDER BY id_objet DESC";
-										$res_o = $mysqli->query($sql_o);
-										$nb_o = $res_o->num_rows;
-
-										if($nb_o){
-											$t = $res_o->fetch_assoc();
-											$type_objet = $t['type_objet'];
-											$objet = $t['id_objet'];
-
-											if($type_objet == 2 && $objet == '8'){
-												$image_objet = 'etendard_nord.png';
-											} else if($type_objet == 2 && $objet == '9'){
-												$image_objet = 'etendard_sud.png';
-											} else {
-												$image_objet = 'o1.gif';
-											}
-										} else {
-											$image_objet = '';
-										}
-
-										$sql_case = "SELECT valid_case FROM joueur WHERE id_joueur='$id_joueur_perso'";
-										$res_case = $mysqli->query($sql_case);
-										$t = $res_case->fetch_assoc();
-										$valid_case = $t['valid_case'];
-
-										if (in_bat($mysqli, $id_perso)) {
-
-											$taille_case = ceil($taille_bat_perso / 2);
-
-											afficher_popover_in_bat($x, $x_perso, $y, $y_perso, $taille_case, $fond_im, $nb_o, $nom_terrain, $id_bat_perso, $image_objet);
-										}
-										else {
-
-											if($y > $y_perso+1 || $y < $y_perso-1 || $x > $x_perso+1 || $x < $x_perso-1) {
-												if($nb_o){
-													echo "<td width=40 height=40 background=\"../fond_carte/".$tab["fond_carte"]."\">";
-													echo "	<img border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='tooltip' data-placement='top' title='objets à ramasser'/>";
-													echo "</td>";
-												}
-												else {
-													echo "<td width=40 height=40> <img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></td>";
-												}
-											}
-											else {
-												if($y == $y_perso+1 && $x == $x_perso+1){
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "	<a href=\"index.php?mouv=3\">";
-															echo "		<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40>";
-															echo "	</a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso-1 && $x == $x_perso+1){
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "	<a href=\"index.php?mouv=8\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso && $x == $x_perso+1){
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=5\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso && $x == $x_perso-1) {
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=4\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso+1 && $x == $x_perso-1) {
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=1\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso-1 && $x == $x_perso-1) {
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=6\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso+1 && $x == $x_perso) {
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=2\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-												if($y == $y_perso-1 && $x == $x_perso) {
-													if($nb_o){
-														echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
-														echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
-														echo "</td>";
-													}
-													else {
-														echo "<td width=40 height=40>";
-														if ($valid_case || is_case_rail($fond_im)) {
-															echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-toggle='popover' data-trigger='focus' data-html='true' data-placement='bottom' ";
-															echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
-															echo "			data-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div>\" >";
-														}
-														else {
-															echo "<a href=\"index.php?mouv=7\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
-														}
-														echo "</td>";
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-							$tab = $res->fetch_assoc();
-						}
-						else //les coordonnées sont hors limites
-							echo "<td width=40 height=40><img border=0 width=40 height=40 src=\"../fond_carte/decorO.jpg\"></td>";
-					}
-					echo "</tr>";
-				}
 				?>
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+		<title>Nord VS Sud</title>
+
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Le jeu au tour par tour sur la guerre de sécession">
+
+		<!-- Bootstrap CSS -->
+		<!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<link rel="stylesheet" href="../public/css/app.css">
+
+		<link href="../style2.css" rel="stylesheet" type="text/css">
+		
+		<!-- Scripts -->
+		<!-- Bunddle Popper.js & Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="../public/js/app.js" defer></script>
+
+	</head>
+	<body class='game'>
+		<div class='background-img homepage-bg'>
+		</div>
+		<div class="toast-container position-fixed top-0 end-0 p-3">
+			<?php if(isset($erreur) && !empty($erreur)): ?>
+			<div class="toast bg-danger-subtle text-danger-emphasis fade show" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="d-flex">
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-10 m-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<div class="toast-body">
+						<?= $erreur ?>
+					</div>
+					<button type="button" class="btn-close m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+			</div>
+			<?php endif ?>
+			<?php if(isset($mess) && !empty($mess)): ?>
+			<div class="toast bg-primary-subtle text-primary-emphasis fade show" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="d-flex">
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-10 m-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<div class="toast-body">
+						<?= $mess ?>
+					</div>
+					<button type="button" class="btn-close m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+			</div>
+			<?php endif ?>
+		</div>
+        <header class='container-fluid p-0'>
+			<?php if(!empty($permissionMsg)):?>
+			<div class="row">
+				<div class='col'>
+					<div class='p-4 m-0 alert alert-warning' role="alert">
+						<!--<svg xmlns="http://www.w3.org/2000/svg" class="warning-icon-lg me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+						</svg>-->
+						<span class='align-middle fw-semibold'><?= $permissionMsg?></span>
+					</div>
+				</div>
+			</div>
+			<?php endif;?>
+			<div class="offcanvas offcanvas-start bg-main shadow-lg" tabindex="-1" id="offcanvasMainMenu" aria-labelledby="offcanvasMainMenuLabel">
+				<div class="offcanvas-header">
+					<h5 class="offcanvas-title" id="offcanvasMainMenuLabel">Menu</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+				</div>
+				<div class="offcanvas-body">
+					<ul class="nav flex-column navMainMenu">
+						<li class="nav-item">
+							<a class="nav-link" href="?action=character">
+								<img src="../public/img/icons/<?php echo $image_profil; ?>" class='size-12' alt="profil">
+								<span class='cat-title d-inline-block text-center w-50'>Mon bataillon</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="evenement.php">
+								<img src="../public/img/icons/<?php echo $image_evenement; ?>" class='size-12' alt="évènements">
+								<span class='cat-title d-inline-block text-center w-50'>Évènements</span>
+							</a>
+						</li>
+						<li class="nav-item d-md-none">
+							<a class="nav-link" href="sac.php">
+								<img src="../public/img/icons/<?php echo $image_sac; ?>" class='size-12' alt="sac">
+								<span class='cat-title d-inline-block text-center w-50'>Sac</span>
+							</a>
+						</li>
+						<li class="nav-item d-none">
+							<a class="nav-link" href="carte/carte.php">
+								<img src="../public/img/icons/map_icon.png" class='size-12' alt="mini map">
+								<span class='cat-title d-inline-block text-center w-50'>Carte</span>
+							</a>
+						</li>
+						<?php if ($type_perso != 6): ?>
+						<li class="nav-item d-md-none">
+							<a class="nav-link" href="messagerie.php">
+								<img src="../public/img/icons/<?php echo $image_messagerie; ?>" class='size-12' alt="messagerie">
+								<span class='cat-title d-inline-block text-center w-50 position-relative'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger'>$nb_nouveaux_mes</span>"; }?></span>
+							</a>
+						</li>
+						<?php endif; ?>
+						<li class="nav-item">
+							<a class="nav-link" href="?action=ranking">
+								<img src="../public/img/icons/ranking_icon.png" class='size-12' alt="classement">
+								<span class='cat-title d-inline-block text-center w-50'>Classements</span>
+							</a>
+						</li>
+						<?php if ($type_perso != 6): ?>
+						<li class="nav-item">
+							<a class="nav-link" href="?action=ranking">
+								<img src="../public/img/icons/<?php echo $image_compagnie; ?>" class='size-12' alt="compagnie">
+								<span class='cat-title d-inline-block text-center w-50 position-relative'>Compagnie
+								<?php if ($nb_demandes_adhesion_compagnie || $nb_demandes_depart_compagnie || $nb_demandes_emprunt_compagnie) { ?>
+									<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill p-2 bg-danger border border-light rounded-circle'><span class="visually-hidden">Demandes en attente</span></span>
+								<?php }?>
+								</span>
+							</a>
+						</li>
+						<?php endif;?>
+						<?php if($nb_em): ?>
+						<li class="nav-item">
+							<a class="nav-link" href="?action=ranking">
+								<img src="../public/img/icons/<?php echo $image_em; ?>" class='size-12' alt="etat major">
+								<span class='cat-title d-inline-block text-center w-50 position-relative'>État Major
+									<?php if ($nb_compagnie_attente_em) {?>
+										<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill p-2 bg-danger border border-light rounded-circle'><span class="visually-hidden">Compagnies en attente</span></span>
+									<?php	}?>
+								</span>
+							</a>
+						</li>
+						<?php endif;?>
+					</ul>
+				</div>
+			</div>
+			<div class="offcanvas offcanvas-end bg-main shadow" tabindex="-1" id="offcanvasAdditionnalMenu" aria-labelledby="offcanvasAdditionnalMenuLabel">
+				<div class="offcanvas-header">
+					<h5 class="offcanvas-title" id="offcanvasAdditionnalMenuLabel">Communauté et paramétrages</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+				</div>
+				<div class="offcanvas-body">
+					<ul class="nav flex-column text-end">
+						<li class="nav-item mb-2">
+							<a class="btn btn-lg btn-light w-100" href="?action=user&op=show&id=<?=$_SESSION["ID_joueur"]?>">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7">
+								  <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+								  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+								</svg>
+								Gérer mon Compte
+							</a>
+						</li>
+						<li class="nav-item my-2 dropdown">
+							<a class="dropdown-toggle btn btn-lg btn-info w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 me-1 align-text-top">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+								</svg>
+								Aide
+							</a>
+							<ul class="dropdown-menu w-100">
+								<li><a class="dropdown-item" href="https://www.encyclopedienvs.nord-vs-sud.fr/index.php/Accueil">Règles</a></li>
+								<li><a class="dropdown-item" href="?action=faq">FAQ</a></li>
+								<li><a class="dropdown-item" href="question_anim.php">Questions aux anims</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="https://discord.gg/EMqRMzHKjZ">DISCORD du jeu</a></li>
+							</ul>
+						</li>
+						<li class="nav-item my-2 dropdown">
+							<a class="dropdown-toggle btn btn-lg btn-primary w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 me-1 align-text-top">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+								</svg>
+								Communauté
+							</a>
+							<ul class="dropdown-menu w-100">
+								<li><a class="dropdown-item disabled" href="#" disabled>Forum</a></li>
+								<li><a class="dropdown-item" href="https://discord.gg/EMqRMzHKjZ">DISCORD du jeu</a></li>
+							</ul>
+						</li>
+						<li class="nav-item my-2 d-none">
+							<a class='btn btn-lg btn-primary w-100' href="capture.php">Déclarer une capture</a>
+						</li>
+						<li class="nav-item my-2">
+							<a class='btn btn-lg btn-warning w-100' href="missions.php">
+								Missions
+								<?php if ($nb_missions_actives > 0) : ?>				
+								<span class='badge badge-success'><?= $nb_missions_actives ?></span>
+								<?php endif; ?>
+							</a>
+						</li>
+						<?php if(redac_perso($mysqli, $id_perso) || anim_perso($mysqli, $id_perso) || $admin): ?>
+						<li class="nav-item dropdown my-2">
+							<a class="dropdown-toggle btn btn-lg btn-warning w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Administration
+							</a>
+							<ul class="dropdown-menu w-100">
+								<?php // Redacteur
+								if(redac_perso($mysqli, $id_perso)): ?>
+								<li class="nav-item">
+									<a class='dropdown-item' href='redacteur.php'>Rédaction</a>
+								</li>
+								<?php endif; ?>
+								<?php // Animation
+								if(anim_perso($mysqli, $id_perso)):?>
+									<li class="nav-item">
+										<a class='dropdown-item' href='animation.php'>
+											Animation
+											<?php if ($nb_demande_a_traiter > 0): ?>
+												<span class='badge badge-danger' title='<?=$nb_demande_a_traiter?> demandes en attente'>
+													<?= $nb_demande_a_traiter?>
+												</span>
+											<?php endif; ?>
+										</a>
+									</li>
+								<?php endif; ?>
+								<?php // Admin
+								if($admin):?>
+									<li class="nav-item">
+										<a class='dropdown-item' href='admin_nvs.php'>Admin</a>
+									</li>
+								<?php endif; ?>
+							</ul>
+						</li>
+						<?php endif; ?>
+						<li class="nav-item mt-2">
+							<a class='btn btn-danger w-100 fw-semibold' href="../logout.php">Déconnexion</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<nav class='container-fluid bg-main bg-main-var shadow p-0'>
+				<div class='row align-items-center bg-body-secondary'>
+					<div class='col-3 ps-4'>
+						<a class='fw-bold' href='/'>
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+							</svg>
+							rafraîchir
+						</a>
+					</div>
+					<div class='col p-1'>
+						<div class='d-flex flex-row justify-content-center'>
+							<div class='pe-5'>
+								<!-- date du serveur -->
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+								</svg>
+								<span id='date'><?=$date_serveur->format('d-m-Y')?></span>
+								<span id='clock'><?=$date_serveur->format('H:i:s')?></span> 
+							</div>
+							<div>
+								<!-- DLA -->
+								<img class="img-fluid size-6" src="../public/img/icons/hourglass.png" alt="messagerie">
+								<span class='fw-semibold'><?=date('d-m-Y',$n_dla)?></span>
+								<span class='fw-semibold'><?=date('H:i:s',$n_dla)?></span>
+							</div>
+						</div>
+					</div>
+					<div class='col-1 col-sm-3'>
+					</div>
+				</div>
+				<div class='row align-items-center'>
+					<div class='col-2 col-md order-first text-start pe-0'>
+						<button class="btn btn-dark btn-lg px-3 py-4 m-0 rounded-0 h-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMainMenu" aria-controls="offcanvasMainMenu">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+							</svg>
+						</button>
+					</div>
+					<div class='col col-md-6 order-md-3'>
+						<div class='d-flex flex-row justify-content-center navMainMenu'>
+							<div class='px-3 text-center my-1 d-none d-sm-block'>
+								<a class="main-menu-button" href="sac.php">
+									<img class="img-fluid size-10 mb-1" src="../public/img/icons/<?= $image_sac; ?>" alt="sac"><br>
+									<span class='cat-title'>Sac</span>
+								</a>
+							</div>
+							<div class='px-3 text-center my-1'>
+								<a class="main-menu-button" href="carte/carte.php">
+									<img class="img-fluid size-10 mb-1" src="../public/img/icons/map_icon.png" alt="mini map"><br>
+									<span class='cat-title'>Carte</span>
+								</a>
+							</div>
+							<div class='px-3 text-center my-1'>
+								<a class="main-menu-button" href="evenement.php">
+									<img class="img-fluid size-10 mb-1" src="../public/img/icons/<?php echo $image_evenement; ?>" alt="évènements"><br>
+									<span class='cat-title'>Évènements</span>
+								</a>
+							</div>
+							<?php if ($type_perso != 6): ?>
+							<div class='px-3 text-center my-1 d-none d-md-block'>
+								<a class="main-menu-button" href="messagerie.php">
+									<img class="img-fluid size-10 mb-1" src="../public/img/icons/<?= $image_messagerie; ?>" alt="messagerie"><br>
+									<span class='cat-title position-relative'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger'>$nb_nouveaux_mes</span>"; }?></span>
+								</a>
+							</div>
+							<?php endif; ?>
+						</div>
+					</div>
+					<div class='col-2 col-md order-4 text-end ps-0'>
+						<button class="btn btn-dark btn-lg px-3 py-4 m-0 rounded-0 h-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAdditionnalMenu" aria-controls="offcanvasAdditionnalMenu">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
+								<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+							</svg>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</header>
+		<main class='container-fluid main-page overflow-scroll'>
+			<div class="row">
+				<!-- interface joueur -->
+				<div class='col-12 col-md-6 col-lg-2 bg-body-tertiary bg-main p-3'>
+					<div class='row'>
+						<div class='col-2'>
+							<div class="position-relative icon-character">
+								<button type="button" class="btn btn-sm btn-secondary position-absolute top-0 start-100 translate-middle p-0 rounded-circle" data-bs-toggle="collapse" data-bs-target="#collapseInfoCharac" aria-expanded="false" aria-controls="collapseInfoCharac">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+									</svg>
+								</button>
+								<span class='fw-bold position-absolute top-50 ms-1'><?= $id_perso ?></span>
+								<img src="../images_perso/<?= "$image_perso"?>" width=40 height=40>
+							</div>
+						</div>
+						<form class='col' method='post' action='index.php'>
+							<span class="fw-semibold">Nom : </span>
+							<select name='liste_perso' onchange="this.form.submit()">
+							<?php foreach($battalion as $t_liste_perso):
+
+								$id_perso_liste 	= $t_liste_perso["id_perso"];
+								$nom_perso_liste 	= $t_liste_perso["nom_perso"];
+								$chef_perso			= $t_liste_perso["chef"];
+
+								if($chef_perso){$nom_perso_chef = $nom_perso_liste;}
+							?>
+								<option value="<?= $id_perso_liste?>" <?php if($id_perso == $id_perso_liste): ?> selected<?php endif;?>>
+									<?= $nom_perso_liste?> [<?= $id_perso_liste?>]
+								</option>
+							<?php endforeach;?>
+							</select>
+							<input type='submit' name='select_perso' value='ok' />
+						</form>
+					</div>
+					<div class="collapse" id="collapseInfoCharac">
+						<div class='col-12'>
+							<span class='fw-semibold'>Grade : </span><a href="grades.php"><?=$nom_grade_perso; ?> <img alt="<?php echo $nom_grade_perso; ?>" title="<?php echo $nom_grade_perso; ?>" src="../images/grades/<?php echo $id_grade_perso . ".gif";?>" width=40 height=40></a><br>
+							<span class='fw-semibold'>Chef : </span><?= $nom_perso_chef; ?><br>
+							<span class='fw-semibold'>Bataillon : </span><a href="bataillon.php?id_bataillon=<?=$id_joueur_perso?>"><?=$bataillon_perso?></a><br>
+							<span class='fw-semibold'>Compagnie : </span><a href="compagnie.php"><?=stripslashes($nom_compagnie_perso)?></a>
+						</div>
+					</div>
+					<div class='row'>
+						<div class='col-12 mt-2'>
+							<div class="progress shadow" role="progressbar" aria-label="points de vie" aria-valuenow="<?=$pv_perso?>" aria-valuemin="0" aria-valuemax="<?=$pvMax_perso?>" style="height: 2rem">
+								<div class="progress-bar text-bg-success fs-6 overflow-visible" style="width: <?= round($pv_perso/$pvMax_perso*100)?>%">PV : <?= round($pv_perso/$pvMax_perso*100)?>% (<?=$pv_perso?>/<?=$pvMax_perso?>)</div>
+							</div>
+						</div>
+						<div class='col-6 mt-2'>
+							<div class="progress shadow" role="progressbar" aria-label="points de mouvement" aria-valuenow="<?= $pm_perso?>" aria-valuemin="0" aria-valuemax="<?=$pmMax_perso?>" style="height: 2rem">
+								<div class="progress-bar progress-bar-striped text-bg-primary fs-6 overflow-visible" style="width: <?= round($pm_perso/$pmMax_perso*100)?>%">PM : <?=$pm_perso?>/<?=$pmMax_perso?></div>
+							</div>
+						</div>
+						<div class='col-6 mt-2'>
+							<div class="progress shadow" role="progressbar" aria-label="points d'action" aria-valuenow="<?=$pa_perso?>" aria-valuemin="0" aria-valuemax="<?= $paMax_final_perso?>" style="height: 2rem">
+								<div class="progress-bar progress-bar-striped text-bg-warning fs-6 overflow-visible" style="width: <?= round($pa_perso/$paMax_final_perso*100)?>%">PA : <?=$pa_perso?>/<?=$paMax_final_perso?></div>
+							</div>
+						</div>
+					</div>
+					<div class='col-12 mt-4'>
+						<!-- caractéristiques perso -->
+						<div class='row d-none d-md-flex'>
+							<div class='col'>
+								<table class='table table-striped shadow'>
+									<tbody>
+										<tr>
+											<td><b>XP</b></td>
+											<td><?= $xp_perso; ?></td>
+										</tr>
+										<tr>
+											<td><b>XPI</b></td>
+											<td><?= $pi_perso; ?></td>
+										</tr>
+										<tr>
+											<td><b>PC</b></td>
+											<td><?= $pc_perso; ?></td>
+										</tr>
+									</tbody>
 								</table>
-							</td>
-						</tr>
-					</table>
-				</td>
-				<!--Fin de la génération de la carte-->
-
-				<?php
-				if($config == '2'){
-					echo "</tr><tr>";
-				}
-				?>
-
-				<!--Debut tableau des actions -->
-				<td valign="top">
-					<table style="border:1px solid black; border-collapse: collapse;">
-						<tr>
-							<td>
-								<table border="0" cellspacing="0" cellpadding="0" style:no-padding>
+							</div>
+							<div class='col'>
+								<table class='table table-striped shadow'>
 									<tr>
-										<td background='../images/background.jpg' align='center' valign='top'colspan='2'>
-											<img src='../images/Action.png' border='0'/>
-											<form method='post' action='action.php'>
-												<select name='liste_action'>
-													<option value="invalide" selected>-- -- -- -- -- -- - Choisir une action - -- -- -- -- -- --</option>
+										<td><b>Perception</b></td>
+										<td>
+										<?php
+										$texte_tooltip = $perception_perso;
+										$bonus_tooltip ='';
+										
+										if($bonusPerception_perso != 0) {
+											$bonus_tooltip = '('.$bonusPerception_perso.')';
+											if($bonusPerception_perso > 0){
+												$bonus_tooltip = '(+'.$bonusPerception_perso.')';
+											}
+										}
+										$perception_final_perso = $perception_perso + $bonusPerception_perso;
+										?>
+											<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="Base : <?=$texte_tooltip?> <span class='fw-bold'><?=$bonus_tooltip?></span>"><?=$perception_final_perso?></a>
+										</td>
+									</tr>
+									<tr>
+										<td><b>Protection</b></td>
+										<td><?=$protec_perso; ?></td>
+									</tr>
+									<tr>
+										<td><b>Récupération</b></td>
+										<td>
+										<?php
+										$texte_tooltip = $recup_perso;
+										$bonus_tooltip ='';
+										
+										if($bonusRecup_perso != 0) {
+											$bonus_tooltip = '('.$bonusRecup_perso.')';
+											if($bonusRecup_perso > 0){
+												$bonus_tooltip = '(+'.$bonusRecup_perso.')';
+											}
+										}
+
+										$recup_final = $recup_perso + $bonusRecup_perso;
+										?>
+											<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="Base : <?=$texte_tooltip?> <span class='fw-bold'><?=$bonus_tooltip?></span>"><?=$recup_final?></a>
+										</td>
+									</tr>
+									<tr>
+										<td><b>Défense</b></td>
+										<td>
+										<?php
+										$texte_tooltip = "Base : ".$bonus_perso."";
+
+										$bonus_defense = getBonusDefenseObjet($mysqli, $id_perso);
+										$bonus_defense_bat = get_bonus_defense_instance_bat($mysqli, $id_perso);
+
+										// recuperation des données de la carte
+										$sql = "SELECT fond_carte FROM $carte
+												WHERE x_carte = $x_perso
+												AND y_carte = $y_perso";
+										$res = $mysqli->query($sql);
+										$tab = $res->fetch_assoc();
+
+										$fond_carte_perso = $tab['fond_carte'];
+
+										$bonus_defense_terrain_cac = get_bonus_defense_terrain($fond_carte_perso, 1);
+										$bonus_defense_terrain_dist = get_bonus_defense_terrain($fond_carte_perso, 2);
+
+										$bonus_final_cac = $bonus_perso + $bonus_defense + $bonus_defense_terrain_cac + $bonus_defense_bat;
+										$bonus_final_dist = $bonus_perso + $bonus_defense + $bonus_defense_terrain_dist + $bonus_defense_bat;
+										?>
+											<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="<?=$texte_tooltip?>">
+										<?php
+										if ($bonus_final_cac == $bonus_final_dist) {
+											echo $bonus_final_cac;
+										}
+										else {
+											echo 'Cac : '.$bonus_final_cac.' - Dist : '.$bonus_final_dist.'</a>';
+										}
+										?></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<!-- actions de combat pour grands écrans -->
+						<div class='row d-none d-md-flex'>
+							<h3 class='fs-5'>Actions de combat</h3>
+							<!-- bouton pour faire une charge -->
+							<?php if (verif_charge_pm($type_perso, $pm_perso) && !in_train($mysqli, $id_perso) && !in_bat($mysqli, $id_perso)) {?>
+							<div>
+								<form method='post' action='action.php' class='text-center'>
+									<input type="hidden" name="liste_action" value="999">
+									<button class='btn btn-warning my-2' type='submit' name='action' value='ok'>
+										<img class='size-11 float-start mt-1 me-3' src='../public/img/icons/cavalry_charge.png' alt='charge de soldats'>
+										CHARGER<br><span class='fs-6'>(consomme tous les PA)</span>
+									</button>
+								</form>
+							</div>
+							<?php } ?>
+							<!-- compétence d'attaque rapprochée ou soin 1 -->
+							<?php if($combat_type != 'distance'){ ?>
+							<div class='col-12 table-responsive'>
+								<table class='table table-sm table-striped shadow'>
+									<thead>
+										<th scope="col" colspan='2'><?php if($combat_type == 'heal'){ echo 'soins 1';}else{ echo 'Combat rapproché';};?></th>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Arme</td>
+											<td><?= $nom_arme_cac; ?></td>
+										</tr>
+										<tr>
+											<td>Coût en PA</td>
+											<td><?=	$coutPa_arme_cac; ?></td>
+										</tr>
+										<tr>
+											<td>Dégâts</td>
+											<td><?= $degats_arme_cac; ?></td>
+										</tr>
+										<tr>
+											<td>Portée</td>
+											<td><?= $porteeMax_arme_cac; ?></td>
+										</tr>
+										<tr>
+											<td>Précision</td>
+											<td><?= $precision_arme_cac . " %"; ?></td>
+										</tr>
+										<?php if(!empty($degatZone_arme_cac) OR !empty($building_damage_cac)){?>
+										<tr>
+											<td class='fw-bold'>Spécial</td>
+											<td>
+												<?php if(!empty($degatZone_arme_cac)){ echo 'Dégâts de zone<br>';}?>
+												<?php if(!empty($building_damage_cac)){ echo 'Bonus de dégâts sur bâtiments';}?>
+											</td>
+										</tr>
+										<?php } ?>
+										<tr>
+											<form method="post" action="agir.php" target='_main'>
+											<td><input type="submit" value="<?php if($combat_type == 'heal'){ echo 'Soigner';}else{ echo 'Attaquer';} ?>"></td>
+											<td>
+												<select name='id_attaque_cac'>
+													<option value="personne">Qui ?</option>
 													<?php
+													if ($combat_type == 'heal') {
+														while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
 
-													// Action d'entrainement
-													if($pa_perso >= 10){
-														echo "<option value=\"65\">Entrainement (10 PA)</option>";
+															$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+															if ($id_cible_cac < 50000) {
+
+																// Un autre perso
+																$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+																$res = $mysqli->query($sql);
+																$tab = $res->fetch_assoc();
+
+																$nom_cible_cac 		= $tab["nom_perso"];
+																$pv_cible_cac		= $tab["pv_perso"];
+																$pv_max_cible_cac	= $tab["pvMax_perso"];
+																$bonus_cible_cac	= $tab["bonus_perso"];
+																$camp_cible_cac		= $tab["clan"];
+
+																$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																if ($id_arme_cac == 10) {
+																	// seringue
+																	// On affiche que les persos blessés
+																	if ($pv_cible_cac < $pv_max_cible_cac) {
+																		echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																	}
+																} else if ($id_arme_cac == 11) {
+																	// bandage
+																	// On affiche que les persos avec malus
+																	if ($bonus_cible_cac < 0) {
+																		echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																	}
+																}
+															} else if ($id_cible_cac >= 200000) {
+
+																// Un PNJ
+																$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+																$res = $mysqli->query($sql);
+																$tab = $res->fetch_assoc();
+
+																$nom_cible_cac 		= $tab["nom_pnj"];
+																$pv_cible_cac		= $tab["pv_i"];
+																$pv_max_cible_cac	= $tab["pvMax_pnj"];
+
+																if ($pv_cible_cac < $pv_max_cible_cac) {
+																	echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																}
+															} else {
+																// Un Batiment => on ne veut pas l'afficher !
+															}
+														}
 													}
+													else {
+														// Impossible d'attaquer au CaC quand on est dans un train
+														if (!in_train($mysqli, $id_perso)) {
 
-													// Action Déposer Objet
-													if($pa_perso >= 1){
-														echo "<option value=\"110\">Deposer objet (1 PA)</option>";
-														echo "<option value=\"139\">Donner objet (1 PA)</option>";
+															while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
+
+																$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+																if ($id_cible_cac < 50000) {
+
+																	// Un autre perso
+																	$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_cac 	= $tab["nom_perso"];
+																	$camp_cible_cac	= $tab["clan"];
+
+																	$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																} else if ($id_cible_cac >= 200000) {
+
+																	// Un PNJ
+																	$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_cac = $tab["nom_pnj"];
+
+																	$couleur_clan_cible = "grey";
+
+																} else {
+
+																	// Un Batiment
+																	$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_cac'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_cac = $tab["nom_batiment"];
+																	if ($tab["nom_instance"] != "") {
+																		$nom_cible_cac .= " ".$tab["nom_instance"];
+																	}
+
+																	$camp_cible_cac	= $tab["camp_instance"];
+
+																	$couleur_clan_cible = couleur_clan($camp_cible_cac);
+																	$pv_instance	= $tab["pv_instance"];
+																	if ($pv_instance <= 0)
+																		continue;
+																}
+
+																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+															}
+														}
 													}
+													?>
+												</select>
+											</td>
+											</form>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<?php } ?>
+							<!-- compétence d'attaque à distance -->
+							<?php if($combat_type != 'close' AND $combat_type != 'heal'){ ?>
+							<div class='col-12 table-responsive'>
+								<table class='table table-sm table-striped shadow'>
+									<thead>
+										<th scope="col" colspan='2' >Combat à distance</th>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Arme</td>
+											<td><?= $nom_arme_dist; ?></td>
+										</tr>
+										<tr>
+											<td>Coût en PA</td>
+											<td><?=	$coutPa_arme_dist; ?><?php if (possede_lunette_visee($mysqli, $id_perso)) { echo " (+2)"; } ?></td>
+										</tr>
+										<tr>
+											<td>Dégâts</td>
+											<td><?= $degats_arme_dist; ?></td>
+										</tr>
+										<tr>
+											<td>Portée</td>
+											<td><?= $porteeMax_arme_dist; ?></td>
+										</tr>
+										<tr>
+											<td>Précision</td>
+											<td><?= $precision_arme_dist . " %"; ?></td>
+										</tr>
+										<?php if(!empty($degatZone_arme_dist) OR !empty($building_damage_dist)){?>
+										<tr>
+											<td class='fw-bold'>Spécial</td>
+											<td>
+												<?php if(!empty($degatZone_arme_dist)){ echo 'Dégâts de zone<br>';}?>
+												<?php if(!empty($building_damage_dist)){ echo 'Bonus de dégâts sur bâtiments';}?>
+											</td>
+										</tr>
+										<?php } ?>
+										<tr>
+											<form method="post" action="agir.php" target='_main'>
+											<td><input type="submit" value="Attaquer"></td>
+											<td>
+												<select name='id_attaque_dist'>
+													<option value="personne">Qui ?</option>
+													<?php
+													if (!isset($id_bat_perso) || (isset($id_bat_perso) && $id_bat_perso != 10)) {
+														while($t_cible_portee_dist = $res_portee_dist->fetch_assoc()) {
 
+															$id_cible_dist = $t_cible_portee_dist["idPerso_carte"];
+															$id_instance_in_bat = in_bat($mysqli,$id_perso);
+
+															if ($id_cible_dist != $id_instance_in_bat) {
+
+																if ($id_cible_dist < 50000) {
+
+																	// Un autre perso
+																	$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_dist'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_dist = $tab["nom_perso"];
+																	$camp_cible_cac	= $tab["clan"];
+
+																	$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																} else if ($id_cible_dist >= 200000) {
+
+																	// Un PNJ
+																	$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_dist'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_dist = $tab["nom_pnj"];
+
+																	$couleur_clan_cible = "grey";
+
+																} else {
+
+																	// Un Batiment
+																	$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_dist'";
+																	$res = $mysqli->query($sql);
+																	$tab = $res->fetch_assoc();
+
+																	$nom_cible_dist = $tab["nom_batiment"];
+																	if ($tab["nom_instance"] != "") {
+																		$nom_cible_dist .= " ".$tab["nom_instance"];
+																	}
+
+																	$camp_cible_dist	= $tab["camp_instance"];
+
+																	$couleur_clan_cible = couleur_clan($camp_cible_dist);
+																	$pv_instance	= $tab["pv_instance"];
+																	if ($pv_instance <= 0)
+																		continue;
+																}
+
+																echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_dist.",".$id_arme_dist."'>".$nom_cible_dist." (mat. ".$id_cible_dist.")</option>";
+															}
+														}
+													}
+													?>
+												</select>
+											</td>
+											</form>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<?php } ?>
+							<!-- compétence de soins 2 --> 
+							<?php if($combat_type == 'heal'){ ?>
+							<div class='col-12 table-responsive'>
+								<table class='table table-sm table-striped shadow'>
+									<thead>
+										<th scope="col" colspan='2'>Soins 2</th>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Arme</td>
+											<td><?= $nom_arme_cac2; ?></td>
+										</tr>
+										<tr>
+											<td>Coût en PA</td>
+											<td><?=	$coutPa_arme_cac2; ?></td>
+										</tr>
+										<tr>
+											<td>Dégâts</td>
+											<td><?= $degats_arme_cac2; ?></td>
+										</tr>
+										<tr>
+											<td>Portée</td>
+											<td><?= $porteeMax_arme_cac2; ?></td>
+										</tr>
+										<tr>
+											<td>Précision</td>
+											<td><?= $precision_arme_cac2 . " %"; ?></td>
+										</tr>
+										<?php if(!empty($degatZone_arme_cac2) OR !empty($building_damage_cac2)){?>
+										<tr>
+											<td class='fw-bold'>Spécial</td>
+											<td>
+												<?php if(!empty($degatZone_arme_cac2)){ echo 'Soins de zone<br>';}?>
+												<?php if(!empty($building_damage_cac2)){ echo 'Bonus de dégâts sur bâtiments';}?>
+											</td>
+										</tr>
+										<?php } ?>
+										<tr>
+											<form method="post" action="agir.php" target='_main'>
+											<td><input type="submit" value="Soigner"></td>
+											<td>
+												<select name='id_attaque_cac2'>
+													<option value="personne">Qui ?</option>
+													<?php 
+													$res_portee_cac2 = resource_liste_cibles_a_portee_attaque($mysqli, 'carte', $id_perso, $porteeMin_arme_cac, $porteeMax_arme_cac, $perc_att, 'cac');
+													while($t_cible_portee_cac = $res_portee_cac2->fetch_assoc()) {
+
+														$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+														if ($id_cible_cac < 50000) {
+
+															// Un autre perso
+															$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+															$res = $mysqli->query($sql);
+															$tab = $res->fetch_assoc();
+
+															$nom_cible_cac 		= $tab["nom_perso"];
+															$pv_cible_cac		= $tab["pv_perso"];
+															$pv_max_cible_cac	= $tab["pvMax_perso"];
+															$bonus_cible_cac	= $tab["bonus_perso"];
+															$camp_cible_cac		= $tab["clan"];
+
+															$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+															if ($id_arme_cac2 == 10) {
+																// seringue
+																// On affiche que les persos blessés
+																if ($pv_cible_cac < $pv_max_cible_cac) {
+																	echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																}
+															} else if ($id_arme_cac2 == 11) {
+																// bandage
+																// On affiche que les persos avec malus
+																if ($bonus_cible_cac < 0) {
+																	echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																}
+															}
+														} else if ($id_cible_cac >= 200000) {
+
+															// Un PNJ
+															$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+															$res = $mysqli->query($sql);
+															$tab = $res->fetch_assoc();
+
+															$nom_cible_cac 		= $tab["nom_pnj"];
+															$pv_cible_cac		= $tab["pv_i"];
+															$pv_max_cible_cac	= $tab["pvMax_pnj"];
+
+															if ($pv_cible_cac < $pv_max_cible_cac) {
+																echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+															}
+														}
+													}
+													?>
+												</select>
+											</td>
+											</form>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<?php } ?>
+						</div>
+						<!-- caractéristiques perso petits écrans -->
+						<div class='row d-md-none'>
+							<div class='col-12'>
+								<button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaracPerso" aria-expanded="false" aria-controls="collapseCaracPerso">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+									</svg>
+									Caractéristiques perso 
+								</button>
+								<div class="collapse" id="collapseCaracPerso">
+									<div class="card card-body">
+										<div class='row'>
+											<div class='col'>
+												<table class='table table-striped shadow'>
+													<tbody>
+														<tr>
+															<td><b>XP</b></td>
+															<td><?= $xp_perso; ?></td>
+														</tr>
+														<tr>
+															<td><b>XPI</b></td>
+															<td><?= $pi_perso; ?></td>
+														</tr>
+														<tr>
+															<td><b>PC</b></td>
+															<td><?= $pc_perso; ?></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+											<div class='col'>
+												<table class='table table-striped shadow'>
+													<tr>
+														<td><b>Perception</b></td>
+														<td>
+														<?php
+														$texte_tooltip = $perception_perso;
+														$bonus_tooltip ='';
+														
+														if($bonusPerception_perso != 0) {
+															$bonus_tooltip = '('.$bonusPerception_perso.')';
+															if($bonusPerception_perso > 0){
+																$bonus_tooltip = '(+'.$bonusPerception_perso.')';
+															}
+														}
+														$perception_final_perso = $perception_perso + $bonusPerception_perso;
+														?>
+															<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="Base : <?=$texte_tooltip?> <span class='fw-bold'><?=$bonus_tooltip?></span>"><?=$perception_final_perso?></a>
+														</td>
+													</tr>
+													<tr>
+														<td><b>Protection</b></td>
+														<td><?=$protec_perso; ?></td>
+													</tr>
+													<tr>
+														<td><b>Récupération</b></td>
+														<td>
+														<?php
+														$texte_tooltip = $recup_perso;
+														$bonus_tooltip ='';
+														
+														if($bonusRecup_perso != 0) {
+															$bonus_tooltip = '('.$bonusRecup_perso.')';
+															if($bonusRecup_perso > 0){
+																$bonus_tooltip = '(+'.$bonusRecup_perso.')';
+															}
+														}
+
+														$recup_final = $recup_perso + $bonusRecup_perso;
+														?>
+															<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="Base : <?=$texte_tooltip?> <span class='fw-bold'><?=$bonus_tooltip?></span>"><?=$recup_final?></a>
+														</td>
+													</tr>
+													<tr>
+														<td><b>Défense</b></td>
+														<td>
+														<?php
+														$texte_tooltip = "Base : ".$bonus_perso."";
+
+														$bonus_defense = getBonusDefenseObjet($mysqli, $id_perso);
+														$bonus_defense_bat = get_bonus_defense_instance_bat($mysqli, $id_perso);
+
+														// recuperation des données de la carte
+														$sql = "SELECT fond_carte FROM $carte
+																WHERE x_carte = $x_perso
+																AND y_carte = $y_perso";
+														$res = $mysqli->query($sql);
+														$tab = $res->fetch_assoc();
+
+														$fond_carte_perso = $tab['fond_carte'];
+
+														$bonus_defense_terrain_cac = get_bonus_defense_terrain($fond_carte_perso, 1);
+														$bonus_defense_terrain_dist = get_bonus_defense_terrain($fond_carte_perso, 2);
+
+														$bonus_final_cac = $bonus_perso + $bonus_defense + $bonus_defense_terrain_cac + $bonus_defense_bat;
+														$bonus_final_dist = $bonus_perso + $bonus_defense + $bonus_defense_terrain_dist + $bonus_defense_bat;
+														?>
+															<a tabindex="0" href="#" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-html="true" data-bs-content="<?=$texte_tooltip?>">
+														<?php
+														if ($bonus_final_cac == $bonus_final_dist) {
+															echo $bonus_final_cac;
+														}
+														else {
+															echo 'Cac : '.$bonus_final_cac.' - Dist : '.$bonus_final_dist.'</a>';
+														}
+														?></td>
+													</tr>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class='col-12'>
+								<!-- Actions de combat -->
+								<button class="btn btn-primary w-100 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCombatActions" aria-expanded="false" aria-controls="collapseCombatActions">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+									</svg>
+									Actions de combat
+								</button>
+								<div class="collapse" id="collapseCombatActions">
+									<div class="card card-body table-responsive">
+										<!-- bouton pour faire une charge -->
+										<?php if (verif_charge_pm($type_perso, $pm_perso) && !in_train($mysqli, $id_perso) && !in_bat($mysqli, $id_perso)) {?>
+										<div>
+											<form method='post' action='action.php' class='text-center'>
+												<input type="hidden" name="liste_action" value="999">
+												<button class='btn btn-warning my-2' type='submit' name='action' value='ok'>
+													<img class='size-11 float-start mt-1 me-3' src='../public/img/icons/cavalry_charge.png' alt='charge de soldats'>
+													CHARGER<br><span class='fs-6'>(consomme tous les PA)</span>
+												</button>
+											</form>
+										</div>
+										<?php } ?>
+										<!-- compétence d'attaque rapprochée ou soin 1 -->
+										<?php if($combat_type != 'distance'){ ?>
+										<div class='col-12 table-responsive'>
+											<table class='table table-sm table-striped shadow-sm'>
+												<thead>
+													<th scope="col" colspan='2'><?php if($combat_type == 'heal'){ echo 'soins 1';}else{ echo 'Combat rapproché';};?></th>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Arme</td>
+														<td><?= $nom_arme_cac; ?></td>
+													</tr>
+													<tr>
+														<td>Coût en PA</td>
+														<td><?=	$coutPa_arme_cac; ?></td>
+													</tr>
+													<tr>
+														<td>Dégâts</td>
+														<td><?= $degats_arme_cac; ?></td>
+													</tr>
+													<tr>
+														<td>Portée</td>
+														<td><?= $porteeMax_arme_cac; ?></td>
+													</tr>
+													<tr>
+														<td>Précision</td>
+														<td><?= $precision_arme_cac . " %"; ?></td>
+													</tr>
+													<?php if(!empty($degatZone_arme_cac) OR !empty($building_damage_cac)){?>
+													<tr>
+														<td class='fw-bold'>Spécial</td>
+														<td>
+															<?php if(!empty($degatZone_arme_cac)){ echo 'Dégâts de zone<br>';}?>
+															<?php if(!empty($building_damage_cac)){ echo 'Bonus de dégâts sur bâtiments';}?>
+														</td>
+													</tr>
+													<?php } ?>
+													<tr>
+														<form method="post" action="agir.php" target='_main'>
+														<td><input type="submit" value="<?php if($combat_type == 'heal'){ echo 'Soigner';}else{ echo 'Attaquer';} ?>"></td>
+														<td>
+															<select name='id_attaque_cac'>
+																<option value="personne">Qui ?</option>
+																<?php
+																if ($combat_type == 'heal') {
+																	while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
+
+																		$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+																		if ($id_cible_cac < 50000) {
+
+																			// Un autre perso
+																			$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+																			$res = $mysqli->query($sql);
+																			$tab = $res->fetch_assoc();
+
+																			$nom_cible_cac 		= $tab["nom_perso"];
+																			$pv_cible_cac		= $tab["pv_perso"];
+																			$pv_max_cible_cac	= $tab["pvMax_perso"];
+																			$bonus_cible_cac	= $tab["bonus_perso"];
+																			$camp_cible_cac		= $tab["clan"];
+
+																			$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																			if ($id_arme_cac == 10) {
+																				// seringue
+																				// On affiche que les persos blessés
+																				if ($pv_cible_cac < $pv_max_cible_cac) {
+																					echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																				}
+																			} else if ($id_arme_cac == 11) {
+																				// bandage
+																				// On affiche que les persos avec malus
+																				if ($bonus_cible_cac < 0) {
+																					echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																				}
+																			}
+																		} else if ($id_cible_cac >= 200000) {
+
+																			// Un PNJ
+																			$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+																			$res = $mysqli->query($sql);
+																			$tab = $res->fetch_assoc();
+
+																			$nom_cible_cac 		= $tab["nom_pnj"];
+																			$pv_cible_cac		= $tab["pv_i"];
+																			$pv_max_cible_cac	= $tab["pvMax_pnj"];
+
+																			if ($pv_cible_cac < $pv_max_cible_cac) {
+																				echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																			}
+																		} else {
+																			// Un Batiment => on ne veut pas l'afficher !
+																		}
+																	}
+																}
+																else {
+																	// Impossible d'attaquer au CaC quand on est dans un train
+																	if (!in_train($mysqli, $id_perso)) {
+
+																		while($t_cible_portee_cac = $res_portee_cac->fetch_assoc()) {
+
+																			$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+																			if ($id_cible_cac < 50000) {
+
+																				// Un autre perso
+																				$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_cac 	= $tab["nom_perso"];
+																				$camp_cible_cac	= $tab["clan"];
+
+																				$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																			} else if ($id_cible_cac >= 200000) {
+
+																				// Un PNJ
+																				$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_cac = $tab["nom_pnj"];
+
+																				$couleur_clan_cible = "grey";
+
+																			} else {
+
+																				// Un Batiment
+																				$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_cac'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_cac = $tab["nom_batiment"];
+																				if ($tab["nom_instance"] != "") {
+																					$nom_cible_cac .= " ".$tab["nom_instance"];
+																				}
+
+																				$camp_cible_cac	= $tab["camp_instance"];
+
+																				$couleur_clan_cible = couleur_clan($camp_cible_cac);
+																				$pv_instance	= $tab["pv_instance"];
+																				if ($pv_instance <= 0)
+																					continue;
+																			}
+
+																			echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																		}
+																	}
+																}
+																?>
+															</select>
+														</td>
+														</form>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										<?php } ?>
+										<!-- compétence d'attaque à distance -->
+										<?php if($combat_type != 'close' AND $combat_type != 'heal'){ ?>
+										<div class='col-12 table-responsive'>
+											<table class='table table-sm table-striped shadow-sm'>
+												<thead>
+													<th scope="col" colspan='2' >Combat à distance</th>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Arme</td>
+														<td><?= $nom_arme_dist; ?></td>
+													</tr>
+													<tr>
+														<td>Coût en PA</td>
+														<td><?=	$coutPa_arme_dist; ?><?php if (possede_lunette_visee($mysqli, $id_perso)) { echo " (+2)"; } ?></td>
+													</tr>
+													<tr>
+														<td>Dégâts</td>
+														<td><?= $degats_arme_dist; ?></td>
+													</tr>
+													<tr>
+														<td>Portée</td>
+														<td><?= $porteeMax_arme_dist; ?></td>
+													</tr>
+													<tr>
+														<td>Précision</td>
+														<td><?= $precision_arme_dist . " %"; ?></td>
+													</tr>
+													<?php if(!empty($degatZone_arme_dist) OR !empty($building_damage_dist)){?>
+													<tr>
+														<td class='fw-bold'>Spécial</td>
+														<td>
+															<?php if(!empty($degatZone_arme_dist)){ echo 'Dégâts de zone<br>';}?>
+															<?php if(!empty($building_damage_dist)){ echo 'Bonus de dégâts sur bâtiments';}?>
+														</td>
+													</tr>
+													<?php } ?>
+													<tr>
+														<form method="post" action="agir.php" target='_main'>
+														<td><input type="submit" value="Attaquer"></td>
+														<td>
+															<select name='id_attaque_dist'>
+																<option value="personne">Qui ?</option>
+																<?php
+																if (!isset($id_bat_perso) || (isset($id_bat_perso) && $id_bat_perso != 10)) {
+																	while($t_cible_portee_dist = $res_portee_dist->fetch_assoc()) {
+
+																		$id_cible_dist = $t_cible_portee_dist["idPerso_carte"];
+																		$id_instance_in_bat = in_bat($mysqli,$id_perso);
+
+																		if ($id_cible_dist != $id_instance_in_bat) {
+
+																			if ($id_cible_dist < 50000) {
+
+																				// Un autre perso
+																				$sql = "SELECT nom_perso, clan FROM perso WHERE id_perso='$id_cible_dist'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_dist = $tab["nom_perso"];
+																				$camp_cible_cac	= $tab["clan"];
+
+																				$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																			} else if ($id_cible_dist >= 200000) {
+
+																				// Un PNJ
+																				$sql = "SELECT nom_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_dist'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_dist = $tab["nom_pnj"];
+
+																				$couleur_clan_cible = "grey";
+
+																			} else {
+
+																				// Un Batiment
+																				$sql = "SELECT nom_batiment, nom_instance, camp_instance, pv_instance FROM batiment, instance_batiment WHERE batiment.id_batiment = instance_batiment.id_batiment AND id_instanceBat = '$id_cible_dist'";
+																				$res = $mysqli->query($sql);
+																				$tab = $res->fetch_assoc();
+
+																				$nom_cible_dist = $tab["nom_batiment"];
+																				if ($tab["nom_instance"] != "") {
+																					$nom_cible_dist .= " ".$tab["nom_instance"];
+																				}
+
+																				$camp_cible_dist	= $tab["camp_instance"];
+
+																				$couleur_clan_cible = couleur_clan($camp_cible_dist);
+																				$pv_instance	= $tab["pv_instance"];
+																				if ($pv_instance <= 0)
+																					continue;
+																			}
+
+																			echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_dist.",".$id_arme_dist."'>".$nom_cible_dist." (mat. ".$id_cible_dist.")</option>";
+																		}
+																	}
+																}
+																?>
+															</select>
+														</td>
+														</form>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										<?php } ?>
+										<!-- compétence de soins 2 --> 
+										<?php if($combat_type == 'heal'){ ?>
+										<div class='col-12 table-responsive'>
+											<table class='table table-sm table-striped shadow'>
+												<thead>
+													<th scope="col" colspan='2'>Soins 2</th>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Arme</td>
+														<td><?= $nom_arme_cac2; ?></td>
+													</tr>
+													<tr>
+														<td>Coût en PA</td>
+														<td><?=	$coutPa_arme_cac2; ?></td>
+													</tr>
+													<tr>
+														<td>Dégâts</td>
+														<td><?= $degats_arme_cac2; ?></td>
+													</tr>
+													<tr>
+														<td>Portée</td>
+														<td><?= $porteeMax_arme_cac2; ?></td>
+													</tr>
+													<tr>
+														<td>Précision</td>
+														<td><?= $precision_arme_cac2 . " %"; ?></td>
+													</tr>
+													<?php if(!empty($degatZone_arme_cac2) OR !empty($building_damage_cac2)){?>
+													<tr>
+														<td class='fw-bold'>Spécial</td>
+														<td>
+															<?php if(!empty($degatZone_arme_cac2)){ echo 'Soins de zone<br>';}?>
+															<?php if(!empty($building_damage_cac2)){ echo 'Bonus de dégâts sur bâtiments';}?>
+														</td>
+													</tr>
+													<?php } ?>
+													<tr>
+														<form method="post" action="agir.php" target='_main'>
+														<td><input type="submit" value="Soigner"></td>
+														<td>
+															<select name='id_attaque_cac2'>
+																<option value="personne">Qui ?</option>
+																<?php 
+																$res_portee_cac2 = resource_liste_cibles_a_portee_attaque($mysqli, 'carte', $id_perso, $porteeMin_arme_cac, $porteeMax_arme_cac, $perc_att, 'cac');
+																while($t_cible_portee_cac = $res_portee_cac2->fetch_assoc()) {
+
+																	$id_cible_cac = $t_cible_portee_cac["idPerso_carte"];
+
+																	if ($id_cible_cac < 50000) {
+
+																		// Un autre perso
+																		$sql = "SELECT nom_perso, pv_perso, pvMax_perso, bonus_perso, clan FROM perso WHERE id_perso='$id_cible_cac'";
+																		$res = $mysqli->query($sql);
+																		$tab = $res->fetch_assoc();
+
+																		$nom_cible_cac 		= $tab["nom_perso"];
+																		$pv_cible_cac		= $tab["pv_perso"];
+																		$pv_max_cible_cac	= $tab["pvMax_perso"];
+																		$bonus_cible_cac	= $tab["bonus_perso"];
+																		$camp_cible_cac		= $tab["clan"];
+
+																		$couleur_clan_cible = couleur_clan($camp_cible_cac);
+
+																		if ($id_arme_cac2 == 10) {
+																			// seringue
+																			// On affiche que les persos blessés
+																			if ($pv_cible_cac < $pv_max_cible_cac) {
+																				echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																			}
+																		} else if ($id_arme_cac2 == 11) {
+																			// bandage
+																			// On affiche que les persos avec malus
+																			if ($bonus_cible_cac < 0) {
+																				echo "<option style=\"color:". $couleur_clan_cible ."\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																			}
+																		}
+																	} else if ($id_cible_cac >= 200000) {
+
+																		// Un PNJ
+																		$sql = "SELECT nom_pnj, pv_i, pvMax_pnj FROM pnj, instance_pnj WHERE pnj.id_pnj = instance_pnj.id_pnj AND idInstance_pnj = '$id_cible_cac'";
+																		$res = $mysqli->query($sql);
+																		$tab = $res->fetch_assoc();
+
+																		$nom_cible_cac 		= $tab["nom_pnj"];
+																		$pv_cible_cac		= $tab["pv_i"];
+																		$pv_max_cible_cac	= $tab["pvMax_pnj"];
+
+																		if ($pv_cible_cac < $pv_max_cible_cac) {
+																			echo "<option style=\"color:grey\" value='".$id_cible_cac.",".$id_arme_cac2."'>".$nom_cible_cac." (mat. ".$id_cible_cac.")</option>";
+																		}
+																	}
+																}
+																?>
+															</select>
+														</td>
+														</form>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										<?php } ?>
+									</div>
+								</div>
+							</div>
+							<div class='col'>
+								<!-- autres actions réduit -->
+								<button class="btn btn-primary w-100 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOthersActions" aria-expanded="false" aria-controls="collapseOthersActions">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+									</svg>
+									Autres actions
+								</button>
+								<div class="collapse" id="collapseOthersActions">
+									<div class="card card-body bg-main">
+										<div class='container-fluid'>
+											<h3 class='fs-5'>Actions</h3>
+											<form method='post' action='action.php' class='text-center row'>
+												<select name='liste_action' class="form-select col">
+													<option value="invalide" selected>-- -- - Choisir une action - -- --</option>
+													<?php // Action d'entrainement
+													if($pa_perso >= 10){ ?>
+													<option value="65">Entrainement (10 PA)</option>
+													<?php } ?>
+													<?php // Action Déposer Objet
+													if($pa_perso >= 1){ ?>
+														<option value="110">Deposer objet (1 PA)</option>
+														<option value="139">Donner objet (1 PA)</option>
+													<?php } ?>
+													<?php 
 													// Actions selon le type d'unité
 
 													// Cavalerie et cavalerie lourde
@@ -4405,74 +4010,1088 @@ if($dispo == '1' || $admin){
 														}
 													}
 													?>
-													<option value="invalide">-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --</option>
+													<option value="invalide">-- -- -- -- -- -- -- -- -- -- --</option>
 												</select>
-												<input type='submit' name='action' value='ok' />
+												<input class='ms-2 col-2' type='submit' name='action' value='ok' />
 											</form>
-											<?php
-											echo $mess_bat;
+											<?php if($mess_bat){ ?>
+											<div class='row mt-4'>
+												<div class='col'><?=$mess_bat?></div>
+											</div>
+											<?php } ?>
+											<div class='row'>
+												<?php if (is_objet_a_terre($mysqli, $x_perso, $y_perso)) { ?>
+												<p class='text-center'>
+													<a href="index.php?ramasser=ok">~~ Ramasser les objets à terre (1 PA) ~~</a><br>
+													<a href="index.php?ramasser=voir&x=<?= $x_perso?>&y=<?= $y_perso?>">~~ Voir la liste des objets à terre ~~</a>
+												</p>
+												<?php } ?>			
+												<?php 
+												// recuperation des données de la carte
+												$sql = "SELECT fond_carte FROM $carte
+														WHERE x_carte = $x_perso
+														AND y_carte = $y_perso";
+												$res = $mysqli->query($sql);
+												$tab = $res->fetch_assoc();
 
-											if (is_objet_a_terre($mysqli, $x_perso, $y_perso)) {
-												echo "<center><font color = blue>~~<a href=\"index.php?ramasser=ok\">Ramasser les objets à terre (1 PA)</a>~~</font></center>";
-												echo "<center><font color = blue>~~<a href=\"index.php?ramasser=voir\">Voir la liste des objets à terre</a>~~</font></center>";
+												$fond_carte_perso = $tab['fond_carte'];
+
+												afficher_liens_rail_genie($genie_compagnie_perso, $fond_carte_perso);
+												?>
+												<hr class="">
+												<p>
+													<a class='fw-semibold' href="nouveau_message.php?visu=ok&camp=<?=$clan_perso?>"><img class='size-11' src='../public/img/icons/plume-full.png' data-bs-toggle='tooltip' data-bs-placement='top' title='Envoyer un message aux persos de son camp dans sa visu' border=0 /> Envoyer un MP à sa visu</a><br>
+												</p>
+												<p>
+													<a class='fw-semibold' href="nouveau_message.php?visu=ok"><img class='size-11' src='../public/img/icons/megaphone.png' data-bs-toggle='tooltip' data-bs-placement='top' title='Envoyer un message à tous les persos dans sa visu' border=0 width='100' height='80' /> Crier très fort</a>
+												</p>
+												<hr class="">
+											</div>
+											<?php 
+											if($afficher_rosace) : 
+											if (in_train($mysqli, $id_perso)) {
+												$id_train = in_train($mysqli, $id_perso);
+											}
+											
+											if(in_bat($mysqli, $id_perso)){
+												$directionUpLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=1";
+												$directionUpCenter = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=2";
+												$directionUpRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=3";
+												$directionCenterLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=4";
+												$directionCenterRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=5";
+												$directionDownLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=6";
+												$directionDownCenter = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=7";
+												$directionDownRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=8";
+												$text_move = "Sortir";
+											}else if (isset($id_train) && $id_train > 0) {
+												$directionUpLeft = "?train=".$id_train."&out=ok&direction=1";
+												$directionUpCenter = "?train=".$id_train."&out=ok&direction=2";
+												$directionUpRight = "?train=".$id_train."&out=ok&direction=3";
+												$directionCenterLeft = "?train=".$id_train."&out=ok&direction=4";
+												$directionCenterRight = "?train=".$id_train."&out=ok&direction=5";
+												$directionDownLeft = "?train=".$id_train."&out=ok&direction=6";
+												$directionDownCenter = "?train=".$id_train."&out=ok&direction=7";
+												$directionDownRight = "?train=".$id_train."&out=ok&direction=8";
+												$text_move = "Sauter";
+											}else {
+												$directionUpLeft = "?mouv=1";
+												$directionUpCenter = "?mouv=2";
+												$directionUpRight = "?mouv=3";
+												$directionCenterLeft = "?mouv=4";
+												$directionCenterRight = "?mouv=5";
+												$directionDownLeft = "?mouv=6";
+												$directionDownCenter = "?mouv=7";
+												$directionDownRight = "?mouv=8";
+												$text_move = "Se déplacer";
+											}
+											?>
+											<div class="moving-arrows text-center">
+												<div>
+													<a href="<?= $directionUpLeft ?>"><img src="../fond_carte/fleche1.png" alt='flèche haut gauche'></a>
+												</div>
+												<div>
+													<a href="<?= $directionUpCenter?>"><img src="../fond_carte/fleche2.png" alt='flèche haut centre'></a>
+												</div>
+												<div>
+													<a href="<?= $directionUpRight?>"><img src="../fond_carte/fleche3.png" alt='flèche haut droit'></a>
+												</div>
+												<div>
+													<a href="<?= $directionCenterLeft?>"><img src="../fond_carte/fleche4.png"></a>
+												</div>
+												<div class='g-col-4 m-auto'>
+													<h3 class='fs-5 d-inline'><?= $text_move?></h3>
+												</div>
+												<div>
+													<a href="<?= $directionCenterRight?>"><img src="../fond_carte/fleche5.png"></a>
+												</div>
+												<div>
+													<a href="<?= $directionDownLeft ?>"><img src="../fond_carte/fleche6.png"></a>
+												</div>
+												<div>
+													<a href="<?= $directionDownCenter ?>"><img src="../fond_carte/fleche7.png"></a>
+												</div>
+												<div>
+													<a href="<?= $directionDownRight ?>"><img src="../fond_carte/fleche8.png"></a>
+												</div>
+											</div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='col col-md-6 col-lg-10'>
+					<?php if (!empty($itemsOnMap)):?>
+					<div class='row bg-body-tertiary bg-main'>
+						<div class='col-6 m-auto mt-2'>
+							<h3>Liste des objets à terre</h3>
+							<table class='table table-striped table-hover'>
+								<thead>
+									<tr class='text-center'>
+										<th scope='col'>Nom objet</th>
+										<th scope='col'>Quantité</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php foreach($itemsOnMap as $item):
+
+									$type_objet = $item['type_objet'];
+									$id_objet 	= $item['id_objet'];
+									$nb_objet	= $item['nb_objet'];
+
+									// Récupération du nom de l'objet
+									// Thunes
+									if ($type_objet == '1') {
+										$nom_objet = "Thune(s)";
+									}
+									// Objets
+									if ($type_objet == '2') {
+										$sql_obj = "SELECT nom_objet FROM objet WHERE id_objet='$id_objet'";
+										$res_obj = $mysqli->query($sql_obj);
+										$t_obj = $res_obj->fetch_assoc();
+
+										$nom_objet = $t_obj['nom_objet'];
+									}
+									// Armes
+									if ($type_objet == '3') {
+										$sql_obj = "SELECT nom_arme FROM arme WHERE id_arme='$id_objet'";
+										$res_obj = $mysqli->query($sql_obj);
+										$t_obj = $res_obj->fetch_assoc();
+
+										$nom_objet = $t_obj['nom_arme'];
+									}?>
+									<tr class='text-center'>
+										<td><?= $nom_objet ?></td>
+										<td><?= $nb_objet ?></td>
+									</tr>
+								<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<?php endif;?>
+	<!-- affichage de la carte -->
+					<div class='row'>
+						<div class='col-12 col-lg table-responsive p-0'>
+							<?php
+							// recuperation des données de la carte
+							$sql = "SELECT x_carte, y_carte, fond_carte, occupee_carte, image_carte, idPerso_carte FROM $carte
+									WHERE x_carte >= $x_perso - $perc_carte
+									AND x_carte <= $x_perso + $perc_carte
+									AND y_carte <= $y_perso + $perc_carte
+									AND y_carte >= $y_perso - $perc_carte
+									ORDER BY y_carte DESC, x_carte";
+							$res = $mysqli->query($sql);
+							$tabCarte = $res->fetch_assoc();
+
+							// calcul taille table
+							$taille_table = ($perception_perso + $bonusPerception_perso) * 2 + 2;
+							$taille_table = $taille_table * 40;
+							$class_cadrillage = '';
+							if($cadrillage){
+								$class_cadrillage = 'table-bordered border-dark';
+							}
+							?>
+							<table class='<?= $class_cadrillage?> text-center' width='<?=$taille_table?>' height='<?=$taille_table?>' align='center' cellspacing='0' cellpadding='0'>
+								<tr class='bg-main'>
+									<td width='40' heigth='40' align='center'>y \ x</td>
+									<?php
+									for ($i = $x_perso - $perc_carte; $i <= $x_perso + $perc_carte; $i++) {
+										if ($i == $x_perso){ ?>
+											<th style='min-width:40px;' height='40' class="bg-main-var"><?= $i ?></th>
+									<?php }else{ ?>
+											<th style='min-width:40px;' height='40' background=\"../images/background.jpg\"><?= $i ?></th>
+									<?php }
+									} ?>
+								</tr>
+								<?php
+								for ($y = $y_perso + $perc_carte; $y >= $y_perso - $perc_carte; $y--) {
+
+									echo "<tr>";
+
+									if ($y == $y_perso) {
+										echo "<th style='min-width:40px;' height='40' class='bg-main bg-main-var'>$y</th>";
+									}
+									else {
+										echo "<th style='min-width:40px;' height='40' class='bg-main'>$y</th>";
+									}
+
+									for ($x = $x_perso - $perc_carte; $x <= $x_perso + $perc_carte; $x++) {
+
+										//les coordonnées sont dans les limites
+										if ($x >= X_MIN && $y >= Y_MIN && $x <= $X_MAX && $y <= $Y_MAX) {
+
+											//--------------------------
+											//coordonnées du perso
+											if ($x == $x_perso && $y == $y_perso){
+
+												// verification s'il y a un objet sur cette case
+												$sql_o = "SELECT id_objet FROM objet_in_carte WHERE x_carte='$x' AND y_carte='$y'";
+												$res_o = $mysqli->query($sql_o);
+												$nb_o = $res_o->num_rows;
+
+												if($clan_perso == '1'){
+													$image_profil 	= "Nord.gif";
+												}
+												if($clan_perso == '2'){
+													$image_profil 	= "Sud.gif";
+												}
+
+												$fond_im = $tabCarte["fond_carte"];
+												$nom_terrain = get_nom_terrain($fond_im);
+
+												echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+												echo "	<div width=40 height=40 style=\"position: relative;\">";
+												echo "		<div tabindex='0' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\"
+																	data-bs-toggle='popover'
+																	data-bs-trigger='focus'
+																	data-bs-html='true'
+																	data-bs-placement='bottom' ";
+
+												// TITLE POPOVER
+												echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_perso."' title='".$nom_grade_perso."' src='../images/grades/" . $id_grade_perso . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_perso."' target='_blank'>".$nom_perso." [".$id_perso."]</a></div> ";
+
+												afficher_infos_compagnie($nom_compagnie_perso, $image_compagnie_perso);
+
+												if (!in_bat($mysqli,$id_perso)) {
+
+													if (!in_train($mysqli,$id_perso)) {
+														afficher_infos_non_bat_non_train($fond_im, $nom_terrain, $nb_o);
+													}
+													else {
+														afficher_infos_in_train($mysqli, $id_perso);
+													}
+												}
+												else {
+													afficher_infos_in_bat($mysqli, $id_perso);
+												}
+												echo "<div><u>Message du jour</u> :<br />".$message_perso."</div>";
+
+												echo "\" ";
+
+												// DATA CONTENT POPOVER
+												echo "			data-bs-content=\"";
+
+												afficher_liens_objet($nb_o, $x, $y);
+												afficher_liens_rail_genie($genie_compagnie_perso, $fond_im);
+
+												if (in_bat($mysqli,$id_perso)) {
+
+													afficher_liens_in_bat($mysqli, $id_perso);
+
+												}
+												else if (prox_bat($mysqli, $x_perso, $y_perso, $id_perso)) {
+
+													afficher_liens_prox_bat($mysqli, $id_perso, $x_perso, $y_perso, $type_perso);
+
+												}
+												echo "\" >" ;
+
+												// Affichage pastille de marquage 
+												$marquages = marquage_joueur($mysqli, $id_perso);
+												
+												if($marquages){
+													foreach($marquages as $marquage){
+														affichage_pastille_marquage($marquage['pastille']);
+														echo '<br>';
+													}
+												}
+
+												echo  $id_perso . "</div>";
+
+												echo "		<img tabindex='0' class=\"\" border=0 src=\"../images_perso/$dossier_img_joueur/$image_perso\" width=40 height=40
+																	data-bs-toggle='popover'
+																	data-bs-trigger='focus'
+																	data-bs-html='true'
+																	data-bs-placement='bottom' ";
+												// TITLE POPOVER
+												echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_perso."' title='".$nom_grade_perso."' src='../images/grades/" . $id_grade_perso . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_perso."' target='_blank'>".$nom_perso." [".$id_perso."]</a></div>";
+
+												afficher_infos_compagnie($nom_compagnie_perso, $image_compagnie_perso);
+
+												if (!in_bat($mysqli,$id_perso)) {
+
+													if (!in_train($mysqli,$id_perso)) {
+														afficher_infos_non_bat_non_train($fond_im, $nom_terrain, $nb_o);
+													}
+													else {
+														afficher_infos_in_train($mysqli, $id_perso);
+													}
+												}
+												else {
+													afficher_infos_in_bat($mysqli, $id_perso);
+												}
+												echo "<div><u>Message du jour</u> :<br />".$message_perso."</div>";
+
+												echo "\" ";
+												// DATA CONTENT POPOVER
+												echo "			data-bs-content=\"";
+
+												afficher_liens_objet($nb_o, $x, $y);
+												afficher_liens_rail_genie($genie_compagnie_perso, $fond_im);
+
+												if (in_bat($mysqli,$id_perso)) {
+
+													afficher_liens_in_bat($mysqli, $id_perso);
+
+												}
+												else if (prox_bat($mysqli, $x_perso, $y_perso, $id_perso)) {
+
+													afficher_liens_prox_bat($mysqli, $id_perso, $x_perso, $y_perso, $type_perso);
+
+												}
+												echo "\" ";
+												echo " />";
+												echo "	</div>";
+												echo "</td>";
+											}
+											else {
+												if ($tabCarte["occupee_carte"]){
+
+													//------------------------------------
+													// Traitement PNJ
+													if($tabCarte['idPerso_carte'] >= 200000){
+
+														$idI_pnj = $tabCarte['idPerso_carte'];
+														$fond_im = $tabCarte["fond_carte"];
+
+														$nom_terrain = get_nom_terrain($fond_im);
+
+														// recuperation du type de pnj
+														$sql_im = "SELECT instance_pnj.id_pnj, nom_pnj FROM instance_pnj, pnj WHERE instance_pnj.id_pnj = pnj.id_pnj AND idInstance_pnj='$idI_pnj'";
+														$res_im = $mysqli->query($sql_im);
+														$t_im = $res_im->fetch_assoc();
+
+														$id_pnj_im 	= $t_im["id_pnj"];
+														$nom_pnj_im	= $t_im["nom_pnj"];
+
+														$im_pnj="pnj".$id_pnj_im."t.png";
+
+														$dossier_pnj = "images/pnj";
+
+														echo "	<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+														echo "		<img tabindex='0' border=0 src=\"../".$dossier_pnj."/".$im_pnj."\" width=40 height=40
+																			data-bs-toggle='popover'
+																			data-bs-trigger='focus'
+																			data-bs-html='true'
+																			data-bs-placement='bottom'
+																			title=\"<div><a href='evenement.php?infoid=".$idI_pnj."' target='_blank'>".$nom_pnj_im." [".$idI_pnj."]</a></div><div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>\" >";
+														echo "	</td>";
+													}
+													else {
+														//-------------------------
+														//  traitement Batiment
+														if($tabCarte['idPerso_carte'] >= 50000 && $tabCarte['idPerso_carte'] < 200000){
+
+															$idI_bat = $tabCarte['idPerso_carte'];
+
+															// recuperation du type de bat et du camp
+															$sql_im = "SELECT instance_batiment.id_batiment, camp_instance, nom_instance, nom_batiment
+																		FROM instance_batiment, batiment
+																		WHERE instance_batiment.id_batiment = batiment.id_batiment
+																		AND id_instanceBat='$idI_bat'";
+															$res_im = $mysqli->query($sql_im);
+															$t_im = $res_im->fetch_assoc();
+
+															$type_bat 	= $t_im["id_batiment"];
+															$camp_bat 	= $t_im["camp_instance"];
+															$nom_i_bat	= $t_im["nom_instance"];
+															$nom_bat	= $t_im["nom_batiment"];
+
+															switch($camp_bat){
+																case '1':
+																	$camp_bat2 		= 'bleu';
+																	$image_profil 	= "Nord.gif";
+																	$img_folder		= 'nord';
+																	break;
+																case '2':
+																	$camp_bat2 		= 'rouge';
+																	$image_profil 	= "Sud.gif";
+																	$img_folder		= 'sud';
+																	break;
+																default:
+																	$camp_bat2 		= 'neutre';
+																	$image_profil 	= "neutre.gif";
+																	$img_folder		= 'neutre';
+															}
+
+															$blason="mini_blason_".$camp_bat2.".gif";
+
+															echo "<td width=40 height=40 background=\"../fond_carte/".$tabCarte["fond_carte"]."\">";
+															echo "	<img tabindex='0' border=0 src=\"../public/img/buildings/".$img_folder."/".$tabCarte["image_carte"]."\" width=40 height=40
+																		data-bs-toggle='popover'
+																		data-bs-trigger='focus'
+																		data-bs-html='true'
+																		data-bs-placement='bottom' ";
+															echo "		title=\"<div><img src='../images/".$image_profil."' width='20' height='20'> <a href='evenement.php?infoid=".$idI_bat."' target='_blank'>".$nom_bat." ".$nom_i_bat." [".$idI_bat."]</a></div>\"";
+															echo "		data-bs-content=\"";
+															if (in_bat($mysqli,$id_perso)) {
+
+																$id_instance_in_bat = in_bat($mysqli,$id_perso);
+
+																if ($idI_bat == $id_instance_in_bat) {
+
+																	echo "<div><a href='batiment.php?bat=".$id_instance_in_bat."' target='_blank'>Accéder à la page du bâtiment</a></div> ";
+																	echo "<div><a href='action.php?bat=".$idI_bat."&reparer=ok'>Réparer ce bâtiment (5PA)</a></div> ";
+																}
+															}
+															else if(prox_instance_bat($mysqli, $x_perso, $y_perso, $idI_bat) && $type_bat != 12) {
+
+																echo "<div><a href='action.php?bat=".$idI_bat."&reparer=ok'>Réparer ce bâtiment (5PA)</a></div> ";
+
+																if (!nation_perso_bat($mysqli, $id_perso, $idI_bat)) {
+																	if(batiment_vide($mysqli, $idI_bat) && batiment_pv_capturable($mysqli, $idI_bat)&& $type_bat != 1 && $type_bat != 5 && $type_bat != 7 && $type_bat != 10 && $type_bat != 11 && $type_perso == 3){
+																		echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Capturer ce bâtiment</a></div>";
+																	}
+																}
+																else {
+																	if($type_bat != 1 && $type_bat != 5 && $type_bat != 10){
+																		if (($type_bat == 2 && ($type_perso == 3 || $type_perso == 4 || $type_perso == 6)) || $type_bat != 2 ) {
+																			echo "<div><a href='index.php?bat=".$idI_bat."&bat2=".$type_bat."'>Entrer dans ce bâtiment</a></div>";
+																		}
+																	}
+																}
+															}
+															echo "\">";
+															echo "</td>";
+														}
+														else {
+
+															if($tabCarte['image_carte'] == "murt.png"){
+																//positionement du mur
+																echo "<td width=40 height=40 background=\"../fond_carte/".$tabCarte["fond_carte"]."\"> <img border=0 src=\"../images_perso/".$tabCarte["image_carte"]."\" width=40 height=40 onMouseOver=\"AffBulle('<img src=../images/murs/mur.jpeg>')\" onMouseOut=\"HideBulle()\" title=\"mur\"></td>";
+															}
+															else {
+
+																$id_perso_im 	= $tabCarte['idPerso_carte'];
+																$fond_im 		= $tabCarte["fond_carte"];
+
+																$nom_terrain 	= get_nom_terrain($fond_im);
+																$cout_pm 		= cout_pm($fond_im, $type_perso);
+
+																//recuperation du type de perso (image)
+																$sql_perso_im = "SELECT * FROM perso WHERE id_perso='$id_perso_im'";
+																$res_perso_im = $mysqli->query($sql_perso_im);
+																$t_perso_im = $res_perso_im->fetch_assoc();
+
+																$im_perso 	= $t_perso_im["image_perso"];
+																$nom_ennemi = $t_perso_im['nom_perso'];
+																$id_ennemi 	= $t_perso_im['id_perso'];
+																$clan_e 	= $t_perso_im['clan'];
+																$message_e	= $t_perso_im['message_perso'];
+
+																if($clan_e == 1){
+																	$clan_ennemi 	= 'rond_b.png';
+																	$couleur_clan_e = 'blue';
+																	$image_profil 	= "Nord.gif";
+																}
+																if($clan_e == 2){
+																	$clan_ennemi 	= 'rond_r.png';
+																	$couleur_clan_e = 'red';
+																	$image_profil 	= "Sud.gif";
+																}
+
+																// récupération du grade du perso
+																$sql_grade = "SELECT perso_as_grade.id_grade, nom_grade FROM perso_as_grade, grades WHERE perso_as_grade.id_grade = grades.id_grade AND id_perso='$id_ennemi'";
+																$res_grade = $mysqli->query($sql_grade);
+																$t_grade = $res_grade->fetch_assoc();
+
+																$id_grade_ennemi 	= $t_grade["id_grade"];
+																$nom_grade_ennemi 	= $t_grade["nom_grade"];
+
+																// cas particuliers grouillot
+																if ($id_grade_ennemi == 101) {
+																	$id_grade_ennemi = "1.1";
+																}
+																if ($id_grade_ennemi == 102) {
+																	$id_grade_ennemi = "1.2";
+																}
+
+																// recuperation de l'id de la compagnie
+																$sql_groupe = "SELECT id_compagnie from perso_in_compagnie where id_perso='$id_perso_im' AND (attenteValidation_compagnie='0' OR attenteValidation_compagnie='2')";
+																$res_groupe = $mysqli->query($sql_groupe);
+																$t_groupe = $res_groupe->fetch_assoc();
+																$nb = $res_groupe->num_rows;
+
+																$id_groupe = $nb ? $t_groupe['id_compagnie'] : 0;
+
+																$nom_compagnie = '';
+
+																if($id_groupe){
+
+																	// recuperation des infos sur la compagnie (dont le nom)
+																	$sql_groupe2 = "SELECT * FROM compagnies WHERE id_compagnie='$id_groupe'";
+																	$res_groupe2 = $mysqli->query($sql_groupe2);
+																	$t_groupe2 = $res_groupe2->fetch_assoc();
+
+																	$nom_compagnie 		= addslashes($t_groupe2['nom_compagnie']);
+																	$id_compagnie 		= $t_groupe2['id_compagnie'];
+																	$image_compagnie	= $t_groupe2['image_compagnie'];
+
+																}
+
+																if(isset($nom_compagnie) && trim($nom_compagnie) != ''){
+
+																	echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																	echo "	<div width=40 height=40 style=\"position: relative;\">";
+
+																	//--- Div matricule perso
+																	echo "		<div tabindex='0' data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\" ";
+																	// Title popover
+																	echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><a href='compagnie.php?id_compagnie=".$id_compagnie."&voir_compagnie=ok' target='_blank'>";
+																	if (trim($image_compagnie) != "" && $image_compagnie != "0") {
+																		echo "<img src='".$image_compagnie."' width='20' height='20'>";
+																	}
+																	echo " ".stripslashes($nom_compagnie)."</a></div>";
+																	if ($nom_terrain == "Pont") {
+
+																		$sql_p = "SELECT id_instanceBat FROM instance_batiment WHERE x_instance='$x' AND y_instance='$y'";
+																		$res_p = $mysqli->query($sql_p);
+																		$t_p = $res_p->fetch_assoc();
+
+																		$idIBat = $t_p['id_instanceBat'];
+
+																		echo "<div><a href='evenement.php?infoid=".$idIBat."'><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." [".$idIBat."]</a></div>";
+																	}
+																	else {
+																		echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
+																	}
+																	echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
+																	// data content popover
+																	echo "			data-bs-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
+
+																	afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
+
+																	echo "			\" >" . $id_ennemi . "</div>";
+
+																	//--- Image perso
+																	echo "		<img tabindex='0' border=0 src=\"../images_perso/$dossier_img_joueur/".$tabCarte["image_carte"]."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																	// Title popover
+																	echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><a href='compagnie.php?id_compagnie=".$id_compagnie."&voir_compagnie=ok' target='_blank'>";
+																	if (trim($image_compagnie) != "" && $image_compagnie != "0") {
+																		echo "<img src='".$image_compagnie."' width='20' height='20'>";
+																	}
+																	echo " ".stripslashes($nom_compagnie)."</a></div>";
+																	if ($nom_terrain == "Pont") {
+
+																		$sql_p = "SELECT id_instanceBat FROM instance_batiment WHERE x_instance='$x' AND y_instance='$y'";
+																		$res_p = $mysqli->query($sql_p);
+																		$t_p = $res_p->fetch_assoc();
+
+																		$idIBat = $t_p['id_instanceBat'];
+
+																		echo "<div><a href='evenement.php?infoid=".$idIBat."'><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." [".$idIBat."]</a></div>";
+																	}
+																	else {
+																		echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
+																	}
+																	echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
+																	// Data content popover
+																	echo "			data-bs-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
+
+																	afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
+
+																	echo "			\" />";
+																	echo "	</div>";
+																	echo "</td>";
+																}
+																else {
+																	echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+
+																	//--- Div matricule perso
+																	echo "	<div width=40 height=40 style=\"position: relative;\">";
+																	echo "		<div tabindex='0' data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' style=\"position: absolute;bottom: -2px;text-align: center; width: 100%;font-weight: bold;\" ";
+																	// Title Popover
+																	echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div>";
+																	echo "<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
+																	echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
+
+																	echo "			data-bs-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
+
+																	afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
+
+																	echo "			\" ";
+																	echo "		>";
+																	// Affichage pastille de marquage 
+																	$marquages = marquage_joueur($mysqli, $id_ennemi);
+																	
+																	if($marquages){
+																		foreach($marquages as $marquage){
+																			affichage_pastille_marquage($marquage['pastille']);
+																			echo '<br>';
+																		}
+																	}
+																	echo  $id_ennemi . "</div>";
+
+																	//--- Image perso
+																	echo "		<img tabindex='0' border=0 src=\"../images_perso/$dossier_img_joueur/".$tabCarte["image_carte"]."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																	// Title popover
+																	echo "			title=\"<div><img src='../images/".$image_profil."' width='20' height='20'><img alt='".$nom_grade_ennemi."' title='".$nom_grade_ennemi."' src='../images/grades/" . $id_grade_ennemi . ".gif' width='20' height='20'> <a href='evenement.php?infoid=".$id_ennemi."' target='_blank'>".$nom_ennemi." [".$id_ennemi."]</a></div><div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain."</div>";
+																	echo "<div><u>Message du jour</u> :<br />".$message_e."</div>\" ";
+																	echo "			data-bs-content=\"<div><a href='nouveau_message.php?pseudo=".$nom_ennemi."' target='_blank'>Envoyer un message</a></div>";
+
+																	afficher_lien_bouculade($x, $x_perso, $y, $y_perso, $cout_pm);
+
+																	echo "			\" />";
+																	echo "	</div>";
+
+																	echo "</td>";
+																}
+															}
+														}
+													}
+												}
+												else {
+
+													//------------------------------------------------------------
+													//  traitement Batiment qui occupe pas une case comme le pont
+													if($tabCarte['idPerso_carte'] >= 50000 && $tabCarte['idPerso_carte'] < 200000){
+
+														$idI_bat = $tabCarte['idPerso_carte'];
+
+														// recuperation du type de bat et du camp
+														$sql_im = "SELECT instance_batiment.id_batiment, camp_instance, nom_instance, nom_batiment
+																	FROM instance_batiment, batiment
+																	WHERE instance_batiment.id_batiment = batiment.id_batiment
+																	AND id_instanceBat='$idI_bat'";
+														$res_im = $mysqli->query($sql_im);
+														$t_im = $res_im->fetch_assoc();
+
+														$type_bat 	= $t_im["id_batiment"];
+														$camp_bat 	= $t_im["camp_instance"];
+														$nom_i_bat	= $t_im["nom_instance"];
+														$nom_bat	= $t_im["nom_batiment"];
+
+														$fond_carte = $tabCarte["fond_carte"];
+
+														$cout_pm = cout_pm($fond_carte, $type_perso);
+
+														afficher_popover_pont($x, $x_perso, $y, $y_perso, $fond_carte, $idI_bat, $nom_bat, $cout_pm, $type_perso);
+													}
+													else {
+
+														$fond_im 			= $tabCarte["fond_carte"];
+
+														$nom_terrain 		= get_nom_terrain($fond_im);
+														$cout_pm_terrain 	= cout_pm($fond_im, $type_perso);
+
+														// verification s'il y a un objet sur cette case
+														$sql_o = "SELECT type_objet, id_objet FROM objet_in_carte WHERE x_carte='$x' AND y_carte='$y' ORDER BY id_objet DESC";
+														$res_o = $mysqli->query($sql_o);
+														$nb_o = $res_o->num_rows;
+
+														if($nb_o){
+															$t = $res_o->fetch_assoc();
+															$type_objet = $t['type_objet'];
+															$objet = $t['id_objet'];
+
+															if($type_objet == 2 && $objet == '8'){
+																$image_objet = 'etendard_nord.png';
+															} else if($type_objet == 2 && $objet == '9'){
+																$image_objet = 'etendard_sud.png';
+															} else {
+																$image_objet = 'o1.gif';
+															}
+														} else {
+															$image_objet = '';
+														}
+
+														$sql_case = "SELECT valid_case FROM joueur WHERE id_joueur='$id_joueur_perso'";
+														$res_case = $mysqli->query($sql_case);
+														$t = $res_case->fetch_assoc();
+														$valid_case = $t['valid_case'];
+
+														if (in_bat($mysqli, $id_perso)) {
+
+															$taille_case = ceil($taille_bat_perso / 2);
+
+															afficher_popover_in_bat($x, $x_perso, $y, $y_perso, $taille_case, $fond_im, $nb_o, $nom_terrain, $id_bat_perso, $image_objet);
+														}
+														else {
+
+															if($y > $y_perso+1 || $y < $y_perso-1 || $x > $x_perso+1 || $x < $x_perso-1) {
+																if($nb_o){
+																	echo "<td width=40 height=40 background=\"../fond_carte/".$tabCarte["fond_carte"]."\">";
+																	echo "	<img border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='tooltip' data-placement='top' title='objets à ramasser'/>";
+																	echo "</td>";
+																}
+																else {
+																	echo "<td width=40 height=40> <img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></td>";
+																}
+															}
+															else {
+																if($y == $y_perso+1 && $x == $x_perso+1){
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=3'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "	<a href=\"index.php?mouv=3\">";
+																			echo "		<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40>";
+																			echo "	</a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso-1 && $x == $x_perso+1){
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=8'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "	<a href=\"index.php?mouv=8\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso && $x == $x_perso+1){
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=5'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=5\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso && $x == $x_perso-1) {
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=4'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=4\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso+1 && $x == $x_perso-1) {
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=1'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=1\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso-1 && $x == $x_perso-1) {
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=6'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=6\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso+1 && $x == $x_perso) {
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=2'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=2\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+																if($y == $y_perso-1 && $x == $x_perso) {
+																	if($nb_o){
+																		echo "<td width=40 height=40 background=\"../fond_carte/".$fond_im."\">";
+																		echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$image_objet."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' title=\"<div>Objets à ramasser</div>\" data-bs-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div><div><a href='index.php?ramasser=voir&x=$x&y=$y'>Voir la liste des objets à terre</a></div>\" >";
+																		echo "</td>";
+																	}
+																	else {
+																		echo "<td width=40 height=40>";
+																		if ($valid_case || is_case_rail($fond_im)) {
+																			echo "	<img tabindex='0' border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40 data-bs-toggle='popover' data-bs-trigger='focus' data-bs-html='true' data-bs-placement='bottom' ";
+																			echo "			title=\"<div><img src='../fond_carte/".$fond_im."' width='20' height='20'> ".$nom_terrain." - ".$cout_pm_terrain." PM</div>\" ";
+																			echo "			data-bs-content=\"<div><a href='index.php?mouv=7'>Se déplacer</a></div>\" >";
+																		}
+																		else {
+																			echo "<a href=\"index.php?mouv=7\"><img border=0 src=\"../fond_carte/".$fond_im."\" width=40 height=40></a>";
+																		}
+																		echo "</td>";
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+											$tabCarte = $res->fetch_assoc();
+										}
+										else //les coordonnées sont hors limites
+											echo "<td width=40 height=40><img border=0 width=40 height=40 src=\"../fond_carte/decorO.jpg\"></td>";
+									}
+									echo "</tr>";
+								} ?>
+							</table>
+						</div>
+						<div class='col-12 col-lg-3 d-none d-md-block bg-main p-4'>
+							<div class='container-fluid'>
+								<h3 class='fs-5'>Actions</h3>
+								<form method='post' action='action.php' class='text-center row'>
+									<select name='liste_action' class="form-select col">
+										<option value="invalide" selected>-- -- - Choisir une action - -- --</option>
+										<?php // Action d'entrainement
+										if($pa_perso >= 10){ ?>
+										<option value="65">Entrainement (10 PA)</option>
+										<?php } ?>
+										<?php // Action Déposer Objet
+										if($pa_perso >= 1){ ?>
+											<option value="110">Deposer objet (1 PA)</option>
+											<option value="139">Donner objet (1 PA)</option>
+										<?php } ?>
+										<?php 
+										// Actions selon le type d'unité
+
+										// Cavalerie et cavalerie lourde
+										if (verif_charge_pm($type_perso, $pm_perso) && !in_train($mysqli, $id_perso) && !in_bat($mysqli, $id_perso)) {
+											// Charge = 999
+											echo '<option value="999">Charger (tous les PA)</option>';
+										}
+
+										$sql = "SELECT action.id_action, nom_action, coutPa_action, reflexive_action
+												FROM perso_as_competence, competence_as_action, action
+												WHERE id_perso='$id_perso'
+												AND perso_as_competence.id_competence=competence_as_action.id_competence
+												AND competence_as_action.id_action=action.id_action
+												AND passif_action = '0'
+												ORDER BY nom_action";
+										$res = $mysqli->query($sql);
+
+										while ($t_ac = $res->fetch_assoc()) {
+
+											$id_ac 		= $t_ac["id_action"];
+											$cout_PA 	= $t_ac["coutPa_action"];
+											$nom_ac 	= $t_ac["nom_action"];
+											$ref_ac		= $t_ac["reflexive_action"];
+
+											if ($cout_PA == -1){
+												$cout_PA = $paMax_perso;
 											}
 
-											// recuperation des données de la carte
-											$sql = "SELECT fond_carte FROM $carte
-													WHERE x_carte = $x_perso
-													AND y_carte = $y_perso";
-											$res = $mysqli->query($sql);
-											$tab = $res->fetch_assoc();
+											if (!in_train($mysqli, $id_perso) && !in_bat($mysqli, $id_perso)) {
+												if ($cout_PA <= $pa_perso){
+													if ($id_ac == 1 && $pm_perso >= $pmMax_perso) {
+														echo "<option value=\"$id_ac\">".$nom_ac." (Tous les PA/PM)</option>";;
+													}
+													else if ($id_ac == 147) {
+														echo "<option value=\"$id_ac\">".$nom_ac." (". $cout_PA . "PA à 8PA)</option>";;
+													}
+													else {
+														echo "<option value=\"$id_ac\">".$nom_ac." (". $cout_PA . "PA)</option>";;
+													}
+												}
+											}
+											else {
+												if ($ref_ac) {
+													if ($cout_PA <= $pa_perso){
+														if ($id_ac == 1 && $pm_perso >= $pmMax_perso) {
+															echo "<option value=\"$id_ac\">".$nom_ac." (". $cout_PA . "pa)</option>";;
+														}
+														else if ($id_ac != 1) {
+															echo "<option value=\"$id_ac\">".$nom_ac." (". $cout_PA . "pa)</option>";;
+														}
+													}
+												}
+											}
+										}
+										?>
+										<option value="invalide">-- -- -- -- -- -- -- -- -- -- --</option>
+									</select>
+									<input class='ms-2 col-2' type='submit' name='action' value='ok' />
+								</form>
+								<?php if($mess_bat){ ?>
+								<div class='row mt-4'>
+									<div class='col'><?=$mess_bat?></div>
+								</div>
+								<?php } ?>
+								<div class='row'>
+									<?php if (is_objet_a_terre($mysqli, $x_perso, $y_perso)) { ?>
+									<p class='text-center'>
+										<a href="index.php?ramasser=ok">~~ Ramasser les objets à terre (1 PA) ~~</a><br>
+										<a href="index.php?ramasser=voir&x=<?=$x_perso?>&y=<?=$y_perso?>">~~ Voir la liste des objets à terre ~~</a>
+									</p>
+									<?php } ?>			
+									<?php 
+									// recuperation des données de la carte
+									$sql = "SELECT fond_carte FROM $carte
+											WHERE x_carte = $x_perso
+											AND y_carte = $y_perso";
+									$res = $mysqli->query($sql);
+									$tab = $res->fetch_assoc();
 
-											$fond_carte_perso = $tab['fond_carte'];
+									$fond_carte_perso = $tab['fond_carte'];
 
-											afficher_liens_rail_genie($genie_compagnie_perso, $fond_carte_perso);
-
-											?>
-										</td>
-									</tr>
-									<tr>
-										<td height='5' background='../images/background.jpg' colspan='2' align='center'>
-											<img src='../images/barre.png' />
-										</td>
-									</tr>
-									<tr>
-										<td background='../images/background.jpg'>
-											<table border='0'>
-												<tr>
-													<td>
-														<img src='../images/Id.png' />
-													</td>
-													<td valign='top'>
-														<form method="post" action="evenement.php" target='_blank'>
-															<input type="text" maxlength="6" size="6" name="id_info" value="" style="background-image:url('../images/background3.jpg');">
-															<input type="submit" value="Plus d'infos">
-														</form>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<td background='../images/background.jpg' align='left' colspan='3'>
-											<?php
-											echo "<div><a href=\"nouveau_message.php?visu=ok&camp=".$clan_perso."\"><img class='img-fluid' src='../images/Ecrire.png' data-toggle='tooltip' data-placement='top' title='Envoyer un message aux persos de son camp dans sa visu' border=0 /><font face='Playball' size='5'><b>Envoyer un MP à sa visu</b></font></a></div>";
-											echo "<div><a href=\"nouveau_message.php?visu=ok\"><img class='img-fluid' src='../images/porte_voix.png' data-toggle='tooltip' data-placement='top' title='Envoyer un message à tous les persos dans sa visu' border=0 width='100' height='80' /><font face='Playball' size='5'><b>Crier très fort</b></font></a></div>";
-											?>
-										</td>
-									</tr>
-									<tr>
-										<td background='../images/background.jpg' colspan='2' align='center'>
-											<img src='../images/barre.png' />
-										</td>
-									</tr>
-								</table>
-							</tr>
-						</td>
-					</table>
-				</td>
-			</tr>
-		</table>
+									afficher_liens_rail_genie($genie_compagnie_perso, $fond_carte_perso);
+									?>
+									<hr class="">
+									<p>
+										<a class='fw-semibold' href="nouveau_message.php?visu=ok&camp=<?=$clan_perso?>"><img class='size-11' src='../public/img/icons/plume-full.png' data-bs-toggle='tooltip' data-bs-placement='top' title='Envoyer un message aux persos de son camp dans sa visu' border=0 /> Envoyer un MP à sa visu</a><br>
+									</p>
+									<p>
+										<a class='fw-semibold' href="nouveau_message.php?visu=ok"><img class='size-11' src='../public/img/icons/megaphone.png' data-bs-toggle='tooltip' data-bs-placement='top' title='Envoyer un message à tous les persos dans sa visu' border=0 width='100' height='80' /> Crier très fort</a>
+									</p>
+									<hr class="">
+								</div>
+								<?php 
+								if($afficher_rosace) : 
+								if (in_train($mysqli, $id_perso)) {
+									$id_train = in_train($mysqli, $id_perso);
+								}
+								if(in_bat($mysqli, $id_perso)){
+									$directionUpLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=1";
+									$directionUpCenter = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=2";
+									$directionUpRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=3";
+									$directionCenterLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=4";
+									$directionCenterRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=5";
+									$directionDownLeft = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=6";
+									$directionDownCenter = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=7";
+									$directionDownRight = "?bat=".$id_bat."&bat2=".$bat."&out=ok&direction=8";
+									$text_move = "Sortir";
+								}else if (isset($id_train) && $id_train > 0) {
+									$directionUpLeft = "?train=".$id_train."&out=ok&direction=1";
+									$directionUpCenter = "?train=".$id_train."&out=ok&direction=2";
+									$directionUpRight = "?train=".$id_train."&out=ok&direction=3";
+									$directionCenterLeft = "?train=".$id_train."&out=ok&direction=4";
+									$directionCenterRight = "?train=".$id_train."&out=ok&direction=5";
+									$directionDownLeft = "?train=".$id_train."&out=ok&direction=6";
+									$directionDownCenter = "?train=".$id_train."&out=ok&direction=7";
+									$directionDownRight = "?train=".$id_train."&out=ok&direction=8";
+									$text_move = "Sauter";
+								}else {
+									$directionUpLeft = "?mouv=1";
+									$directionUpCenter = "?mouv=2";
+									$directionUpRight = "?mouv=3";
+									$directionCenterLeft = "?mouv=4";
+									$directionCenterRight = "?mouv=5";
+									$directionDownLeft = "?mouv=6";
+									$directionDownCenter = "?mouv=7";
+									$directionDownRight = "?mouv=8";
+									$text_move = "Se déplacer";
+								}
+								?>
+								<div class="moving-arrows text-center">
+									<div>
+										<a href="<?= $directionUpLeft ?>"><img src="../fond_carte/fleche1.png" alt='flèche haut gauche'></a>
+									</div>
+									<div>
+										<a href="<?= $directionUpCenter?>"><img src="../fond_carte/fleche2.png" alt='flèche haut centre'></a>
+									</div>
+									<div>
+										<a href="<?= $directionUpRight?>"><img src="../fond_carte/fleche3.png" alt='flèche haut droit'></a>
+									</div>
+									<div>
+										<a href="<?= $directionCenterLeft?>"><img src="../fond_carte/fleche4.png"></a>
+									</div>
+									<div class='g-col-4 m-auto'>
+										<h3 class='fs-5 d-inline'><?= $text_move?></h3>
+									</div>
+									<div>
+										<a href="<?= $directionCenterRight?>"><img src="../fond_carte/fleche5.png"></a>
+									</div>
+									<div>
+										<a href="<?= $directionDownLeft ?>"><img src="../fond_carte/fleche6.png"></a>
+									</div>
+									<div>
+										<a href="<?= $directionDownCenter ?>"><img src="../fond_carte/fleche7.png"></a>
+									</div>
+									<div>
+										<a href="<?= $directionDownRight ?>"><img src="../fond_carte/fleche8.png"></a>
+									</div>
+								</div>
+								<?php endif; ?>
+							</div>
+						</div>
+				</div>
+			</div>
+		</main>
+		<footer class='container-fluid fixed-bottom p-0 d-none'>
+			<div class='row justify-content-center bg-main bg-main-var p-3 text-center'>
+				<div class='col-3 col-md-1 fw-semibold cat-title py-2'>
+					<a href="#" class='py-3 text-light'>
+						<img class="img-fluid size-8 me-2" src="../public/img/icons/battle.png" alt="attaque">
+						Combat
+					</a>
+				</div>
+				<div class='col-3 col-md-1 fw-semibold cat-title mx-4 py-2'>
+					<a href="#" class='py-3 text-light'>
+						<img class="img-fluid size-8 me-2" src="../public/img/icons/move.png" alt="déplacement">
+						Se déplacer
+					</a>
+				</div>
+				<div class='col-3 col-md-1 fw-semibold cat-title py-2'>
+					<a href="#" class='text-light'>
+						<img class="img-fluid size-8 me-2" src="../public/img/icons/flash.png" alt="actions">
+						Actions
+					</a>
+				</div>
+			</div>
+		</footer>
 	<?php
 			}
 		}
@@ -4481,37 +5100,11 @@ if($dispo == '1' || $admin){
 		header("Location:../index.php");
 	}
 	?>
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-		<script>
-		$(function () {
-			$('[data-toggle="tooltip"]').tooltip();
-			$('[data-toggle="popover"]').popover();
-		})
-
-		function openNav() {
-			if(document.getElementById("mySidebar").style.width == "" || document.getElementById("mySidebar").style.width == "0px") {
-				document.getElementById("mySidebar").style.width = "250px";
-				document.getElementById("boutonChat").style.marginLeft = "250px";
-			} else {
-				document.getElementById("mySidebar").style.width = "0";
-				document.getElementById("boutonChat").style.marginLeft= "0";
-			}
-		}
-
-		function closeNav() {
-			document.getElementById("mySidebar").style.width = "0";
-			document.getElementById("boutonChat").style.marginLeft= "0";
-		}
-		</script>
-
 	</body>
 </html>
 <?php
+
+// require_once('../mvc/view/game_board/index.php');
 }
 else {
 	// logout

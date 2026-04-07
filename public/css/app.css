@@ -8,12 +8,70 @@ body{
 	background:#fff;
 }
 
+.main-page {
+	padding-bottom:7rem;
+}
+
 .bg-gray-300 {
 	background:#969696;
 }
 
 .vote-input{
 	margin-top:0.8rem;
+}
+
+/* plateau de jeu */
+.boardgame-grid{
+	display:grid;
+	/* grid-template-columns: repeat(25, 40px); */
+	grid-auto-rows: 40px;
+	grid-auto-columns: 40px;
+}
+
+.game-tile {
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	overflow:hidden;
+}
+.tile-empty{
+	background: url("../img/grounds/0.jpg");
+}
+.tile-prairie{
+	background: url("../img/grounds/1.png");
+}
+.tile-hill{
+	background: url("../img/grounds/2.png");
+}
+.tile-mountain{
+	background: url("../img/grounds/3.png");
+}
+.tile-desert{
+	background: url("../img/grounds/4.png");
+}
+.tile-snow{
+	background: url("../img/grounds/5.gif");
+}
+.tile-marsh{
+	background: url("../img/grounds/6.gif");
+}
+.tile-forest{
+	background: url("../img/grounds/7.png");
+}
+.tile-water{
+	background: url("../img/grounds/8.gif");
+}
+.tile-deep_water{
+	background: url("../img/grounds/9.gif");
+}
+
+/* unités */
+
+.unit{
+
 }
 
 /* page d'accueil */
@@ -129,6 +187,25 @@ body{
 	height:2rem;
 }
 
+.size-10 {
+	width:3rem;
+	height:3rem;
+}
+
+.size-11 {
+	width:4rem;
+	height:4rem;
+}
+
+.size-12 {
+	width:5rem;
+	height:5rem;
+}
+
+.icon-character {
+	width:40px;
+	height:40px;
+}
 /* couleur des camps */
 .text-north{
 	color:rgb(0,90,230);
@@ -205,6 +282,14 @@ body{
 	top:0;
 	left:-13px;
 	width:1rem;
+}
+
+/* rosace de déplacement */
+.moving-arrows{
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	/* grid-gap: 10px; */
+	/* grid-auto-rows: minmax(100px, auto); */
 }
 
 /* messages and notifications */
@@ -411,4 +496,48 @@ body{
 /* list group */
 ol.list-group > li:nth-of-type(odd) {
     background-color: rgb(242,242,242) ;
+}
+
+.navMainMenu a{
+	text-decoration:none !important;
+}
+
+.cat-title{
+	/* border : 3px groove rgba(159,117,42,1); */
+	border : 3px groove rgba(180,150,0,1);
+	border-radius: 7px;
+	background: #382910;
+	background: linear-gradient(180deg,rgba(56, 41, 16, 1) 0%, rgba(95, 0, 0, 1) 30%, rgba(95, 0, 0, 1) 70%, rgba(56, 41, 16, 1) 100%);
+	color:#fff;
+	padding: 0.1rem 0.4rem;
+	font-size:1rem !important;
+	vertical-align: middle;
+	font-family: "Times", "Times New Roman", "Georgia", serif;
+	/* font-variant-caps: all-small-caps; */
+	letter-spacing: 2px;
+	box-shadow: 0 1px 5px rgba(0,0,0,0.8);
+}
+
+.main-menu-button:hover{
+	transform: translateY(42px);
+}
+
+/* affichage pastille en attente de refacto */
+
+.spot-obj{
+	position:relative;
+	top:0;
+	left:-11px;
+	width:1rem;
+}
+
+/* background général */
+
+.bg-main {
+	background-color: rgba(150,125,80,1);
+	background-image:url("../img/backgrounds/cardboard.png");
+}
+
+.bg-main-var{
+	background-color: rgba(180,160,120,1) !important;
 }
