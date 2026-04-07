@@ -6,12 +6,19 @@ abstract class Model extends Db
 	
 	protected $table;
 	protected $primaryKey = 'id';
-	protected $fillable = []; // seuls les champs de ce tableau seront autorisés dans une hydratation
-	protected $guarded; //  tous les champs de ce tableau seront enlevés d'une hydratation
 	
-	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','orWhereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db','attributes','original'];
+	// gestion des champs autorisés ou non en hydratation
+	protected $fillable = [];
+	protected $guarded = null;
+	
+	// relations (à implémenter)
+	// protected array $relations = [];
+	
+	// état de l'objet
 	protected array $attributes = [];
     protected array $original = [];
+	
+	private $modelAttr = ['table','primaryKey','fillable','guarded','modelAttr','selectedCols','whereConditions','orWhereConditions','joinedTables','groupByConditions','orderByConditions','limitCondition','db','attributes','original'];
 	private $selectedCols = '';
 	private $whereConditions = [];
 	private $orWhereConditions = [];
@@ -25,7 +32,8 @@ abstract class Model extends Db
 	{
 		// par défaut la table est le nom de la classe
 		if(empty($this->table)){
-			$this->table = strtolower(get_class($this));
+			$className = (new \ReflectionClass($this))->getShortName();
+			$this->table = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $className));
 		}
 	}
 	
