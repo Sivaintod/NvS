@@ -1,13 +1,44 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log( "NvS - Le Jeu" );
 	
+	// activation des tooltips
 	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+	
+	// activation des popovers
+	const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+	const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+	
+	// activation des toats
+	const toastElList = document.querySelectorAll('.toast');
+	const toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl));
 	
 	// actualisation du captcha
 	$('#reload_captcha').click(function(){
 		$("#captcha_img").attr("src", "../captcha.php?"+(new Date()).getTime());
 	})
+	
+	// actualisation en temps réel de l'heure	
+	function updateClock() {
+		const now = new Date();
+
+		// Format de la date : jj-mm-aaaa
+		const day = String(now.getDate()).padStart(2, '0');
+		const month = String(now.getMonth() + 1).padStart(2, '0'); // +1 car les mois commencent à 0
+		const year = now.getFullYear();
+
+		// Format de l'heure : HH:MM:SS
+		const hours = String(now.getHours()).padStart(2, '0');
+		const minutes = String(now.getMinutes()).padStart(2, '0');
+		const seconds = String(now.getSeconds()).padStart(2, '0');
+
+		// Mise à jour de l'affichage
+		document.getElementById('date').textContent = `${day}-${month}-${year}`;
+		document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+	}
+
+	setInterval(updateClock, 1000);
+	updateClock();
 
 	//aperçu d'une image sélectionnée dans un formulaire
 	var imgInput = document.getElementById('imgUpload');

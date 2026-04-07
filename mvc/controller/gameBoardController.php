@@ -1,5 +1,6 @@
 <?php
 require_once("../mvc/model/User.php");
+require_once("../mvc/model/Map.php");
 require_once("../mvc/model/Character.php");
 require_once("../mvc/model/Building.php");
 require_once("../mvc/model/Vehicle.php");
@@ -78,23 +79,24 @@ class GameboardController extends Controller
 			header("Location:?");
 		}
 		
-		$character = new Character();
-		$character = $character->select('perso.id_perso, idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, est_gele, clan, est_renvoye,
+		$selected_Character = new Character();
+		$selected_Character = $selected_Character->select('perso.id_perso, idJoueur_perso, nom_perso, x_perso, y_perso, pm_perso, pmMax_perso, image_perso, pa_perso, perception_perso, bonusPerception_perso, recup_perso, bonusRecup_perso, bonusPM_perso, type_perso, type_combat, paMax_perso, pv_perso, charge_perso, chargeMax_perso, DLA_perso, est_gele, clan, est_renvoye,
 									perso_as_grade.id_grade, grades.nom_grade')
 								->leftJoin('perso_as_grade','perso_as_grade.id_perso','=','perso.id_perso')
 								->leftJoin('grades','perso_as_grade.id_grade','=','grades.id_grade')
+								->leftJoin('type_unite','perso.type_perso','=','type_unite.id_unite')
 								->where('perso.id_perso',$_SESSION["id_perso"])
 								->get();
-		$character = $character[0];
+		$selected_Character = $selected_Character[0];
 
 		// contrôle si le perso appartient bien au joueur
-		if($user->id_joueur!=$character->idJoueur_perso){
+		if($user->id_joueur!=$selected_Character->idJoueur_perso){
 			// log de triche
 			$cheatingLog = new GameLog();
 			$cheatingLog->category = 2;
 			$cheatingLog->action_type = 1;
 			$cheatingLog->character_id = $_SESSION["id_perso"];
-			$cheatingLog->description = 'Le joueur ['.$user->id_joueur.'] a essayé de prendre contrôle du perso ['.$character->idJoueur_perso.'] qui ne lui appartient pas !';
+			$cheatingLog->description = 'Le joueur ['.$user->id_joueur.'] a essayé de prendre contrôle du perso ['.$selected_Character->idJoueur_perso.'] qui ne lui appartient pas !';
 			$cheatingLog->refered_page = $_SERVER['REQUEST_URI'];
 			$cheatingLog->created_at = $now;
 			$cheatingLog->save();
@@ -107,7 +109,7 @@ class GameboardController extends Controller
 		}
 		
 		// on vérifie que le perso n'est pas désactivé
-		if($character->est_renvoye==1){
+		if($selected_Character->est_renvoye==1){
 			
 			$_SESSION['id_perso'] = $_SESSION["leader_id"];
 			header("Location:?");
@@ -171,6 +173,10 @@ class GameboardController extends Controller
 		$gameLog->refered_page = $_SERVER['REQUEST_URI'];
 		$gameLog->created_at = $now;
 		$gameLog->save();
+		
+		/* récupération de la carte */
+		// $character_view = new Map();
+		// $character_view = $character_view->getCarteWithPerc(1, $character->x_perso, $character->y_perso, $character->perception_perso+$character->bonusPerception_perso);
 		
 		// TO DO 
 		// Récupérer toutes les infos du joueur et du perso
