@@ -2676,7 +2676,7 @@ if($dispo == '1' || $admin){
 						</li>
 						<?php if ($type_perso != 6): ?>
 						<li class="nav-item">
-							<a class="nav-link" href="?action=ranking">
+							<a class="nav-link" href="compagnie.php">
 								<img src="../public/img/icons/<?php echo $image_compagnie; ?>" class='size-12' alt="compagnie">
 								<span class='cat-title d-inline-block text-center w-50 position-relative'>Compagnie
 								<?php if ($nb_demandes_adhesion_compagnie || $nb_demandes_depart_compagnie || $nb_demandes_emprunt_compagnie) { ?>
@@ -2688,7 +2688,7 @@ if($dispo == '1' || $admin){
 						<?php endif;?>
 						<?php if($nb_em): ?>
 						<li class="nav-item">
-							<a class="nav-link" href="?action=ranking">
+							<a class="nav-link" href="command.php">
 								<img src="../public/img/icons/<?php echo $image_em; ?>" class='size-12' alt="etat major">
 								<span class='cat-title d-inline-block text-center w-50 position-relative'>État Major
 									<?php if ($nb_compagnie_attente_em) {?>

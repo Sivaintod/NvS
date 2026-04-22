@@ -122,8 +122,6 @@ if(isset($_SESSION["id_perso"])){
 							else:
 								echo "<a href='bataillon.php?id_bataillon=".$id_joueur_bataillon."&changer_nom=ok' class='btn btn-warning'>Demander à changer le nom du bataillon</a>";
 							endif;
-						}else{
-							echo "<div class='alert alert-danger w-25'>Une erreur est survenue. Si le problème persiste, veuillez contacter l'administrateur</div>";
 						}
 						?>
 					</div>
@@ -172,6 +170,7 @@ if(isset($_SESSION["id_perso"])){
 			}
 			}else{
 				echo "<div class='alert alert-danger'>Ce bataillon n'existe pas ou vous n'en êtes pas le chef</div>";
+				echo "<div class='alert alert-warning'>Pour voir le bataillon d'un autre joueur, vous devez disposer de la compétence \"Espionnage\" (évolution à venir)</div>";
 			}
 
 		} else {
