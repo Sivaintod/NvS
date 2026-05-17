@@ -11,55 +11,9 @@ $mysqli = db_connexion();
 
 include ('../nb_online.php');
 
-date_default_timezone_set('Europe/Paris');
-
-$id_perso = 0;
-
-// Traitement selection perso
-if (isset($_POST["liste_perso"]) && $_POST["liste_perso"] != "") {
-
-	if(isset($_SESSION["ID_joueur"])){
-
-		$id_joueur 	= $_SESSION["ID_joueur"];
-		$id_perso	= $_POST["liste_perso"];
-
-		// recuperation des infos du perso
-		$sql = "SELECT idJoueur_perso FROM perso WHERE id_perso='$id_perso'";
-		$res = $mysqli->query($sql);
-		$t_perso = $res->fetch_assoc();
-
-		$id_joueur_perso 	= $t_perso["idJoueur_perso"];
-
-		// Le perso appartient-il bien au joueur ?
-		if ($id_joueur_perso == $id_joueur) {
-			$id_perso = $_SESSION['id_perso'] = $_POST["liste_perso"];
-		}
-		else {
-			// Tentative de triche !
-			$text_triche = "Le joueur $id_joueur a essayé de prendre controle du perso $id_perso qui ne lui appartient pas !";
-
-			$sql = "INSERT INTO tentative_triche (id_perso, texte_tentative) VALUES ('$id_perso', '$text_triche')";
-			$mysqli->query($sql);
-
-			$_SESSION = array(); // On écrase le tableau de session
-			session_destroy(); // On détruit la session
-
-			//redirection
-			header("location:index.php");
-		}
-
-	} else {
-		header("Location:../index.php");
-	}
-}
-
-if(isset($_SESSION["id_perso"])){
-	$id_perso = $_SESSION['id_perso'];
-}
-
 // recupération config jeu
 $dispo = config_dispo_jeu($mysqli);
-$admin = admin_perso($mysqli, $id_perso);
+$admin = $user->admin_perso;
 
 if($dispo == '1' || $admin){
 
@@ -72,62 +26,8 @@ if($dispo == '1' || $admin){
 		if ($_SERVER['QUERY_STRING'] != '') {
 			$page_acces .= '?'.$_SERVER['QUERY_STRING'];
 		}
-
-		// acces_log
-		$sql = "INSERT INTO acces_log (date_acces, id_perso, page) VALUES (NOW(), '$id_perso', '$page_acces')";
-		$mysqli->query($sql);
-
-		// Alerte si 10 refresh ou plus en 10 sec (déco ?)
-		$sql = "SELECT COUNT(*) as count_log_10sec FROM acces_log WHERE id_perso='$id_perso' AND page = 'index.php' AND date_acces > (NOW() - INTERVAL 10 SECOND)";
-		$res = $mysqli->query($sql);
-		$t = $res->fetch_assoc();
-
-		$count_log_10sec = $t['count_log_10sec'];
-
-		if ($count_log_10sec >= 10) {
-			// Est-ce qu'il y a déjà eu une alerte de ce type pour ce perso dans les 30 dernières secondes ?
-			$sql = "SELECT COUNT(*) as nb_alerte_10sec FROM alerte_anim WHERE type_alerte='2' AND id_perso='$id_perso' AND date_alerte > (NOW() - INTERVAL 30 SECOND)";
-			$res = $mysqli->query($sql);
-			$t = $res->fetch_assoc();
-
-			$nb_alerte_10sec = $t['nb_alerte_10sec'];
-
-			if ($nb_alerte_10sec == 0) {
-				$sql = "INSERT INTO alerte_anim (type_alerte, id_perso, raison_alerte, date_alerte) VALUES ('2', '$id_perso', 'Page de jeu - plus de 10 refresh en moins de 10 secondes : $count_log_10sec', NOW())";
-				$mysqli->query($sql);
-			}
-		}
-
-		// Alerte si 30 refresh ou plus en moins d'une minute
-		$sql = "SELECT COUNT(*) as count_log_1min FROM acces_log WHERE id_perso='$id_perso' AND page = 'index.php' AND date_acces > (NOW() - INTERVAL 60 SECOND)";
-		$res = $mysqli->query($sql);
-		$t = $res->fetch_assoc();
-
-		$count_log_1min = $t['count_log_1min'];
-
-		if ($count_log_1min >= 30) {
-
-			// Est-ce qu'il y a déjà eu une alerte de ce type pour ce perso dans les 3 dernière minutes ?
-			$sql = "SELECT COUNT(*) as nb_alerte_1min FROM alerte_anim WHERE type_alerte='3' AND id_perso='$id_perso' AND date_alerte > (NOW() - INTERVAL 180 SECOND)";
-			$res = $mysqli->query($sql);
-			$t = $res->fetch_assoc();
-
-			$nb_alerte_1min = $t['nb_alerte_1min'];
-
-			if ($nb_alerte_1min == 0) {
-				$sql = "INSERT INTO alerte_anim (type_alerte, id_perso, raison_alerte, date_alerte) VALUES ('3', '$id_perso', 'Page de jeu - plus de 30 refresh en moins de 1 minute : $count_log_1min', NOW())";
-				$mysqli->query($sql);
-			}
-		}
-
-		// TODO - Vérification 10 derniers logs d'accès, sont-il sur le même delta de temps ?
-
-
-		$sql_joueur = "SELECT idJoueur_perso FROM perso WHERE id_perso='$id_perso'";
-		$res_joueur = $mysqli->query($sql_joueur);
-		$t_joueur = $res_joueur->fetch_assoc();
-
-		$id_joueur_perso = $t_joueur["idJoueur_perso"];
+		
+		$id_joueur_perso = $_SESSION['ID_joueur'];
 
 		$sql_dla = "SELECT UNIX_TIMESTAMP(DLA_perso) as DLA, est_gele FROM perso WHERE idJoueur_perso='$id_joueur_perso' AND chef=1";
 		$res_dla = $mysqli->query($sql_dla);
@@ -2121,47 +2021,6 @@ if($dispo == '1' || $admin){
 						$mess_bat .= afficher_lien_prox_bat($mysqli, $x_persoN, $y_persoN, $id_perso, $type_perso);
 					}
 				}
-
-				
-				$date_serveur = new DateTime('now', new DateTimeZone('Europe/Paris'));
-
-				$date_dla = date('d-m-Y H:i', $n_dla);
-				
-				if (anim_perso($mysqli, $id_perso)) {
-					// Récupération des demandes sur la gestion des compagnies
-					$sql = "SELECT * FROM compagnie_demande_anim, compagnies
-							WHERE compagnie_demande_anim.id_compagnie = compagnies.id_compagnie
-							AND compagnies.id_clan='$clan_p'";
-					$res = $mysqli->query($sql);
-					$nb_demandes_gestion_compagnie = $res->num_rows;
-
-					// Récupération des demandes sur la gestion des persos
-					$sql = "(SELECT perso_demande_anim.* FROM perso_demande_anim, perso
-							WHERE perso_demande_anim.id_perso = perso.id_perso
-							AND perso.clan = '$clan_p'
-							AND perso_demande_anim.type_demande = 1)
-							UNION ALL
-							(SELECT perso_demande_anim.* FROM perso_demande_anim, perso
-							WHERE perso_demande_anim.id_perso = perso.idJoueur_perso
-							AND perso.clan = '$clan_p'
-							AND perso.chef = '1'
-							AND perso_demande_anim.type_demande > 1)
-							";
-					$res = $mysqli->query($sql);
-					$nb_demandes_gestion_perso = $res->num_rows;
-
-					// Récupération du nombre de questions / remontées anims en attente de réponse
-					$sql = "SELECT id FROM anim_question WHERE id_camp='$clan_p' AND status='0'";
-					$res = $mysqli->query($sql);
-					$nb_questions_anim = $res->num_rows;
-
-					// Récupération du nombre de remontées de capture RP non traitées
-					$sql = "SELECT id FROM anim_capture WHERE statut='0'";
-					$res = $mysqli->query($sql);
-					$nb_captures_anim = $res->num_rows;
-
-					$nb_demande_a_traiter = $nb_demandes_gestion_compagnie + $nb_demandes_gestion_perso + $nb_questions_anim + $nb_captures_anim;
-				}
 				
 				// Récupération du nombre de missions actives
 				$sql_ma = "SELECT id_mission, nom_mission, texte_mission, recompense_thune, recompense_xp, recompense_pc, nombre_participant, date_debut_mission, date_fin_mission
@@ -2642,46 +2501,46 @@ if($dispo == '1' || $admin){
 						<li class="nav-item">
 							<a class="nav-link" href="?action=character">
 								<img src="../public/img/icons/<?php echo $image_profil; ?>" class='size-12' alt="profil">
-								<span class='cat-title d-inline-block text-center w-50'>Mon bataillon</span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50'>Mon bataillon</span>
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="evenement.php">
 								<img src="../public/img/icons/<?php echo $image_evenement; ?>" class='size-12' alt="évènements">
-								<span class='cat-title d-inline-block text-center w-50'>Évènements</span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50'>Évènements</span>
 							</a>
 						</li>
 						<li class="nav-item d-md-none">
 							<a class="nav-link" href="sac.php">
 								<img src="../public/img/icons/<?php echo $image_sac; ?>" class='size-12' alt="sac">
-								<span class='cat-title d-inline-block text-center w-50'>Sac</span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50'>Sac</span>
 							</a>
 						</li>
 						<li class="nav-item d-none">
 							<a class="nav-link" href="carte/carte.php">
 								<img src="../public/img/icons/map_icon.png" class='size-12' alt="mini map">
-								<span class='cat-title d-inline-block text-center w-50'>Carte</span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50'>Carte</span>
 							</a>
 						</li>
 						<?php if ($type_perso != 6): ?>
 						<li class="nav-item d-md-none">
 							<a class="nav-link" href="messagerie.php">
 								<img src="../public/img/icons/<?php echo $image_messagerie; ?>" class='size-12' alt="messagerie">
-								<span class='cat-title d-inline-block text-center w-50 position-relative'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger'>$nb_nouveaux_mes</span>"; }?></span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50 position-relative'>Messagerie<?php if($nb_nouveaux_mes) { echo "<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger'>$nb_nouveaux_mes</span>"; }?></span>
 							</a>
 						</li>
 						<?php endif; ?>
 						<li class="nav-item">
 							<a class="nav-link" href="?action=ranking">
 								<img src="../public/img/icons/ranking_icon.png" class='size-12' alt="classement">
-								<span class='cat-title d-inline-block text-center w-50'>Classements</span>
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50'>Classements</span>
 							</a>
 						</li>
 						<?php if ($type_perso != 6): ?>
 						<li class="nav-item">
 							<a class="nav-link" href="compagnie.php">
 								<img src="../public/img/icons/<?php echo $image_compagnie; ?>" class='size-12' alt="compagnie">
-								<span class='cat-title d-inline-block text-center w-50 position-relative'>Compagnie
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50 position-relative'>Compagnie
 								<?php if ($nb_demandes_adhesion_compagnie || $nb_demandes_depart_compagnie || $nb_demandes_emprunt_compagnie) { ?>
 									<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill p-2 bg-danger border border-light rounded-circle'><span class="visually-hidden">Demandes en attente</span></span>
 								<?php }?>
@@ -2693,7 +2552,7 @@ if($dispo == '1' || $admin){
 						<li class="nav-item">
 							<a class="nav-link" href="command.php">
 								<img src="../public/img/icons/<?php echo $image_em; ?>" class='size-12' alt="etat major">
-								<span class='cat-title d-inline-block text-center w-50 position-relative'>État Major
+								<span class='title-ribbon title-ribbon-sm d-inline-block text-center w-50 position-relative'>État Major
 									<?php if ($nb_compagnie_attente_em) {?>
 										<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill p-2 bg-danger border border-light rounded-circle'><span class="visually-hidden">Compagnies en attente</span></span>
 									<?php	}?>
@@ -2752,10 +2611,15 @@ if($dispo == '1' || $admin){
 								<?php endif; ?>
 							</a>
 						</li>
-						<?php if(redac_perso($mysqli, $id_perso) || anim_perso($mysqli, $id_perso) || $admin): ?>
+						<?php if(redac_perso($mysqli, $id_perso) || $user->animateur || $admin): ?>
 						<li class="nav-item dropdown my-2">
 							<a class="dropdown-toggle btn btn-lg btn-warning w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							Administration
+							<?php if ($nb_demande_a_traiter > 0 ): ?>
+									<span class='badge text-bg-danger'>
+										?
+									</span>
+							<?php endif; ?>
 							</a>
 							<ul class="dropdown-menu w-100">
 								<?php // Redacteur
@@ -2765,12 +2629,12 @@ if($dispo == '1' || $admin){
 								</li>
 								<?php endif; ?>
 								<?php // Animation
-								if(anim_perso($mysqli, $id_perso)):?>
+								if($user->animateur):?>
 									<li class="nav-item">
 										<a class='dropdown-item' href='animation.php'>
 											Animation
 											<?php if ($nb_demande_a_traiter > 0): ?>
-												<span class='badge badge-danger' title='<?=$nb_demande_a_traiter?> demandes en attente'>
+												<span class='badge text-bg-danger' title='<?=$nb_demande_a_traiter?> demandes en attente'>
 													<?= $nb_demande_a_traiter?>
 												</span>
 											<?php endif; ?>
@@ -2889,8 +2753,8 @@ if($dispo == '1' || $admin){
 							</div>
 						</div>
 						<form class='col' method='post' action='index.php'>
-							<span class="fw-semibold">Nom : </span>
-							<select name='liste_perso' onchange="this.form.submit()">
+							<label class="fw-semibold form-label visually-hidden" for="liste_perso">Nom : </label>
+							<select class='form-select' id='liste_perso' name='liste_perso' onchange="this.form.submit()">
 							<?php foreach($battalion as $t_liste_perso):
 
 								$id_perso_liste 	= $t_liste_perso["id_perso"];
@@ -2904,10 +2768,9 @@ if($dispo == '1' || $admin){
 								</option>
 							<?php endforeach;?>
 							</select>
-							<input type='submit' name='select_perso' value='ok' />
 						</form>
 					</div>
-					<div class="collapse" id="collapseInfoCharac">
+					<div class="row pt-2 collapse" id="collapseInfoCharac">
 						<div class='col-12'>
 							<span class='fw-semibold'>Grade : </span><a href="grades.php"><?=$nom_grade_perso; ?> <img alt="<?php echo $nom_grade_perso; ?>" title="<?php echo $nom_grade_perso; ?>" src="../images/grades/<?php echo $id_grade_perso . ".gif";?>" width=40 height=40></a><br>
 							<span class='fw-semibold'>Chef : </span><?= $nom_perso_chef; ?><br>
@@ -2916,19 +2779,30 @@ if($dispo == '1' || $admin){
 						</div>
 					</div>
 					<div class='row'>
+						<?php
+							$percents_PV = ($pvMax_perso > 0) ? round($pv_perso/$pvMax_perso*100):0;
+							$percents_PM = ($pmMax_perso > 0) ? round($pm_perso/$pmMax_perso*100):0;
+							$percents_PA = ($paMax_final_perso > 0) ? round($pa_perso/$paMax_final_perso*100):0;
+							
+							$percents_PV_style = ($percents_PV<40) ? ' text-success-emphasis ps-2':'';
+							$percents_PM_style = ($percents_PM<50) ? ' text-primary-emphasis ps-2':'';
+							$percents_PA_style = ($percents_PA<50) ? ' ps-2':'';
+						?>
 						<div class='col-12 mt-2'>
-							<div class="progress shadow" role="progressbar" aria-label="points de vie" aria-valuenow="<?=$pv_perso?>" aria-valuemin="0" aria-valuemax="<?=$pvMax_perso?>" style="height: 2rem">
-								<div class="progress-bar text-bg-success fs-6 overflow-visible" style="width: <?= round($pv_perso/$pvMax_perso*100)?>%">PV : <?= round($pv_perso/$pvMax_perso*100)?>% (<?=$pv_perso?>/<?=$pvMax_perso?>)</div>
+							<div class="progress bg-success-subtle shadow" role="progressbar" aria-label="points de vie" aria-valuenow="<?=$pv_perso?>" aria-valuemin="0" aria-valuemax="<?=$pvMax_perso?>" style="height: 2rem">
+								<div class="progress-bar progress-bar-striped text-bg-success fw-semibold fs-6 overflow-visible<?= $percents_PV_style?>" style="width: <?= $percents_PV ?>%">
+									PV : <?= $percents_PV ?>% (<?=$pv_perso?>/<?=$pvMax_perso?>)
+								</div>
 							</div>
 						</div>
 						<div class='col-6 mt-2'>
-							<div class="progress shadow" role="progressbar" aria-label="points de mouvement" aria-valuenow="<?= $pm_perso?>" aria-valuemin="0" aria-valuemax="<?=$pmMax_perso?>" style="height: 2rem">
-								<div class="progress-bar progress-bar-striped text-bg-primary fs-6 overflow-visible" style="width: <?= round($pm_perso/$pmMax_perso*100)?>%">PM : <?=$pm_perso?>/<?=$pmMax_perso?></div>
+							<div class="progress bg-primary-subtle shadow" role="progressbar" aria-label="points de mouvement" aria-valuenow="<?= $pm_perso?>" aria-valuemin="0" aria-valuemax="<?=$pmMax_perso?>" style="height: 2rem">
+								<div class="progress-bar progress-bar-striped text-bg-primary fw-semibold fs-6 overflow-visible<?= $percents_PM_style?>" style="width: <?= $percents_PM ?>%">PM : <?=$pm_perso?>/<?=$pmMax_perso?></div>
 							</div>
 						</div>
 						<div class='col-6 mt-2'>
-							<div class="progress shadow" role="progressbar" aria-label="points d'action" aria-valuenow="<?=$pa_perso?>" aria-valuemin="0" aria-valuemax="<?= $paMax_final_perso?>" style="height: 2rem">
-								<div class="progress-bar progress-bar-striped text-bg-warning fs-6 overflow-visible" style="width: <?= round($pa_perso/$paMax_final_perso*100)?>%">PA : <?=$pa_perso?>/<?=$paMax_final_perso?></div>
+							<div class="progress bg-danger-subtle shadow" role="progressbar" aria-label="points d'action" aria-valuenow="<?=$pa_perso?>" aria-valuemin="0" aria-valuemax="<?= $paMax_final_perso?>" style="height: 2rem">
+								<div class="progress-bar progress-bar-striped text-warning-emphasis text-bg-warning fw-semibold fs-6 overflow-visible<?= $percents_PA_style?>" style="width: <?= round($pa_perso/$paMax_final_perso*100)?>%">PA : <?=$pa_perso?>/<?=$paMax_final_perso?></div>
 							</div>
 						</div>
 					</div>

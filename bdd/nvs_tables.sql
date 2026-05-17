@@ -562,6 +562,7 @@ ALTER TABLE `compagnie_as_contraintes`
 --
 
 CREATE TABLE `compagnie_demande_anim` (
+	`id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY;
 	`id_compagnie` INT NOT NULL ,
 	`type_demande` INT NOT NULL ,
 	`info_demande` TEXT NOT NULL
@@ -1841,6 +1842,7 @@ ALTER TABLE `perso_bagne`
 --
 
 CREATE TABLE `perso_demande_anim` (
+	`id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`id_perso` INT NOT NULL ,
 	`type_demande` INT NOT NULL ,
 	`info_demande` TEXT NOT NULL
