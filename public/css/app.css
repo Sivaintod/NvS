@@ -172,6 +172,11 @@ body{
 	width:1.5rem;
 }
 
+.size-5 {
+	width:1.25rem;
+	height:1.25rem;
+}
+
 .size-6 {
 	width:1.5rem;
 	height:1.5rem;
@@ -476,6 +481,10 @@ body{
 }
 
 /* icons custom */
+
+.alert-dot{
+	font-size:0.75rem;
+}
 
 .icon-lg {
 	height:2.5rem;

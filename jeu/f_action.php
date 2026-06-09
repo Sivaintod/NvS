@@ -3411,7 +3411,7 @@ function action_deposerObjet($mysqli, $id_perso, $type_objet, $id_objet, $quanti
 			$res = $mysqli->query($sql);
 			$to = $res->fetch_assoc();
 			
-			$nb_o = $to["nb_objet"];
+			$nb_o = $to["nb_objet"]??null;
 			
 			if($nb_o){
 				// On met a jour le nombre
