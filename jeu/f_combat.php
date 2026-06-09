@@ -254,7 +254,7 @@ function resource_liste_cibles_a_portee_attaque($mysqli, $carte, $id_perso, $por
 	// Pas d'attaque au CaC depuis un batiment
 	// Portée max ne peut pas être inférieur à portée min
 	if (($type_attaque == 'cac' && in_bat($mysqli, $id_perso)) || $portee_max < $portee_min) {
-		return false;
+		$sql = "SELECT id_perso FROM perso WHERE 1=2";
 	}
 
 	//bonus de portée du terrain uniquement pour les armes à distance
