@@ -21,6 +21,7 @@ if($dispo == '1' || $admin){
 
 		$id_perso = $_SESSION['id_perso'];
 		$date = time();
+		$nb_compagnie_attente_em = '';
 
 		$page_acces = 'index.php';
 		if ($_SERVER['QUERY_STRING'] != '') {
