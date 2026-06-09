@@ -2689,10 +2689,13 @@ if($dispo == '1' || $admin){
 				</div>
 				<div class='row align-items-center'>
 					<div class='col-2 col-md order-first text-start pe-0'>
-						<button class="btn btn-dark btn-lg px-3 py-4 m-0 rounded-0 h-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMainMenu" aria-controls="offcanvasMainMenu">
+						<button class="btn btn-dark btn-lg px-3 py-4 m-0 rounded-0 h-100 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMainMenu" aria-controls="offcanvasMainMenu">
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
 							</svg>
+							<?php if($nb_nouveaux_mes || $nb_demandes_adhesion_compagnie || $nb_demandes_depart_compagnie || $nb_demandes_emprunt_compagnie || $nb_compagnie_attente_em) {?>
+							<span class='d-md-none alert-dot position-absolute top-50 start-50 badge rounded-pill bg-danger'>!</span>
+							<?php }?>
 						</button>
 					</div>
 					<div class='col col-md-6 order-md-3'>
