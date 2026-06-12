@@ -1355,7 +1355,7 @@ if($dispo == '1' || $admin){
 				if(in_bat($mysqli, $id_perso)){
 
 					// Récupération des infos sur l'instance du batiment dans lequel le perso se trouve
-					$sql = "SELECT id_instanceBat, id_batiment, nom_instance, pv_instance, pvMax_instance FROM instance_batiment WHERE x_instance='$x_persoN' AND y_instance='$y_persoN'";
+					$sql = "SELECT id_instanceBat, instance_batiment.id_batiment, nom_instance, pv_instance, pvMax_instance, taille_batiment FROM instance_batiment LEFT JOIN batiment ON batiment.id_batiment=instance_batiment.id_batiment WHERE x_instance='$x_persoN' AND y_instance='$y_persoN'";
 					$res = $mysqli->query($sql);
 					$t = $res->fetch_assoc();
 
@@ -1364,6 +1364,7 @@ if($dispo == '1' || $admin){
 					$nom_ibat 	= $t["nom_instance"];
 					$pv_bat		= $t['pv_instance'];
 					$pvMax_bat	= $t['pvMax_instance'];
+					$taille_batiment = $t['taille_batiment'];
 
 					//recuperation du nom du batiment
 					$sql_n = "SELECT nom_batiment FROM batiment WHERE id_batiment = '$bat'";
@@ -2421,6 +2422,14 @@ if($dispo == '1' || $admin){
 				$perc_carte = $perc;
 				if ($perc_carte < 0) {
 					$perc_carte = 0;
+				}
+				
+				if(in_bat($mysqli, $id_perso)){
+					$perception_bat = $taille_batiment-1;
+					
+					if($perc_carte<$perception_bat){
+						$perc_carte = $perception_bat/2+1;
+					}
 				}
 				?>
 <!DOCTYPE html>
