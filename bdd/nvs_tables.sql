@@ -343,6 +343,7 @@ CREATE TABLE `batiment` (
   `respawn_allowed` tinyint NOT NULL DEFAULT '0',
   `respawn_order` tinyint NOT NULL DEFAULT '0',
   `capturable` tinyint(1) NOT NULL DEFAULT '0',
+  `perception_bonus` tinyint NOT NULL,
   PRIMARY KEY (`id_batiment`),
   KEY `index_taille_bat` (`taille_batiment`,`id_batiment`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
