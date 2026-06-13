@@ -1317,7 +1317,7 @@ if($dispo == '1' || $admin) {
 														<span>(!) Vous ne pouvez donner un objet qu'à un perso de votre camp</span>
 														<form method='post' action='action.php' class='mt-3'>
 															<label>Choisir un perso</label>
-															<select name=\"select_perso_don\" style=\"color: #000000;\" onChange=\"this.style.color=this.options[this.selectedIndex].style.color\" class='form-control'>";
+															<select name="select_perso_don" style="color: #000000;" onChange="this.style.color=this.options[this.selectedIndex].style.color" class='form-control'>
 											<?php
 											while($t_c = $res_c->fetch_assoc()){
 												
