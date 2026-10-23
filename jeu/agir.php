@@ -4,8 +4,8 @@ require_once("../fonctions.php");
 require_once("f_carte.php");
 require_once("f_combat.php");
 require_once('../mvc/model/Event.php');
-require_once('../mvc/model/Carte.php');
-require_once('../mvc/model/Perso.php');
+require_once('../mvc/model/Map.php');
+require_once('../mvc/model/Character.php');
 
 $mysqli = db_connexion();
 
@@ -35,8 +35,8 @@ if ($verif_id_perso_session) {
 <?php
 
 	$model_event = new Event();
-	$model_carte = new Carte();
-	$model_perso = new Perso();
+	$model_carte = new Map();
+	$model_perso = new Character();
 
 	$carte = "carte";
 	$verif = false;

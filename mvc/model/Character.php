@@ -9,7 +9,6 @@ class Character extends Model
 	// protected $fillable = [];
 	protected $guarded = [];
 	
-		
 	/**
    * recherche les infos d'un perso
    * @return class of $this
@@ -24,9 +23,42 @@ class Character extends Model
 
 		return $result;
 	}
+	
+	/**
+   * Récupère les persos qui sont sur la carte
+   * @return array
+   */
+   
+   public function getCharactersWithPerc(int $x,int $y,int $perc){
+		$x_min = $x - $perc;
+		$x_max = $x + $perc;
+		$y_min = $y - $perc;
+		$y_max = $y + $perc;
+		
+		if($x_min<0){
+			$x_min = 0;
+		}
+		if($y_min<0){
+			$y_min = 0;
+		}
+		$values = [$x_min,$x_max,$y_min,$y_max];
+		
+		$query = "SELECT perso.id_perso as id, idJoueur_perso, nom_perso, x_perso, y_perso, type_perso, image_unite, type_unite.nom_unite , camp.id as camp_id, camp.img_suffix as camp_img_sfx
+				FROM perso
+				LEFT JOIN type_unite ON type_unite.id_unite= perso.type_perso
+				LEFT JOIN camp ON camp.id=perso.clan
+				LEFT JOIN perso_in_batiment ON perso_in_batiment.id_perso=perso.id_perso
+				WHERE (x_perso BETWEEN ? AND ?) AND (y_perso BETWEEN ? AND ?)
+				AND perso_in_batiment.id_perso IS NULL";
+		
+		$request = $this->request($query,$values);		
+		$result = $request->fetchAll();
+		
+		return $result;
+   }
 
 	/**
-     * Récupération des demandes anim liées aux persos
+     * Récupération du nombre de demandes anim liées aux persos
      * @param $camp int
      * @return array
      */
@@ -43,7 +75,7 @@ class Character extends Model
 	}
 
 	/**
-     * Récupération des questions anim liées aux persos
+     * Récupération du nombre de questions anim liées aux persos
      * @param $camp int
      * @return array
      */
@@ -59,7 +91,7 @@ class Character extends Model
 	}
 	
 	/**
-     * Récupération des demandes de capture RP
+     * Récupération du nombre de demandes de capture RP
      * @param $camp int
      * @return array
      */
@@ -355,6 +387,185 @@ class Character extends Model
 		}
 
 		return ['match' => false];
+	}
+	
+	/**
+	* Récupère tous les objets/armes détenus par le perso
+	* @param $id_perso : L'identifiant du personnage
+	* @param $type : quel type d'objet on veut récuperer 'item' pour les objets courants ou 'weapon' pour les armes non équipées
+	* @return array
+	*/
+	public function items($id_perso,$type){
+		$db = $this->dbConnectPDO();
+
+		switch($type){
+			case 'item':
+				$query = "SELECT objet.id_objet, nom_objet, poids_objet, description_objet, type_objet, image_objet, contient_alcool, echangeable, deposable, GROUP_CONCAT(perso_as_objet.capacite_objet SEPARATOR ',') as destinations, COUNT(*) AS quantity, SUM(poids_objet) as poids_total, SUM(perso_as_objet.equip_objet) as equiped FROM objet INNER JOIN perso_as_objet ON perso_as_objet.id_perso=:id_perso AND perso_as_objet.id_objet=objet.id_objet GROUP BY perso_as_objet.id_objet";
+				break;
+			case 'weapon':
+				$query = "SELECT arme.id_arme, nom_arme, poids_arme, description_arme, image_arme, COUNT(*) AS quantity, SUM(poids_arme) as poids_total FROM arme INNER JOIN perso_as_arme ON perso_as_arme.id_perso=:id_perso AND perso_as_arme.id_arme=arme.id_arme AND perso_as_arme.est_portee='0' GROUP BY id_arme";
+				break;
+		}
+
+		$request = $db->prepare($query);
+		$request->bindParam('id_perso', $id_perso, PDO::PARAM_INT);
+		$request->execute();
+		$result = $request->fetchAll();
+
+		return $result;
+	}
+
+
+	/**
+	* On utilise un objet de l'inventaire d'un perso et on applique les bonus
+	* @param $perso : instance de classe Perso
+	* @param $item : instance de classe Item
+	* @return bool
+	*/
+	public function useItem($perso,$item,$equip=true){
+		$db = $this->dbConnectPDO();
+
+		$id_perso = $perso->id_perso;
+		$pv_perso = $perso->pv_perso;
+		$pvMax_perso = $perso->pvMax_perso;
+		$pm_perso = $perso->pm_perso;
+		$pmMax_perso = $perso->pmMax_perso;
+		$pa_perso = $perso->pa_perso;
+		$paMax_perso = $perso->paMax_perso;
+
+		$id_item = $item->id_objet;
+		$nom_objet = $item->nom_objet;
+		$type_objet = $item->type_objet;
+		$cout_pa = $item->coutPa_objet;
+		$poids = $item->poids_objet;
+		$bonusPerception = $item->bonusPerception_objet;
+		$bonusRecup = $item->bonusRecup_objet;
+		$bonusPv = $item->bonusPv_objet;
+		$bonusPm = $item->bonusPm_objet;
+		$bonusPa = $item->bonusPA_objet;
+		$alcool = $item->contient_alcool;
+
+		// fonction d'ajustement si le bonus dépasse le maximum de l'attribut du perso
+		function checkMax($actual,$bonus,$maximum){
+			if($actual+$bonus>$maximum){
+				$bonus = $bonus-($actual+$bonus-$maximum);
+			}
+			return $bonus;
+		}
+
+		$bonusPv = checkMax($pv_perso,$bonusPv,$pvMax_perso);
+		// $bonusPm = checkMax($pm_perso,$bonusPm,$pmMax_perso);
+		// $bonusPa = checkMax($pa_perso,$bonusPa,$paMax_perso);
+
+
+		if($type_objet == 'N'){
+			//suppression de l'objet de l'inventaire
+			$query = "DELETE FROM perso_as_objet WHERE id_perso=:id_perso AND id_objet=:id_item LIMIT 1";
+		}elseif($type_objet == 'E'){
+			$poids = 0;
+			if($equip==false){
+				//déséquipe l'objet
+				$query = "UPDATE perso_as_objet SET equip_objet='0' WHERE id_perso=:id_perso AND id_objet=:id_item AND equip_objet=1 LIMIT 1";
+			}else{
+				//équipe l'objet
+				$query = "UPDATE perso_as_objet SET equip_objet='1' WHERE id_perso=:id_perso AND id_objet=:id_item LIMIT 1";
+			}
+		}else{
+			return false;
+		}
+
+		$request = $db->prepare($query);
+		$request->bindParam('id_perso', $id_perso, PDO::PARAM_INT);
+		$request->bindParam('id_item', $id_item, PDO::PARAM_INT);
+		$result = $request->execute();
+
+		if($result){
+
+			// MAJ des PA, du poids et des bonus du perso
+			$query = "UPDATE perso SET pa_perso = pa_perso-:pa, charge_perso=charge_perso-:poids, pv_perso = pv_perso+:pv, bonusPerception_perso=bonusPerception_perso+:bonusPerc, bonusRecup_perso=bonusRecup_perso+:bonusRecup, bonusPM_perso=bonusPM_perso+:bonusPM, bonusPA_perso=bonusPA_perso+:bonusPA, bourre_perso=bourre_perso+:alcool WHERE id_perso=:id_perso";
+			$request = $db->prepare($query);
+			$request->bindParam('id_perso', $id_perso, PDO::PARAM_INT);
+			$request->bindParam('pa', $cout_pa, PDO::PARAM_INT);
+			$request->bindParam('poids', $poids);
+			$request->bindParam('pv', $bonusPv, PDO::PARAM_INT);
+			$request->bindParam('bonusPerc', $bonusPerception, PDO::PARAM_INT);
+			$request->bindParam('bonusRecup', $bonusRecup, PDO::PARAM_INT);
+			$request->bindParam('bonusPM', $bonusPm, PDO::PARAM_INT);
+			$request->bindParam('bonusPA', $bonusPa, PDO::PARAM_INT);
+			$request->bindParam('alcool', $alcool, PDO::PARAM_INT);
+			$result = $request->execute();
+
+			if($result){
+				return true;
+			}else{
+				return false;
+			}
+
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	* Déséquipe une arme d'un perso
+	* @param $id_perso : L'identifiant du perso
+	* @param $attribut : quel attribut on modifie. Doit être le même que dans la table Perso
+	* @param $effect : Le type d'effet : bonus ou malus
+	* @return bool
+	*/
+	public function equipItem($id_perso,$id_obj,$equip=true){
+		$db = $this->dbConnectPDO();
+
+		$query = "UPDATE perso_as_objet SET equip_objet='0' WHERE id_perso=:id_perso AND id_objet=:id_obj AND equip_objet=1 LIMIT 1";
+		$request = $db->prepare($query);
+		$request->bindParam('id_perso', $id_perso, PDO::PARAM_INT);
+		$request->bindParam('id_obj', $id_obj, PDO::PARAM_INT);
+		$result = $request->execute();
+
+		if($result){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	* Ajoute un bonus/malus à un perso
+	* @param $id_perso : L'identifiant du perso
+	* @param $attribut : quel attribut on modifie. Doit être le même que dans la table Perso
+	* @param $effect : Le type d'effet : bonus ou malus
+	* @return bool
+	*/
+	public function addBonusOrMalus($id_perso,$attribut,$effect){
+		$db = $this->dbConnectPDO();
+
+		$query = 'UPDATE perso SET '.$attribut.'='.$attribut.'+:effect WHERE id_perso=:id_perso';
+		$request = $db->prepare($query);
+		$request->bindParam('id_perso', $id_perso, PDO::PARAM_INT);
+		$request->bindParam('effect', $effect, PDO::PARAM_INT);
+		$result = $request->execute();
+
+		if($result){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/* retrocompatibilité */
+	public function infligeDegats($id_cible, $degats_final){
+		$db = $this->dbConnectPDO();
+		// mise a jour des pv et des malus de la cible
+		$sql = "UPDATE perso SET pv_perso=pv_perso-$degats_final, bonus_perso=bonus_perso-2 WHERE id_perso='$id_cible'";
+		$request = $db->prepare($sql);
+		$request->execute();
+	}
+
+	public function perso_gain_xp($id, $gain_xp){
+		$db = $this->dbConnectPDO();
+		$sql = "UPDATE perso SET xp_perso=xp_perso+$gain_xp, pi_perso=pi_perso+$gain_xp, gain_xp_tour=gain_xp_tour+$gain_xp WHERE id_perso='$id'";
+		$request = $db->prepare($sql);
+		$request->execute();
 	}
 
 }

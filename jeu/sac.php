@@ -2,7 +2,7 @@
 session_start();
 require_once("../fonctions.php");
 require_once("../mvc/model/Item.php");
-require_once("../mvc/model/Perso.php");
+require_once("../mvc/model/Character.php");
 
 $mysqli = db_connexion();
 
@@ -19,7 +19,7 @@ if(isset($_SESSION["id_perso"])){
 //récuperation des variables de sessions
 		$id_perso = $_SESSION["id_perso"];
 
-		$perso = new Perso();
+		$perso = new Character();
 		$perso = $perso->find($id_perso);
 
 		$type_p = $perso->type_perso;

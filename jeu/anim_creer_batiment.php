@@ -4,6 +4,7 @@ require_once("../fonctions.php");
 require_once("f_carte.php");
 require_once("f_combat.php");
 require_once("f_action.php");
+require_once("../mvc/model/BuildingType.php");
 
 $mysqli = db_connexion();
 
@@ -26,6 +27,9 @@ if(isset($_SESSION["id_perso"])){
 		$mess_err 	= "";
 		$mess 		= "";
 		
+		$building_types = new BuildingType();
+		$building_types = $building_types->get();
+
 		if (isset($_POST['select_batiment']) && $_POST['select_batiment'] != ""
 			&& isset($_POST['coord_x_placement']) && trim($_POST['coord_x_placement']) != ""
 			&& isset($_POST['coord_y_placement']) && trim($_POST['coord_y_placement']) != "") {
@@ -35,6 +39,7 @@ if(isset($_SESSION["id_perso"])){
 			$y_bat		= $_POST['coord_y_placement'];
 			$camp_bat	= $_POST['select_camp'];
 			$verif 		= $_POST['select_verifications'];
+			
 			
 			$nom_instance = '';
 			
@@ -50,14 +55,22 @@ if(isset($_SESSION["id_perso"])){
 				$bat_camp = "g";
 			}
 			
-			// recuperation du nom du batiment
-			$sql = "SELECT nom_batiment, taille_batiment, image_prefix FROM batiment WHERE id_batiment='$id_bat'";
+			// recuperation des caractéristiques du bâtiment
+			$sql = "SELECT nom_batiment, taille_batiment, image_prefix, capacity, pvMin_batiment, pvMax_batiment FROM batiment WHERE id_batiment='$id_bat'";
 			$res = $mysqli->query($sql);
 			$tb = $res->fetch_assoc();
 			
 			$nom_bat 	= $tb["nom_batiment"];
 			$taille_bat = $tb["taille_batiment"];
 			$img_prefix = $tb["image_prefix"];
+			$contenance_bat = $tb["capacity"];
+			$pvMin = $tb["pvMin_batiment"];
+			$pvMax = $tb["pvMax_batiment"];
+			$pv_bat = rand($pvMin, $pvMin * 2);
+			
+			// niveau bâtiment par défaut = 1
+			$niveau_bat = 1;
+			$img_bat = "b".$id_bat."".$bat_camp.".png";
 			
 			$sql = "SELECT MAX(x_carte) as x_max, MAX(y_carte) as y_max FROM carte";
 			$res = $mysqli->query($sql);
@@ -143,24 +156,6 @@ if(isset($_SESSION["id_perso"])){
 							if ($autorisation_construction_bats) {
 						
 								if ($autorisation_construction_taille) {
-									
-									// recuperation des donnees necessaires pour la construction du batiment
-									$sql = "SELECT pvMin_action, pvMax_action, contenance, action.nb_points as niveau_bat
-											FROM action, action_as_batiment
-											WHERE action.id_action = action_as_batiment.id_action
-											AND id_batiment = '$id_bat'";
-									$res = $mysqli->query($sql);
-									$t_b = $res->fetch_assoc();
-									
-									$pvMin 			= $t_b['pvMin_action'];
-									$pvMax 			= $t_b['pvMax_action'];
-									$niveau_bat 	= $t_b["niveau_bat"];
-									$contenance_bat = $t_b["contenance"];
-									
-									
-									$pv_bat = rand($pvMin, $pvMin * 2);
-									$img_bat = "b".$id_bat."".$bat_camp.".png";
-									
 									if ($id_bat == 4){
 										// route
 										// mise a jour de la carte
@@ -549,13 +544,9 @@ if(isset($_SESSION["id_perso"])){
 					
 					<form method='POST' action='anim_creer_batiment.php'>
 						<select name="select_batiment">
-							<option value='1'>Barricade</option>
-							<option value='2'>Tour de visu</option>
-							<option value='7'>Hopital</option>
-							<option value='11'>Gare</option>
-							<option value='8'>Fortin</option>
-							<option value='9'>Fort</option>
-							<option value='13'>Point stratégique</option>
+							<?php foreach($building_types as $type):?>
+							<option value='<?= $type->id_batiment?>'><?= $type->nom_batiment?></option>
+							<?php endforeach; ?>
 						</select>
 						<select name="select_verifications">
 							<option value='1'>Aucune verification des contraintes</option>

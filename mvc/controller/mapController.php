@@ -17,11 +17,11 @@ class MapController extends Controller
 		$dispo = $admin->getMaintenanceMode();
 		
 		$map = new Map();
-		$mapTablesInDatabase = $map->mapTables;
+		$registeredMaps = $map->registeredMaps();
 		
 		$maps = [];
 		
-		foreach($mapTablesInDatabase as $key => $value){
+		foreach($registeredMaps as $key => $value){
 			if($map->carteExist($value)){
 				$maps[] = $value;
 			}
@@ -32,7 +32,6 @@ class MapController extends Controller
 	
 	/**
      * Display the map creation page.
-     *
      * @return view
      */
     public function create()
@@ -41,12 +40,12 @@ class MapController extends Controller
 		$old_input = isset($_SESSION['old_input'])?$_SESSION['old_input']:'';
 		
 		$map = new Map();
-		$mapTablesInDatabase = $map->mapTables;
+		$registeredMaps = $map->registeredMaps();
 		$grounds = $map->grounds;
 
 		$emptyMaps = 	[];	
 		
-		foreach($mapTablesInDatabase as $key => $value){
+		foreach($registeredMaps as $key => $value){
 			if(!$map->carteExist($value)){
 				$emptyMaps[] = $value;
 			}
@@ -57,7 +56,6 @@ class MapController extends Controller
 	
 	/**
      * Display the specified map.
-     *
      * @param  $id de la carte
 	 * @param  $id du perso
      * @return view
@@ -211,7 +209,7 @@ class MapController extends Controller
 					$y_min = $_POST['y_pos'] - $_POST['perc'];
 					$y_max = $_POST['y_pos'] + $_POST['perc'];
 					
-					$map = $map->getCarteWithPerc($id,$x_choice,$y_choice,$perc);
+					$map = $map->getMapWithPerc($id,$x_choice,$y_choice,$perc);
 
 					if($perc>20){
 						$tileClass = 'tile-sm';
@@ -302,7 +300,7 @@ class MapController extends Controller
      *
      * @return ?
      */
-    public function destroy($id)
+    public function destroyMap($id)
     {
 		$admin = new Administration();
 		$dispo = $admin->getMaintenanceMode();

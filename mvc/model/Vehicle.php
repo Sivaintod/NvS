@@ -11,7 +11,37 @@ class Vehicle extends Model
 	// protected $fillable = [];
 	protected $guarded = [];
 	
-	
+	/**
+   * Récupère les persos qui sont sur la carte
+   * @return array
+   */
+   
+   public function getVehiclesWithPerc(int $x,int $y,int $perc){
+		$x_min = $x - $perc;
+		$x_max = $x + $perc;
+		$y_min = $y - $perc;
+		$y_max = $y + $perc;
+		
+		if($x_min<0){
+			$x_min = 0;
+		}
+		if($y_min<0){
+			$y_min = 0;
+		}
+		$values = [$x_min,$x_max,$y_min,$y_max];
+		
+		$query = "SELECT vehicle.id, vehicle.name, vehicle_type.name as type_name, vehicle.type_id, vehicle.level, vehicle.health_points, vehicle.position_x, vehicle.position_y, vehicle.path_id, vehicle.camp_origin, camp.id as camp_id, camp.img_suffix as camp_img_sfx, vehicle_type.image_prefix
+				FROM vehicle
+				LEFT JOIN vehicle_type ON vehicle.type_id= vehicle_type.id
+				LEFT JOIN camp ON camp.id=vehicle.camp_now
+				WHERE (position_x BETWEEN ? AND ?) AND (position_y BETWEEN ? AND ?)";
+		
+		$request = $this->request($query,$values);		
+		$result = $request->fetchAll();
+		
+		return $result;
+   }
+   
 	/* fonction pivot pour supprimer un ou plusieurs persos d'un véhicule
 	 * @var charac_ids (array) ids des persos
 	 * @return number of row deleted
@@ -218,7 +248,7 @@ class Vehicle extends Model
 		return $result;
 	}
 	
-	/* fonction pivot pour intégrer un ou plusieurs persos dans ue gare
+	/* fonction pivot pour intégrer un ou plusieurs persos dans une gare
 	 * @var charac_ids (array) ids des persos
 	 * @var building_id (int) id du bâtiment
 	 * @return number of row created
