@@ -26,12 +26,6 @@ class Event extends Model
 	// private $created_at;
 	// private $special;
 	
-	public function __set($name, $value) {}
-	
-	public function __get($name){
-		return $this->$name;
-	}
-	
 	// A supprimer après la refacto
 	/* fonction pour ajouter un évènement à un perso
 	 * @return number of row created

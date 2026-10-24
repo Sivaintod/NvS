@@ -133,6 +133,43 @@ class Building extends Model
 		return false;
 	}
 	
+	/* récupère les bâtiments dans la visu avec les ids des persos dedans
+	 *
+	 *
+	 */
+	public function getBuildingsWithPerc(int $x,int $y,int $perc){
+		
+		$query = "SELECT MAX(taille_batiment) as max_size FROM batiment";
+				
+		$request = $this->request($query);		
+		$building_max_size = $request->fetch();
+		
+		$perc = $perc+$building_max_size['max_size'];
+		$x_min = $x - $perc;
+		$x_max = $x + $perc;
+		$y_min = $y - $perc;
+		$y_max = $y + $perc;
+		
+		if($x_min<0){
+			$x_min = 0;
+		}
+		if($y_min<0){
+			$y_min = 0;
+		}
+		$values = [$x_min,$x_max,$y_min,$y_max];
+
+		$query = "SELECT id_instanceBat as id, nom_instance, x_instance, y_instance, camp.id as camp_id, camp.img_suffix as camp_img_sfx, instance_batiment.id_batiment as type, batiment.nom_batiment, batiment.image_prefix, batiment.width, batiment.height, batiment.taille_batiment
+				FROM instance_batiment
+				LEFT JOIN batiment ON instance_batiment.id_batiment= batiment.id_batiment
+				LEFT JOIN camp ON camp.id=instance_batiment.camp_instance
+				WHERE (x_instance BETWEEN ? AND ?) AND (y_instance BETWEEN ? AND ?)";
+		
+		$request = $this->request($query,$values);		
+		$result = $request->fetchAll();
+		
+		return $result;
+	}
+	
 	// Obsolète. A supprimer à termes
    public function getByType(int $type,int $camp=null){
 		$db = $this->dbConnectPDO();

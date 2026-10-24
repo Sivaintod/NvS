@@ -4,7 +4,7 @@ require_once("../fonctions.php");
 require_once("f_carte.php");
 require_once("../mvc/model/Administration.php");
 require_once("../mvc/model/Building.php");
-require_once("../mvc/model/Perso.php");
+require_once("../mvc/model/Character.php");
 
 $mysqli = db_connexion();
 
@@ -23,7 +23,7 @@ if(isset($_SESSION["id_perso"])){
 		$mess 		= "";
 		
 		$building = new Building();
-		$perso = new Perso();
+		$character = new Character();
 		
 		$administration = new Administration();
 		$dispo = $administration->getMaintenanceMode();
@@ -33,34 +33,34 @@ if(isset($_SESSION["id_perso"])){
 		
 		if(isset($_GET['action']) && $_GET['action']=='teleport') {
 			if(isset($_POST['id']) && !empty($_POST['id'])){
+				$allPerso = $character->select('id_perso')->where('clan',$_POST['id'])->get();
+				die();
 				switch($_POST['id']){
 					case 1:
 						if(isset($_POST['teleport_bat_north']) && (!empty($_POST['teleport_bat_north']) OR $_POST['teleport_bat_north']==0)){
-							$fort = $building->getById($_POST['teleport_bat_north']);//fonction obsolète à changer avec la DAO
-							$allPerso = $perso->getAllPerso(['id_perso'],$_POST['id']);//fonction obsolète à changer avec la DAO
+							$fort = $building->find($_POST['teleport_bat_north']);
 						}
 					break;
 					case 2:
 						if(isset($_POST['teleport_bat_south']) && (!empty($_POST['teleport_bat_south']) OR $_POST['teleport_bat_south']==0)){
-							$fort = $building->getById($_POST['teleport_bat_south']);//fonction obsolète à changer avec la DAO
-							$allPerso = $perso->getAllPerso(['id_perso'],$_POST['id']);//fonction obsolète à changer avec la DAO
+							$fort = $building->find($_POST['teleport_bat_south']);
 						}
 					break;
 					default:
 					header('location:?');
 				}
 				
-				$id_fort = $fort['id_instanceBat'];
-				$x_fort = $fort['x_instance'];
-				$y_fort = $fort['y_instance'];
+				$id_fort = $fort->id_instanceBat;
+				$x_fort = $fort->x_instance;
+				$y_fort = $fort->y_instance;
 
 				//insérer tous les persos dans le fort
 				foreach($allPerso as $perso){
 					
 					//Vide la carte des persos si certains ont bougés entre la création de la carte et le placement des forts.
-					if((isset($perso['x_perso'])&&!empty($perso['x_perso']))&&(isset($perso['y_perso'])&&!empty($perso['y_perso']))){
-						$x_perso = $perso['x_perso'];
-						$y_perso = $perso['y_perso'];
+					if((isset($perso->x_perso)&&!empty($perso->x_perso))&&(isset($perso->y_perso)&&!empty($perso->y_perso))){
+						$x_perso = $perso->x_perso;
+						$y_perso = $perso->y_perso;
 						
 						$query = "UPDATE carte SET occupee_carte='0', idPerso_carte=NULL, image_carte=NULL WHERE x_carte='$x_perso' AND y_carte='$y_perso'";
 						$mysqli->query($query);

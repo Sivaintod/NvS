@@ -3,7 +3,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/mvc/Db/Db.php");
 
 abstract class Model extends Db
 {
-	
+
 	protected $table;
 	protected $primaryKey = 'id';
 	
@@ -37,18 +37,81 @@ abstract class Model extends Db
 		}
 	}
 	
-	// paramétrer ce que retourne le var_dump
+	// ===================== accesseurs magiques =====================
+	// Toute propriété non déclarée (donc toute colonne de table) est
+	// stockée dans $this->attributes : plus aucune propriété dynamique. Conforme aux versions PHP 8.2+
+	
+	// A FAIRE
+	public function __set(string $name, $value): void
+	{
+		$this->attributes[$name] = $value;
+	}
+	
+	public function __get(string $name): mixed
+	{
+		return $this->attributes[$name] ?? null;
+	}
+	
+	public function __isset(string $name): bool
+	{
+		return isset($this->attributes[$name]);
+	}
+	
+	public function __unset(string $name): void
+	{
+		unset($this->attributes[$name]);
+	}
+	
+	// paramétrer ce que retourne le var_dump/print_r pour qu'ils n'affichent que les données métier
 	public function __debugInfo() {
-		$model_vars = get_object_vars($this);
-		$array = [];
-		
-		foreach($model_vars as $attr => $value){
-			if(!in_array($attr,$this->modelAttr)){
-				$array[$attr] = $value;
-			}
-		}
-		return $array;
+		return $this->attributes;
     }
+	
+	// ===================== hydratation =====================
+
+	/**
+	 * Détermine si un champ est assignable en masse,
+	 * selon les règles fillable / guarded.
+	 */
+	protected function isAssignable(string $key): bool
+	{
+		if($this->fillable === [] && $this->guarded === []){
+			return true; // tout autorisé
+		}
+		if($this->fillable !== []){
+			if($this->guarded !== NULL){
+				return in_array($key, $this->fillable) && !in_array($key, $this->guarded);
+			}
+			return in_array($key, $this->fillable);
+		}
+		if($this->guarded !== NULL){
+			return !in_array($key, $this->guarded);
+		}
+		return false;
+	}
+	
+	/**
+	 * Hydrate l'objet à partir d'une ligne de base de données (brute, sans filtrage).
+	 * @return $this
+	 */
+	public function fill(array $data)
+	{
+		foreach($data as $key => $value){
+			$this->attributes[$key] = $value;
+		}
+		$this->original = $this->attributes;
+		return $this;
+	}
+	
+	/**
+	 * Retourne les attributs sous forme de tableau.
+	 */
+	public function toArray(): array
+	{
+		return $this->attributes;
+	}
+	
+	// ===================== requêtes =====================
 	
 	/**
      * Display the generic request
@@ -72,10 +135,12 @@ abstract class Model extends Db
 	// créer une entrée dans une table via des attributs définis
 	public function save()
 	{
-		$model_vars = get_object_vars($this);
+		$columns = [];
+		$bind = [];
+		$values = [];
 		
-		foreach($model_vars as $attr => $value){
-			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
+		foreach($this->attributes as $attr => $value){
+			if($value !== null && $attr != $this->primaryKey){
 				$columns[] = $attr;
 				$bind[] = '?';
 				$values[] = $value;
@@ -88,55 +153,19 @@ abstract class Model extends Db
 		return $this->request('INSERT INTO '.$this->table.' ('.$columns.') VALUES ('.$bind.')',$values);
 	}
 	
-	/* créer une entrée dans une table via des attributs définis
-	 * retourne l'instance de modèle créée
-	*/
+	// créer une entrée dans une table puis retourner l'instance du modèle créé
 	public function saveWithModel()
 	{
-		$model_vars = get_object_vars($this);
-		
-		foreach($model_vars as $attr => $value){
-			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
-				$columns[] = $attr;
-				$bind[] = '?';
-				$values[] = $value;
-			}
-		}
-		
-		$columns = implode(', ',$columns);
-		$bind = implode(', ',$bind);
-		
-		$query = 'INSERT INTO '.$this->table.' ('.$columns.') VALUES ('.$bind.')';
-		
-		$this->request($query,$values);
+		$this->save();
 		return $this->find($this->db->lastInsertId());
 	}
 	
-	// créer une entrée à partir d'un tableau de données (hydratation)
-	// les champs fillable ou guarded doivent être définis
+	// créer une entrée à partir d'un tableau de données (hydratation filtrée par fillable/guarded)
 	public function create(array $data)
 	{	
 		foreach($data as $key => $value){
-			if($this->guarded === [] && $this->fillable === []){
-				$this->$key = $value;
-			}else{
-				if($this->fillable !== []){
-					if($this->guarded !== NULL){
-						if(in_array($key, $this->fillable) && !in_array($key, $this->guarded)){
-							$this->$key = $value;
-						}
-					}else{
-						if(in_array($key, $this->fillable)){
-							$this->$key = $value;
-						}
-					}
-				}else{
-					if($this->guarded !== NULL){
-						if(!in_array($key, $this->guarded)){
-							$this->$key = $value;
-						}
-					}
-				}
+			if($this->isAssignable($key)){
+				$this->attributes[$key] = $value;
 			}
 		}
 
@@ -145,7 +174,7 @@ abstract class Model extends Db
 	
 	/*
 	 * get all resources from the database. Can be used with Select, Where, Join functions, Group
-	 * @return object
+	 * @return array of Model instances
 	*/
 	public function get(){
 		
@@ -202,34 +231,48 @@ abstract class Model extends Db
 
 		$query = 'SELECT '.$selected.' FROM '.$this->table.$joined.$where.$orWhere.$grouped.$ordered.$limit;
 		
-		$request = $this->request($query,$values);
-
-		return $request->fetchAll(PDO::FETCH_CLASS,get_class($this));
+		$rows = $this->request($query,$values)->fetchAll(PDO::FETCH_ASSOC);
+		
+		// on hydrate chaque ligne dans une nouvelle instance de modèle
+		$models = [];
+		foreach($rows as $row){
+			$models[] = (new static())->fill($row);
+		}
+		return $models;
 	}
 	
-	//récupérer une entrée d'une table via sa clé primaire (à améliorer comme le get)
+	//récupérer une entrée d'une table via sa clé primaire
+	// retourne l'instance hydratée, ou false si aucune ligne trouvée
 	public function find(int $id)
 	{
 		$selected = (empty($this->selectedCols))?'*':$this->selectedCols;
 		$joined = (empty($this->joinedTables))?'':$this->joinedTables;
 		
 		$request = $this->request('SELECT '.$selected.' FROM '.$this->table.$joined.' WHERE '.$this->table.'.'.$this->primaryKey.' = '.$id);
-		$request->setFetchMode(PDO::FETCH_INTO, $this);
-		return $request->fetch();
+		$row = $request->fetch(PDO::FETCH_ASSOC);
+		
+		if($row === false){
+			return false;
+		}
+		
+		return $this->fill($row);
 	}
 	
-	/*mettre à jour une entrée d'une table via sa clé primaire si celle-ci n'est pas dans le modèle
+	/* mettre à jour une entrée d'une table via sa clé primaire si celle-ci n'est pas dans le modèle
+	 * (l'id peut être fourni en paramètre, ou lu depuis les attributs)
 	 * @return number of lines affected
 	*/
 	public function update(int $id=NULL)
 	{
-		$model_vars = get_object_vars($this);
+		if($id === NULL){
+			$id = $this->attributes[$this->primaryKey] ?? NULL;
+		}
 		
-		foreach($model_vars as $attr => $value){
-			if($attr=='primaryKey' AND !empty($this->$value)){
-				$id=$this->$value;
-			}
-			if(!in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
+		$columns = [];
+		$values = [];
+		
+		foreach($this->attributes as $attr => $value){
+			if($attr != $this->primaryKey){
 				$columns[] = $attr. ' = ?';
 				$values[] = $value;
 			}
@@ -242,16 +285,18 @@ abstract class Model extends Db
 		return $request->rowCount();
 	}
 	
-	//mettre à jour une entrée d'une table via sa clé primaire si celle-ci n'est pas dans le modèle
+	//mettre à jour une entrée d'une table puis retourner l'instance du modèle
 	public function updateWithModel(int $id=NULL)
 	{
-		$model_vars = get_object_vars($this);
+		if($id === NULL){
+			$id = $this->attributes[$this->primaryKey] ?? NULL;
+		}
 		
-		foreach($model_vars as $attr => $value){
-			if($attr=='primaryKey' AND !empty($this->$value)){
-				$id=$this->$value;
-			}
-			if($value !== null && !in_array($attr,$this->modelAttr) && $attr != $this->primaryKey){
+		$columns = [];
+		$values = [];
+		
+		foreach($this->attributes as $attr => $value){
+			if($value !== null && $attr != $this->primaryKey){
 				$columns[] = $attr. ' = ?';
 				$values[] = $value;
 			}
@@ -270,9 +315,8 @@ abstract class Model extends Db
 	{
 		$key = $this->primaryKey;
 		
-		
 		if(empty($this->whereConditions)){
-			$id = $this->$key;
+			$id = $this->attributes[$key] ?? NULL;
 			$where = ' WHERE '.$key.' = ?';
 			$values = [$id];
 		}else{
@@ -373,8 +417,6 @@ abstract class Model extends Db
 	
 	/**
 	 * Ajouter une condition WHERE IN à la requête
-	 * 
-	 * @return *this
 	 */
 	public function whereIn(string $attr, array $values){
 		
@@ -448,7 +490,7 @@ abstract class Model extends Db
      * 
      * @return $this
      */
-	public function join(string $joined_table, string $contraint_1,string $operator,string $contraint_2){
+	public function join(string $joined_table, string $contraint_1, string $operator, string $contraint_2){
 		
 		$query = ' INNER JOIN '.$joined_table.' ON '.$contraint_1.$operator.$contraint_2;
 
@@ -458,7 +500,7 @@ abstract class Model extends Db
 	}
 	
 	/**
-     * Ajouter une jointure gauche (LEFT JOIN) à la requête // Séparée de la jointure interne pour plus de clareté
+     * Ajouter une jointure gauche (LEFT JOIN) à la requête
      * 
      * @return $this
      */
@@ -472,7 +514,7 @@ abstract class Model extends Db
 	}
 	
 	/**
-     * Ajouter une jointure droite (RIGHT JOIN) à la requête // Séparée de la jointure interne pour plus de clareté
+     * Ajouter une jointure droite (RIGHT JOIN) à la requête
      * 
      * @return $this
      */

@@ -1,6 +1,5 @@
 <?php
 require_once("Model.php");
-// require_once("../creation_carte/f_analyse.php");
 
 class Map extends Model
 {
@@ -8,19 +7,6 @@ class Map extends Model
 	// protected $primaryKey = "";
 	// protected $fillable = [];
 	protected $guarded = [];
-	
-	// à refactoriser à partir de ce commentaire. Vérifier les implications
-	public $x_carte;
-	public $y_carte;
-	public $occupee_carte;
-	public $fond_carte;
-	public $idPerso_carte;
-	public $image_carte;
-	public $vue_nord;
-	public $vue_sud;
-	public $coordonnees;
-	public $vue_nord_date;
-	public $vue_sud_date;
 	protected $xMax;
 	protected $yMax;
 	protected $grounds = [
@@ -35,17 +21,18 @@ class Map extends Model
 		8=>['eau',92,191,207],
 		9=>['eau_profonde',39,141,227]
 	];
-	protected $mapTables = ['carte' => 1,'carte2' => 2,'carte3' => 3];// à refactoriser
-
-	public function __set($name, $value) {}
+	protected $mapTables = ['carte' => 1,'carte2' => 2,'carte3' => 3, 'carte4' => 4];// à refactoriser
 	
-	public function __get($name){
-		return $this->$name;
+	/**
+     * Retourne les cartes déclarées
+     * @return bool
+     */
+	public function registeredMaps(){
+		return $this->mapTables;
 	}
 	
 	/**
      * Vérifie que la carte existe
-     *
      * @return bool
      */
 	public function carteExist($id){
@@ -287,11 +274,44 @@ class Map extends Model
 
 		return $result;
 	}
+	/**
+     * Récupère la carte en fonction d'une case et la perception définie
+     *
+	 * @param id carte, int x_origin, int y_origin, int perception
+     * @return arrays
+     */
+	public function getMapWithPerc($id,$x,$y,$perc,$desc=false){
+		$db = $this->dbConnectPDO();
+		
+		$x_min = $x - $perc;
+		$x_max = $x + $perc;
+		$y_min = $y - $perc;
+		$y_max = $y + $perc;
+		
+		if($x_min<0){
+			$x_min = 0;
+		}
+		if($y_min<0){
+			$y_min = 0;
+		}
+		
+		$map = array_search($id,$this->mapTables);
+		
+		$query = "SELECT $map.id, x_carte, y_carte, grounds.id as ground_id, grounds.name, grounds.slug as ground_slug, occupee_carte FROM $map LEFT JOIN grounds ON grounds.id= $map.ground WHERE (x_carte BETWEEN $x_min AND $x_max) AND (y_carte BETWEEN $y_min AND $y_max) ORDER BY y_carte DESC, x_carte";//DESC
+		
+		$request = $db->prepare($query);
+		$request->execute();
+		$request->setFetchMode(PDO::FETCH_ASSOC);
+		
+		$result = $request->fetchAll();
+
+		return $result;
+	}
 	
 	/**
      * Récupère la carte pour affichage stratégique
      *
-	 * @param id carte, int x_origin, int y_origin, int perception
+	 * @param id carte
      * @return bool
      */
 	public function getMap($id,$desc=false){

@@ -37,7 +37,7 @@ if(isset($_SESSION["id_perso"])){
 				if(!isset($_POST['id'])){
 					$mapController->index();
 				}else{
-				$mapController->destroy($_POST['id']);
+				$mapController->destroyMap($_POST['id']);
 				}
 			break;
 			default:
