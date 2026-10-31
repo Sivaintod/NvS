@@ -336,6 +336,7 @@ CREATE TABLE `batiment` (
   `nom_batiment` varchar(125) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `image_prefix` tinytext NOT NULL,
+  `pvMin_batiment` int(11) NOT NULL DEFAULT '20',
   `pvMax_batiment` int(11) NOT NULL DEFAULT '20',
   `taille_batiment` int(11) unsigned NOT NULL DEFAULT '1',
   `capacity` int unsigned NOT NULL DEFAULT '0',
@@ -1502,6 +1503,7 @@ COMMIT;
 --
 
 CREATE TABLE `objet_in_carte` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `type_objet` tinyint(4) NOT NULL DEFAULT '1',
   `id_objet` int(11) NOT NULL DEFAULT '0',
   `nb_objet` int(11) NOT NULL DEFAULT '0',
@@ -1826,7 +1828,7 @@ ALTER TABLE `perso_as_respawn`
 --
 
 CREATE TABLE `perso_bagne` (
-	`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`id_perso` INT NOT NULL ,
 	`date_debut` DATETIME NOT NULL ,
 	`duree` INT NULL , PRIMARY KEY (`id`)
@@ -1949,6 +1951,7 @@ ALTER TABLE `perso_in_train`
 CREATE TABLE `pnj` (
   `id_pnj` int(11) NOT NULL,
   `nom_pnj` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `image_prefix` tinytext NOT NULL,
   `pvMax_pnj` int(11) NOT NULL DEFAULT '0',
   `degatMin_pnj` int(11) NOT NULL DEFAULT '0',
   `degatMax_pnj` int(11) NOT NULL DEFAULT '0',
@@ -2109,7 +2112,7 @@ ALTER TABLE `train_last_dep`
 --
 
 CREATE TABLE `type_unite` (
-  `id_unite` int(11) NOT NULL,
+  `id_unite` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `nom_unite` varchar(250) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description_unite` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `type_combat` tinytext NOT NULL,
@@ -2126,7 +2129,6 @@ CREATE TABLE `type_unite` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `type_unite`
-  ADD KEY `id_unite` (`id_unite`),
   ADD KEY `index_all_grouillot1` (`id_unite`,`nom_unite`);
 
 -- --------------------------------------------------------
@@ -2184,8 +2186,8 @@ CREATE TABLE `vehicle` (
   `type_id` tinyint unsigned NOT NULL,
   `level` tinyint unsigned NOT NULL DEFAULT '1',
   `health_points` int unsigned NOT NULL,
-  `position_x` int NULL,
-  `position_y` int NULL,
+  `position_x` int,
+  `position_y` int,
   `path_id` int unsigned NULL,
   `camp_origin` tinyint unsigned NOT NULL,
   `camp_now` tinyint unsigned NOT NULL,

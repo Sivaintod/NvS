@@ -34,7 +34,6 @@ if(isset($_SESSION["id_perso"])){
 		if(isset($_GET['action']) && $_GET['action']=='teleport') {
 			if(isset($_POST['id']) && !empty($_POST['id'])){
 				$allPerso = $character->select('id_perso')->where('clan',$_POST['id'])->get();
-				die();
 				switch($_POST['id']){
 					case 1:
 						if(isset($_POST['teleport_bat_north']) && (!empty($_POST['teleport_bat_north']) OR $_POST['teleport_bat_north']==0)){
@@ -66,7 +65,7 @@ if(isset($_SESSION["id_perso"])){
 						$mysqli->query($query);
 					}
 					
-					$id = $perso['id_perso'];
+					$id = $perso->id_perso;
 					$enterInBat = new Building();
 					$enterInBat = $enterInBat->insertCharacters([$id],$id_fort);
 					
