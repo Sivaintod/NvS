@@ -21,7 +21,7 @@ class Map extends Model
 		8=>['eau',92,191,207],
 		9=>['eau_profonde',39,141,227]
 	];
-	protected $mapTables = ['carte' => 1,'carte2' => 2,'carte3' => 3, 'carte4' => 4];// à refactoriser
+	protected $mapTables = ['carte' => 1,'carte2' => 2,'carte3' => 3];// à refactoriser
 	
 	/**
      * Retourne les cartes déclarées

@@ -10,6 +10,7 @@ include ('../nb_online.php');
 if(isset($_SESSION["id_perso"])){
 	
 	$id_perso = $_SESSION['id_perso'];
+	$main_background = '';
 	
 	// recupération config jeu
 	$admin = admin_perso($mysqli, $id_perso);
